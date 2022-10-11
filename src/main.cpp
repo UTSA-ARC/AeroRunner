@@ -147,30 +147,30 @@ void loop() {
 
   char c = ',';
 
-  Serial.println("Now reading MPU6050...");
-  Serial.print("Time (S): ");
+  //Serial.println("Now reading MPU6050...");
+  //Serial.print("Time (S): ");
   Serial.println(millis()/1000.0);
 
-  Serial.print("Raw Acceleration (X, Y, Z): ");
-  Serial.println(raw_accel.at(0) + c + raw_accel.at(1) + c + raw_accel.at(0)); // Arduino is really dumb
+  //Serial.print("Raw Acceleration (X, Y, Z): ");
+  Serial.println("Raw Acceleration (X, Y, Z): " + raw_accel.at(0) + c + raw_accel.at(1) + c + raw_accel.at(0)); // Arduino is really dumb
   
-  Serial.print("Calc Acceleration (X, Y, Z): ");
-  Serial.println(accel.at(0) + c + accel.at(1) + c + accel.at(2)); // Arduino is really dumb again
+  //Serial.print("Calc Acceleration (X, Y, Z): ");
+  Serial.println("Calc Acceleration (X, Y, Z): " + accel.at(0) + c + accel.at(1) + c + accel.at(2)); // Arduino is really dumb again
   
-  Serial.print("Raw GyroRange (X, Y, Z): ");
-  Serial.println(raw_gyro.at(0) + c + raw_gyro.at(1) + c + raw_gyro.at(2)); // Arduino is really dumb again,...again
+  //Serial.print("Raw GyroRange (X, Y, Z): ");
+  Serial.println("Raw GyroRange (X, Y, Z): " + raw_gyro.at(0) + c + raw_gyro.at(1) + c + raw_gyro.at(2)); // Arduino is really dumb again,...again
 
-  Serial.print("Gyro Range (X, Y, Z): ");
-  Serial.println(gyro.at(0) + c + gyro.at(1) + c + gyro.at(2)); // Arduino is really dumb again,...again, and again
+  //Serial.print("Gyro Range (X, Y, Z): ");
+  Serial.println("Gyro Range (X, Y, Z): " + gyro.at(0) + c + gyro.at(1) + c + gyro.at(2)); // Arduino is really dumb again,...again, and again
 
   Serial.println();
 
   Serial.println("Now reading BMP390...");
   
-  Serial.print("Tempurature (C): ");
+  //Serial.print("Tempurature (C): ");
   Serial.println(bmp.temperature);
   
-  Serial.print("Pressure (kPa): ");
+  //Serial.print("Pressure (kPa): ");
   Serial.println(bmp.pressure / 1000.0);
   
   Serial.print("Altitude (m): ");

@@ -9,10 +9,9 @@ void setup() {
   // Find hexadecimal representation of accelerometer range based on decimal global variable AccelRange defined above // 
   // Find decimal representation of LSB Sensitivity based on decimal global variable AccelRange defined above // 
 
-  //Serial.begin(115200); //Changed to higher rate 4/21/22
+  Serial.begin(115200); //Changed to higher rate 4/21/22
 
-  while (!Serial)
-    Serial.println("Adafruit BMP388 / BMP390 test");
+  while (!Serial);
 
   if (!bmp.begin_I2C()) {   // hardware I2C mode, can pass in address & alt Wire
     Serial.println("Could not find a valid BMP3 sensor, check wiring!");
@@ -27,17 +26,6 @@ void setup() {
 
   pinMode(pinCS, OUTPUT);
   pinMode(pinMOSI, OUTPUT);
-
-  // SD Card Initialization
-  if (SD.begin())
-  {
-    Serial.println("SD card is ready to use.");
-  } else
-  {
-    Serial.println("SD card initialization failed");
-    
-    return;
-  }
 
   switch (AccelRange) {
 
@@ -62,7 +50,7 @@ void setup() {
     break;
 
     default:
-    Serial.println("Must input 2, 4, 8, or 16g for MPU6050 accelerometer range! Exiting...");
+     Serial.println("Must input 2, 4, 8, or 16g for MPU6050 accelerometer range! Exiting...");
     return;
   }
 
@@ -96,8 +84,6 @@ void setup() {
       return;
   }
 
-
-
   Wire.begin();                      // Initialize comunication
   Wire.beginTransmission(MPU);       // Start communication with MPU6050 // MPU=0x68
   Wire.write(0x6B);                  // Talk to the register 6B
@@ -116,15 +102,13 @@ void setup() {
   Wire.write(GFS_SEL);                   // Set the register bits as 00010000 (1000deg/s full scale)
   Wire.endTransmission(true);
 
-  Serial.println("Time (seconds),Raw Ax (g),Ax (g),Raw Ay (g),Ay (g),Raw Az (g),Az (g),Raw Gx (deg/s),Gx (deg/s),Raw Gy (deg/s),Gy (deg/s),Raw Gz (deg/s),Gz (deg/s), Temp (*C), P (kPa), Alt (m)");
-  Serial.println();
+  // myFile.print("Time (seconds),Raw Ax (g),Ax (g),Raw Ay (g),Ay (g),Raw Az (g),Az (g),Raw Gx (deg/s),Gx (deg/s),Raw Gy (deg/s),Gy (deg/s),Raw Gz (deg/s),Gz (deg/s), Temperature (*C), Pressure (kpA), Altitude (m)");
+  // myFile.print("Time,RAx,Ax,RAy,Ay,RAz,Az,RGx,Gx,RGy,Gy,RGz,Gz, Temp (*C), P (kPa), Alt (m)");
  
-  File myFile = SD.open("Raw_V05.csv", FILE_WRITE);  
-  myFile.print("Time (seconds),Raw Ax (g),Ax (g),Raw Ay (g),Ay (g),Raw Az (g),Az (g),Raw Gx (deg/s),Gx (deg/s),Raw Gy (deg/s),Gy (deg/s),Raw Gz (deg/s),Gz (deg/s), Temperature (*C), Pressure (kpA), Altitude (m)");
-  myFile.print("Time,RAx,Ax,RAy,Ay,RAz,Az,RGx,Gx,RGy,Gy,RGz,Gz, Temp (*C), P (kPa), Alt (m)");
- 
-  myFile.println();
-  myFile.close();
+  // myFile.println();
+  // myFile.close();
+
+  Serial.end();
 
   delay(20);
 
@@ -132,7 +116,9 @@ void setup() {
 
 void loop() {
 
-  Serial.begin(115200);
+  Serial.begin(9600);
+  while (!Serial);
+  
   // === Read acceleromter data === //
   
   Vector<int> raw_accel = Get_Raw_Accel();
@@ -148,35 +134,34 @@ void loop() {
   char c = ',';
 
   //Serial.println("Now reading MPU6050...");
-  Serial.print("Time (S): ");
-  Serial.println(millis()/1000.0);
+  Serial.println("Time (S): " + String(millis() / 1000.0));
 
   //Serial.print("Raw Acceleration (X, Y, Z): ");
-  Serial.println("Raw Acceleration (X, Y, Z): " + raw_accel.at(0) + c + raw_accel.at(1) + c + raw_accel.at(0)); // Arduino is really dumb
+  Serial.println("Raw Acceleration (X, Y, Z): " + String(raw_accel.at(0) / 1000.0, 2) + c + String(raw_accel.at(1) / 1000.0, 2) + c + String(raw_accel.at(0)  / 1000.0, 2)); // Arduino is really dumb
   
   //Serial.print("Calc Acceleration (X, Y, Z): ");
-  Serial.println("Calc Acceleration (X, Y, Z): " + accel.at(0) + c + accel.at(1) + c + accel.at(2)); // Arduino is really dumb again
+  Serial.println("Normalized Acceleration (X, Y, Z): " + String(accel.at(0)  / 1000.0, 2) + c + String(accel.at(1) / 1000.0, 2) + c + String(accel.at(2) / 1000.0, 2)); // Arduino is really dumb again
   
   //Serial.print("Raw GyroRange (X, Y, Z): ");
-  Serial.println("Raw GyroRange (X, Y, Z): " + raw_gyro.at(0) + c + raw_gyro.at(1) + c + raw_gyro.at(2)); // Arduino is really dumb again,...again
+  Serial.println("Raw GyroRange (X, Y, Z): " + String(raw_gyro.at(0) / 1000.0, 2) + c + String(raw_gyro.at(1) / 1000.0, 2) + c + String(raw_gyro.at(2) / 1000.0, 2)); // Arduino is really dumb again,...again
 
   //Serial.print("Gyro Range (X, Y, Z): ");
-  Serial.println("Gyro Range (X, Y, Z): " + gyro.at(0) + c + gyro.at(1) + c + gyro.at(2)); // Arduino is really dumb again,...again, and again
+  Serial.println("Normalized Gyro Range (X, Y, Z): " + String(gyro.at(0) / 1000.0, 2) + c + String(gyro.at(1) / 1000.0, 2) + c + String(gyro.at(2) / 1000.0, 2)); // Arduino is really dumb again,...again, and again
 
   Serial.println();
 
   Serial.println("Now reading BMP390...");
   
   //Serial.print("Tempurature (C): ");
-  Serial.println(bmp.temperature);
+  Serial.println("Tempurature (C): " + String(bmp.temperature));
   
   //Serial.print("Pressure (kPa): ");
-  Serial.println(bmp.pressure / 1000.0);
+  Serial.println("Pressure (kPa): " + String(bmp.pressure / 1000.0));
   
   Serial.print("Altitude (m): ");
-  Serial.println(bmp.readAltitude(SEALEVELPRESSURE_HPA));
-  Serial.println();
-  Serial.println();
+  Serial.println("Altitude (m): " + String(bmp.readAltitude(SEALEVELPRESSURE_HPA)));
+  Serial.println("\n");
+
   Serial.end();
 
   // myFile = SD.open("Raw_V05.csv", FILE_WRITE);
@@ -187,4 +172,6 @@ void loop() {
   // myFile.print(bmp.readAltitude(SEALEVELPRESSURE_HPA));
   // myFile.println();
   // myFile.close();
+
+  delay(200);
 }

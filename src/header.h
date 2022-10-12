@@ -20,6 +20,7 @@
 #define GyroRange 2000
 
 short AFS_SEL, GFS_SEL, ALSB_Sensitivity, GLSB_Sensitivity;
+File myFile = SD.open("Raw_V05.csv", FILE_WRITE);
 
 Adafruit_BMP3XX bmp;
 
@@ -32,9 +33,9 @@ Vector<int> Get_Raw_Accel() {
 
   Vector<int> result;
 
-  result.push_back((Wire.read() << 8 | Wire.read()) * 10000); // Raw X-axis value
-  result.push_back((Wire.read() << 8 | Wire.read()) * 10000); // Raw Y-axis value
-  result.push_back((Wire.read() << 8 | Wire.read()) * 10000); // Raw Z-axis value
+  result.push_back((Wire.read() << 8 | Wire.read()) * 1000); // Raw X-axis value
+  result.push_back((Wire.read() << 8 | Wire.read()) * 1000); // Raw Y-axis value
+  result.push_back((Wire.read() << 8 | Wire.read()) * 1000); // Raw Z-axis value
 
   return result;
 

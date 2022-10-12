@@ -148,7 +148,7 @@ void loop() {
   char c = ',';
 
   //Serial.println("Now reading MPU6050...");
-  //Serial.print("Time (S): ");
+  Serial.print("Time (S): ");
   Serial.println(millis()/1000.0);
 
   //Serial.print("Raw Acceleration (X, Y, Z): ");

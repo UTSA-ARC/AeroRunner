@@ -93,13 +93,13 @@ void setup() {
   // Configure Accelerometer Sensitivity - Full Scale Range (default +/- 2g)
   Wire.beginTransmission(MPU);
   Wire.write(0x1C);                  //Talk to the ACCEL_CONFIG register (1C hex)
-  Wire.write(AFS_SEL);                  //Set the register bits as 00010000 (+/- 8g full scale range)
+  Wire.write(AFS_SEL);               //Set the register bits as 00010000 (+/- 8g full scale range)
   Wire.endTransmission(true);
   
   // Configure Gyro Sensitivity - Full Scale Range (default +/- 250deg/s)
   Wire.beginTransmission(MPU);
   Wire.write(0x1B);                   // Talk to the GYRO_CONFIG register (1B hex)
-  Wire.write(GFS_SEL);                   // Set the register bits as 00010000 (1000deg/s full scale)
+  Wire.write(GFS_SEL);                // Set the register bits as 00010000 (1000deg/s full scale)
   Wire.endTransmission(true);
 
   // myFile.print("Time (seconds),Raw Ax (g),Ax (g),Raw Ay (g),Ay (g),Raw Az (g),Az (g),Raw Gx (deg/s),Gx (deg/s),Raw Gy (deg/s),Gy (deg/s),Raw Gz (deg/s),Gz (deg/s), Temperature (*C), Pressure (kpA), Altitude (m)");
@@ -133,33 +133,28 @@ void loop() {
 
   char c = ',';
 
-  //Serial.println("Now reading MPU6050...");
   Serial.println("Time (S): " + String(millis() / 1000.0));
 
-  //Serial.print("Raw Acceleration (X, Y, Z): ");
   Serial.println("Raw Acceleration (X, Y, Z): " + String(raw_accel.at(0) / 1000.0, 2) + c + String(raw_accel.at(1) / 1000.0, 2) + c + String(raw_accel.at(0)  / 1000.0, 2)); // Arduino is really dumb
   
-  //Serial.print("Calc Acceleration (X, Y, Z): ");
   Serial.println("Normalized Acceleration (X, Y, Z): " + String(accel.at(0)  / 1000.0, 2) + c + String(accel.at(1) / 1000.0, 2) + c + String(accel.at(2) / 1000.0, 2)); // Arduino is really dumb again
   
-  //Serial.print("Raw GyroRange (X, Y, Z): ");
   Serial.println("Raw GyroRange (X, Y, Z): " + String(raw_gyro.at(0) / 1000.0, 2) + c + String(raw_gyro.at(1) / 1000.0, 2) + c + String(raw_gyro.at(2) / 1000.0, 2)); // Arduino is really dumb again,...again
 
-  //Serial.print("Gyro Range (X, Y, Z): ");
   Serial.println("Normalized Gyro Range (X, Y, Z): " + String(gyro.at(0) / 1000.0, 2) + c + String(gyro.at(1) / 1000.0, 2) + c + String(gyro.at(2) / 1000.0, 2)); // Arduino is really dumb again,...again, and again
 
   Serial.println();
 
   Serial.println("Now reading BMP390...");
   
-  //Serial.print("Tempurature (C): ");
   Serial.println("Tempurature (C): " + String(bmp.temperature));
   
-  //Serial.print("Pressure (kPa): ");
   Serial.println("Pressure (kPa): " + String(bmp.pressure / 1000.0));
   
   Serial.print("Altitude (m): ");
+
   Serial.println("Altitude (m): " + String(bmp.readAltitude(SEALEVELPRESSURE_HPA)));
+
   Serial.println("\n");
 
   Serial.end();

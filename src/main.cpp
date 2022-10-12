@@ -168,5 +168,5 @@ void loop() {
   // myFile.println();
   // myFile.close();
 
-  delay(200);
+  delay(2000);
 }

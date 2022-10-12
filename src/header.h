@@ -40,7 +40,7 @@ Vector<int> Get_Raw_Accel() {
 
 }
 
-Vector<int> Normalized_Accel(Vector<int> raw_accel) {
+Vector<int> Normalized_Accel(const Vector<int>& raw_accel) {
   
   Vector<int> normalized_accel;
 
@@ -69,7 +69,7 @@ Vector<int> Get_Raw_Gyro() {
 
 }
 
-Vector<int> Normalized_Gyro(Vector<int> raw_gyro) {
+Vector<int> Normalized_Gyro(const Vector<int>& raw_gyro) {
 
   Vector<int> normalized_gyro;
 

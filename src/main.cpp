@@ -140,8 +140,8 @@ void loop() {
 
   // === Read gyroscope data === //
 
-  Vector<int> raw_gyro = Get_Raw_Gyro();
-  Vector<int> gyro = Normalized_Gyro(raw_gyro);
+  const Vector<int> raw_gyro = Get_Raw_Gyro();
+  const Vector<int> gyro = Normalized_Gyro(raw_gyro);
  
   // Print the values on the serial monitor
 

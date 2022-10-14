@@ -141,9 +141,7 @@ void loop() {
   
   Serial.println("Raw GyroRange (X, Y, Z): " + String(raw_gyro.at(0) / 1000.0, 2) + c + String(raw_gyro.at(1) / 1000.0, 2) + c + String(raw_gyro.at(2) / 1000.0, 2)); // Arduino is really dumb again,...again
 
-  Serial.println("Normalized Gyro Range (X, Y, Z): " + String(gyro.at(0) / 1000.0, 2) + c + String(gyro.at(1) / 1000.0, 2) + c + String(gyro.at(2) / 1000.0, 2)); // Arduino is really dumb again,...again, and again
-
-  Serial.println();
+  Serial.println("Normalized Gyro Range (X, Y, Z): " + String(gyro.at(0) / 1000.0, 2) + c + String(gyro.at(1) / 1000.0, 2) + c + String(gyro.at(2) / 1000.0, 2) + '\n'); // Arduino is really dumb again,...again, and again
 
   Serial.println("Now reading BMP390...");
   
@@ -153,9 +151,7 @@ void loop() {
   
   Serial.print("Altitude (m): ");
 
-  Serial.println("Altitude (m): " + String(bmp.readAltitude(SEALEVELPRESSURE_HPA)));
-
-  Serial.println("\n");
+  Serial.println("Altitude (m): " + String(bmp.readAltitude(SEALEVELPRESSURE_HPA)) + '\n');
 
   Serial.end();
 

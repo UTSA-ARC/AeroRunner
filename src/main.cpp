@@ -148,8 +148,6 @@ void loop() {
   Serial.println("Tempurature (C): " + String(bmp.temperature));
   
   Serial.println("Pressure (kPa): " + String(bmp.pressure / 1000.0));
-  
-  Serial.print("Altitude (m): ");
 
   Serial.println("Altitude (m): " + String(bmp.readAltitude(SEALEVELPRESSURE_HPA)) + '\n');
 

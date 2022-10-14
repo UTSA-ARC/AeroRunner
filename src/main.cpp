@@ -102,11 +102,11 @@ void setup() {
   Wire.write(GFS_SEL);                // Set the register bits as 00010000 (1000deg/s full scale)
   Wire.endTransmission(true);
 
-  // myFile.print("Time (seconds),Raw Ax (g),Ax (g),Raw Ay (g),Ay (g),Raw Az (g),Az (g),Raw Gx (deg/s),Gx (deg/s),Raw Gy (deg/s),Gy (deg/s),Raw Gz (deg/s),Gz (deg/s), Temperature (*C), Pressure (kpA), Altitude (m)");
-  // myFile.print("Time,RAx,Ax,RAy,Ay,RAz,Az,RGx,Gx,RGy,Gy,RGz,Gz, Temp (*C), P (kPa), Alt (m)");
+  myFile.print("Time (seconds),Raw Ax (g),Ax (g),Raw Ay (g),Ay (g),Raw Az (g),Az (g),Raw Gx (deg/s),Gx (deg/s),Raw Gy (deg/s),Gy (deg/s),Raw Gz (deg/s),Gz (deg/s), Temperature (*C), Pressure (kpA), Altitude (m)");
+  myFile.print("Time,RAx,Ax,RAy,Ay,RAz,Az,RGx,Gx,RGy,Gy,RGz,Gz, Temp (*C), P (kPa), Alt (m)");
  
-  // myFile.println();
-  // myFile.close();
+  myFile.println();
+  myFile.close();
 
   Serial.end();
 
@@ -159,14 +159,9 @@ void loop() {
 
   Serial.end();
 
-  // myFile = SD.open("Raw_V05.csv", FILE_WRITE);
-  // myFile.print(bmp.temperature);
-  // myFile.print(",");
-  // myFile.print(bmp.pressure / 1000.0);
-  // myFile.print(",");
-  // myFile.print(bmp.readAltitude(SEALEVELPRESSURE_HPA));
-  // myFile.println();
-  // myFile.close();
+  myFile = SD.open("Raw_V05.csv", FILE_WRITE);
+  myFile.println(String(bmp.temperature) + c + String(bmp.pressure / 1000.0) + c + String(bmp.readAltitude(SEALEVELPRESSURE_HPA)) + '\n');
+  myFile.close();
 
   delay(2000);
 }

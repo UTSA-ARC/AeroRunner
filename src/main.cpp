@@ -14,7 +14,7 @@ void setup() {
   while (!Serial);
 
   if (!bmp.begin_I2C()) { // hardware I2C mode, can pass in address & alt Wire
-    // Serial.println("Could not find a valid BMP3 sensor, check wiring!\n");
+    Serial.println("Could not find a valid BMP3 sensor, check wiring!\n");
     bmp_exists = false;
   }
 

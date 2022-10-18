@@ -14,75 +14,44 @@ void setup() {
   while (!Serial);
 
   if (!bmp.begin_I2C()) { // hardware I2C mode, can pass in address & alt Wire
-    Serial.println("Could not find a valid BMP3 sensor, check wiring!");
-    while (1);
+    // Serial.println("Could not find a valid BMP3 sensor, check wiring!\n");
+    bmp_exists = false;
+  }
+
+  Wire.beginTransmission(MPU);
+  mpu_exists = (Wire.endTransmission() == 0) ? true : false;
+  if (!mpu_exists) {
+    Serial.println("Could not find MPU\n");
   }
 
   // Set up oversampling and filter initialization
-  bmp.setTemperatureOversampling(BMP3_OVERSAMPLING_8X);
-  bmp.setPressureOversampling(BMP3_OVERSAMPLING_4X);
-  bmp.setIIRFilterCoeff(BMP3_IIR_FILTER_COEFF_3);
-  bmp.setOutputDataRate(BMP3_ODR_50_HZ);
+
+  if (bmp_exists) {
+    bmp.setTemperatureOversampling(BMP3_OVERSAMPLING_8X);
+    bmp.setPressureOversampling(BMP3_OVERSAMPLING_4X);
+    bmp.setIIRFilterCoeff(BMP3_IIR_FILTER_COEFF_3);
+    bmp.setOutputDataRate(BMP3_ODR_50_HZ);
+  }
 
   pinMode(pinCS, OUTPUT);
   pinMode(pinMOSI, OUTPUT);
 
-  switch (AccelRange) {
-
-    case 2:
-      AFS_SEL = 0x00;
-      ALSB_Sensitivity = 16384;
-    break;
+  while (Set_Accel_Range(AccelRange) != 0) {
     
-    case 4:
-      AFS_SEL = 0x08;
-      ALSB_Sensitivity = 8192;
-    break;
-    
-    case 8:
-      AFS_SEL = 0x10;
-      ALSB_Sensitivity = 4096;  
-    break;
+    Serial.println("Please Fix Accel Range");
+    delay(2000);
 
-    case 16:
-      AFS_SEL = 0x18;
-      ALSB_Sensitivity = 2048;
-    break;
+    }
+  
+  while (Set_Gyro_Range(GyroRange) != 0) {
 
-    default:
-     Serial.println("Must input 2, 4, 8, or 16g for MPU6050 accelerometer range! Exiting...");
-    return;
-  }
+    Serial.println("Please Fix Gyro Range");
+    delay(2000);
+
+  };
 
   // Find hexadecimal representation of gyroscope range based on decimal global variable GyroRange defined above // 
   // Find decimal representation of LSB Sensitivity based on decimal global variable GyroRange defined above // 
-
-  switch (GyroRange) {
-
-    case 250:
-      GFS_SEL = 0x00;
-      GLSB_Sensitivity = 131;
-      break;
-  
-    case 500:
-      GFS_SEL = 0x08;
-      GLSB_Sensitivity = 65.5;
-      break;
-    
-    case 1000:
-      GFS_SEL = 0x10;
-      GLSB_Sensitivity = 32.8;  
-      break;
-
-    case 2000:
-      GFS_SEL = 0x18;
-      GLSB_Sensitivity = 16.4;
-      break;
-
-    default:
-      Serial.println("Must input 250, 500, 1000, or 2000 deg/s for MPU6050 gyroscope range! Exiting...");
-      return;
-  }
 
   Wire.begin();                      // Initialize comunication
   Wire.beginTransmission(MPU);       // Start communication with MPU6050 // MPU=0x68
@@ -116,7 +85,7 @@ void setup() {
 
 void loop() {
 
-  Serial.begin(9600);
+  Serial.begin(115200);
   while (!Serial);
   
   // === Read acceleromter data === //
@@ -153,9 +122,9 @@ void loop() {
 
   Serial.end();
 
-  myFile = SD.open("Raw_V05.csv", FILE_WRITE);
-  myFile.println(String(bmp.temperature) + c + String(bmp.pressure / 1000.0) + c + String(bmp.readAltitude(SEALEVELPRESSURE_HPA)) + '\n');
-  myFile.close();
+  // myFile = SD.open("Raw_V05.csv", FILE_WRITE);
+  // myFile.println(String(bmp.temperature) + c + String(bmp.pressure / 1000.0) + c + String(bmp.readAltitude(SEALEVELPRESSURE_HPA)) + '\n');
+  // myFile.close();
 
   delay(2000);
 }

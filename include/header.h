@@ -15,10 +15,79 @@
 #define AccelRange 16
 #define GyroRange 2000
 
-short AFS_SEL, GFS_SEL, ALSB_Sensitivity, GLSB_Sensitivity;
+bool bmp_exists, mpu_exists, sd_exists;
+byte AFS_SEL, GFS_SEL;
+short ALSB_Sensitivity, GLSB_Sensitivity;
+
 File myFile = SD.open("Raw_V05.csv", FILE_WRITE);
 
 Adafruit_BMP3XX bmp;
+
+int Set_Accel_Range(byte range) {
+
+  switch (AccelRange) {
+
+    case 2:
+      AFS_SEL = 0x00;
+      ALSB_Sensitivity = 16384;
+    break;
+    
+    case 4:
+      AFS_SEL = 0x08;
+      ALSB_Sensitivity = 8192;
+    break;
+    
+    case 8:
+      AFS_SEL = 0x10;
+      ALSB_Sensitivity = 4096;  
+    break;
+
+    case 16:
+      AFS_SEL = 0x18;
+      ALSB_Sensitivity = 2048;
+    break;
+
+    default:
+      Serial.println("Must input 2, 4, 8, or 16g for MPU6050 accelerometer range! Exiting...");
+      return 1;
+  }
+
+  return 0;
+
+}
+
+int Set_Gyro_Range(short range) {
+
+  switch (GyroRange) {
+
+    case 250:
+      GFS_SEL = 0x00;
+      GLSB_Sensitivity = 131;
+      break;
+  
+    case 500:
+      GFS_SEL = 0x08;
+      GLSB_Sensitivity = 65.5;
+      break;
+    
+    case 1000:
+      GFS_SEL = 0x10;
+      GLSB_Sensitivity = 32.8;  
+      break;
+
+    case 2000:
+      GFS_SEL = 0x18;
+      GLSB_Sensitivity = 16.4;
+      break;
+
+    default:
+      Serial.println("Must input 250, 500, 1000, or 2000 deg/s for MPU6050 gyroscope range! Exiting...");
+      return 0;
+  }
+
+  return 1;
+
+}
 
 Vector<int> Get_Raw_Accel() {
 

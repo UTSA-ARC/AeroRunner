@@ -30,14 +30,10 @@ void setup() {
 
   // Set up oversampling and filter initialization
 
-  if ( bmp_exists ) {
-
-    bmp.setTemperatureOversampling( BMP3_OVERSAMPLING_8X );
-    bmp.setPressureOversampling( BMP3_OVERSAMPLING_4X );
-    bmp.setIIRFilterCoeff( BMP3_IIR_FILTER_COEFF_3 );
-    bmp.setOutputDataRate( BMP3_ODR_50_HZ );
-
-  }
+  bmp.setTemperatureOversampling( BMP3_OVERSAMPLING_8X );
+  bmp.setPressureOversampling( BMP3_OVERSAMPLING_4X );
+  bmp.setIIRFilterCoeff( BMP3_IIR_FILTER_COEFF_3 );
+  bmp.setOutputDataRate( BMP3_ODR_50_HZ );
 
   pinMode( pinCS, OUTPUT );
   pinMode( pinMOSI, OUTPUT );

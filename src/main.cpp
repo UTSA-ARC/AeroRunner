@@ -12,6 +12,14 @@ void setup() {
   Serial.begin( 115200 ); //Changed to higher rate 4/21/22
 
   while ( !Serial );
+  
+  // Builtin SD Card Initialization 
+  Serial.print("Initializing SD card...");
+
+  while ( !SD.begin(BUILTIN_SDCARD) )
+    Serial.println("Card not readable");
+
+  Serial.println("Card initialized");
 
   while ( !bmp.begin_I2C() ) { // hardware I2C mode, can pass in address & alt Wire
 
@@ -55,7 +63,7 @@ void setup() {
   // Find hexadecimal representation of gyroscope range based on decimal global variable GyroRange defined above // 
   // Find decimal representation of LSB Sensitivity based on decimal global variable GyroRange defined above // 
 
-  Wire.begin();                      // Initialize comunication
+  Wire.begin();                        // Initialize comunication
   Wire.beginTransmission( MPU );       // Start communication with MPU6050 // MPU=0x68
   Wire.write( 0x6B );                  // Talk to the register 6B
   Wire.write( 0x00 );                  // Make reset - place a 0 into the 6B register

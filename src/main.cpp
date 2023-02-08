@@ -95,12 +95,7 @@ void setup() {
   // ----------------------------------------------------------------
 
   // CSV Setup
-  
-  File myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
-  myFile.print( "Time ( seconds ),Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),Ax ( g ),Ay ( g ),Az ( g ),Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),Gx ( deg/s ),Gy ( deg/s ),Gz ( deg/s ),Temperature ( *C ),Pressure ( kpA ),Altitude ( m )" );
- 
-  myFile.println();
-  myFile.close();
+  Init_CSV(); // Initialize CSV
 
   Serial.end();
 
@@ -110,7 +105,7 @@ void setup() {
 
 void loop() {
 
-  // Print All Values
+  // Print & Save All Values
   Record_Data();
 
   delay( 2000 );

@@ -113,10 +113,6 @@ void loop() {
   // Print All Values
   Record_Data();
 
-  File myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
-  myFile.println( String( bmp.temperature ) + ',' + String( bmp.pressure / 1000.0 ) + ',' + String( bmp.readAltitude( SEALEVELPRESSURE_HPA ) ) + '\n' );
-  myFile.close();
-
   delay( 2000 );
 
 }

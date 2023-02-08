@@ -18,8 +18,6 @@
 byte AFS_SEL, GFS_SEL;
 short ALSB_Sensitivity, GLSB_Sensitivity;
 
-File myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
-
 Adafruit_BMP3XX bmp;
 
 int Set_Accel_Range( byte range ) {

@@ -95,6 +95,8 @@ void setup() {
   // ----------------------------------------------------------------
 
   // CSV Setup
+  
+  File myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
   myFile.print( "Time ( seconds ),Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),Ax ( g ),Ay ( g ),Az ( g ),Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),Gx ( deg/s ),Gy ( deg/s ),Gz ( deg/s ),Temperature ( *C ),Pressure ( kpA ),Altitude ( m )" );
  
   myFile.println();
@@ -109,9 +111,9 @@ void setup() {
 void loop() {
 
   // Print All Values
-  Print_All_Values();
+  Record_Data();
 
-  myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
+  File myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
   myFile.println( String( bmp.temperature ) + ',' + String( bmp.pressure / 1000.0 ) + ',' + String( bmp.readAltitude( SEALEVELPRESSURE_HPA ) ) + '\n' );
   myFile.close();
 

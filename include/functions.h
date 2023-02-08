@@ -93,27 +93,50 @@ Vector<int> Get_All_Values_MULT() {
 
 }
 
-void Print_All_Values() { // Print the Values on the serial monitor
+void Print_All_Values(Vector<int>& Values) { // Print the Values on the serial monitor
 
   Serial.begin( 115200 ); // Open Serial Port
 
-  Vector<int> Values = Get_All_Values_MULT();
-
   String output = ""; // init output string
 
-  output.append( "Time ( S ): " + String( Values.at( 0 ) / 1000.0 ) + "\n" );
-  output.append( "Raw Acceleration ( X, Y, Z ): " + String( Values.at( 1 ) / 1000.0, 2 ) + ',' + String( Values.at( 2 ) / 1000.0, 2 ) + ',' + String( Values.at( 3 )  / 1000.0, 2 ) + "\n" );
-  output.append( "Normalized Acceleration ( X, Y, Z ): " + String( Values.at( 4 )  / 1000.0, 2 ) + ',' + String( Values.at( 5 ) / 1000.0, 2 ) + ',' + String( Values.at( 6 ) / 1000.0, 2 ) + "\n" );
-  output.append( "Raw GyroRange ( X, Y, Z ): " + String( Values.at( 7 ) / 1000.0, 2 ) + ',' + String( Values.at( 8 ) / 1000.0, 2 ) + ',' + String( Values.at( 9 ) / 1000.0, 2 ) + "\n" ); // Arduino is really dumb again,...againauto
-  output.append( "Normalized Gyro Range ( X, Y, Z ): " + String( Values.at( 10 ) / 1000.0, 2 ) + ',' + String( Values.at( 11 ) / 1000.0, 2 ) + ',' + String( Values.at( 12 ) / 1000.0, 2 ) + '\n' );
+  output.append( "Time ( S ): " + String( Values.at( 0 ) / 1000.0f ) + "\n" );
+  output.append( "Raw Acceleration ( X, Y, Z ): " + String( Values.at( 1 ) / 1000.0f, 2 ) + ',' + String( Values.at( 2 ) / 1000.0f, 2 ) + ',' + String( Values.at( 3 )  / 1000.0f, 2 ) + "\n" );
+  output.append( "Normalized Acceleration ( X, Y, Z ): " + String( Values.at( 4 )  / 1000.0f, 2 ) + ',' + String( Values.at( 5 ) / 1000.0f, 2 ) + ',' + String( Values.at( 6 ) / 1000.0f, 2 ) + "\n" );
+  output.append( "Raw GyroRange ( X, Y, Z ): " + String( Values.at( 7 ) / 1000.0f, 2 ) + ',' + String( Values.at( 8 ) / 1000.0f, 2 ) + ',' + String( Values.at( 9 ) / 1000.0f, 2 ) + "\n" );
+  output.append( "Normalized Gyro Range ( X, Y, Z ): " + String( Values.at( 10 ) / 1000.0f, 2 ) + ',' + String( Values.at( 11 ) / 1000.0f, 2 ) + ',' + String( Values.at( 12 ) / 1000.0f, 2 ) + '\n' );
 
   output.append( "\n\n Now reading BMP390...\n" );
-  output.append( "Tempurature ( C ): " + String( Values.at( 13 ) / 1000.0 ) + "\n" );
-  output.append( "Pressure ( kPa ): " + String( Values.at( 14 ) / 1000.0 ) + "\n" );
-  output.append( "Altitude ( m ): " + String( Values.at( 15 ) / 1000.0 ) + '\n' );
+  output.append( "Tempurature ( C ): " + String( Values.at( 13 ) / 1000.0f ) + "\n" );
+  output.append( "Pressure ( kPa ): " + String( Values.at( 14 ) / 1000.0f ) + "\n" );
+  output.append( "Altitude ( m ): " + String( Values.at( 15 ) / 1000.0f ) + '\n' );
 
   Serial.println( output ); // Print output to screen
 
   Serial.end(); // End Serial Transmission
+
+}
+
+void Write_All_Values_To_SD(Vector<int>& Values) {
+
+  File myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
+
+  for ( uint i = 0; i < Values.size(); i++) {
+
+    myFile.printf( "%.2", Values.at( i ) );
+
+  }
+
+  myFile.println();
+
+  myFile.close();
+
+}
+
+void Record_Data() {
+
+  Vector<int> Values = Get_All_Values_MULT();
+
+  Print_All_Values( Values );
+  Write_All_Values_To_SD( Values );
 
 }

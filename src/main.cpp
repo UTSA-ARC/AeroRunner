@@ -3,7 +3,7 @@
    by Dejan, https://howtomechatronics.com
 */
 
-#include "setup.h"
+#include "functions.h"
 
 void setup() {
   // Find hexadecimal representation of accelerometer range based on decimal global variable AccelRange defined above // 
@@ -107,47 +107,14 @@ void setup() {
 }
 
 void loop() {
-
-  Serial.begin( 115200 );
-  while ( !Serial );
   
-  // === Read acceleromter data === //
-  
-  Vector<int> raw_accel = Get_Raw_Accel();
-  Vector<int> accel = Normalized_Accel( raw_accel );
-
-  // === Read gyroscope data === //
-
-  const Vector<int> raw_gyro = Get_Raw_Gyro();
-  const Vector<int> gyro = Normalized_Gyro( raw_gyro );
- 
-  // Print the values on the serial monitor
-
-  char c = ',';
-
-  Serial.println( "Time ( S ): " + String( millis() / 1000.0 ) );
-
-  Serial.println( "Raw Acceleration ( X, Y, Z ): " + String( raw_accel.at( 0 ) / 1000.0, 2 ) + c + String( raw_accel.at( 1 ) / 1000.0, 2 ) + c + String( raw_accel.at( 0 )  / 1000.0, 2 ) ); // Arduino is really dumb
-  
-  Serial.println( "Normalized Acceleration ( X, Y, Z ): " + String( accel.at( 0 )  / 1000.0, 2 ) + c + String( accel.at( 1 ) / 1000.0, 2 ) + c + String( accel.at( 2 ) / 1000.0, 2 ) ); // Arduino is really dumb again
-  
-  Serial.println( "Raw GyroRange ( X, Y, Z ): " + String( raw_gyro.at( 0 ) / 1000.0, 2 ) + c + String( raw_gyro.at( 1 ) / 1000.0, 2 ) + c + String( raw_gyro.at( 2 ) / 1000.0, 2 ) ); // Arduino is really dumb again,...again
-
-  Serial.println( "Normalized Gyro Range ( X, Y, Z ): " + String( gyro.at( 0 ) / 1000.0, 2 ) + c + String( gyro.at( 1 ) / 1000.0, 2 ) + c + String( gyro.at( 2 ) / 1000.0, 2 ) + '\n' ); // Arduino is really dumb again,...again, and again
-
-  Serial.println( "Now reading BMP390..." );
-  
-  Serial.println( "Tempurature ( C ): " + String( bmp.temperature ) );
-  
-  Serial.println( "Pressure ( kPa ): " + String( bmp.pressure / 1000.0 ) );
-
-  Serial.println( "Altitude ( m ): " + String( bmp.readAltitude( SEALEVELPRESSURE_HPA ) ) + '\n' );
-
-  Serial.end();
+  // Print All Values
+  Print_All_Values();
 
   myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
-  myFile.println( String( bmp.temperature ) + c + String( bmp.pressure / 1000.0 ) + c + String( bmp.readAltitude( SEALEVELPRESSURE_HPA ) ) + '\n' );
+  myFile.println( String( bmp.temperature ) + ',' + String( bmp.pressure / 1000.0 ) + ',' + String( bmp.readAltitude( SEALEVELPRESSURE_HPA ) ) + '\n' );
   myFile.close();
 
   delay( 2000 );
+
 }

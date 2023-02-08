@@ -2,7 +2,8 @@ name: PlatformIO Patch CI
 
 on:
    push:
-    branches: 'origin/V*.*.*'
+    branches: 
+      - 'origin/V*.*.*'
 
 jobs:
   build:

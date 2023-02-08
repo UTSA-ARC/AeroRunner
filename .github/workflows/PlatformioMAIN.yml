@@ -1,4 +1,4 @@
-name: PlatformIO CI
+name: PlatformIO Main CI
 
 on:
   pull_request:

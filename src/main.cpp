@@ -3,7 +3,7 @@
    by Dejan, https://howtomechatronics.com
 */
 
-#include "header.h"
+#include "setup.h"
 
 void setup() {
   // Find hexadecimal representation of accelerometer range based on decimal global variable AccelRange defined above // 
@@ -60,26 +60,8 @@ void setup() {
 
   }
 
-  // Find hexadecimal representation of gyroscope range based on decimal global variable GyroRange defined above // 
-  // Find decimal representation of LSB Sensitivity based on decimal global variable GyroRange defined above // 
-
-  Wire.begin();                        // Initialize comunication
-  Wire.beginTransmission( MPU );       // Start communication with MPU6050 // MPU=0x68
-  Wire.write( 0x6B );                  // Talk to the register 6B
-  Wire.write( 0x00 );                  // Make reset - place a 0 into the 6B register
-  Wire.endTransmission( true );        //end the transmission
-  
-  // Configure Accelerometer Sensitivity - Full Scale Range ( default +/- 2g )
-  Wire.beginTransmission( MPU );
-  Wire.write( 0x1C );                  //Talk to the ACCEL_CONFIG register ( 1C hex )
-  Wire.write( AFS_SEL );               //Set the register bits as 00010000 ( +/- 8g full scale range )
-  Wire.endTransmission( true );
-  
-  // Configure Gyro Sensitivity - Full Scale Range ( default +/- 250deg/s )
-  Wire.beginTransmission( MPU );
-  Wire.write( 0x1B );                   // Talk to the GYRO_CONFIG register ( 1B hex )
-  Wire.write( GFS_SEL );                // Set the register bits as 00010000 ( 1000deg/s full scale )
-  Wire.endTransmission( true );
+  // Find hexadecimal representation of gyroscope range based on decimal global variable GyroRange defined above
+  // Find decimal representation of LSB Sensitivity based on decimal global variable GyroRange defined above
 
   myFile.print( "Time ( seconds ),Raw Ax ( g ),Ax ( g ),Raw Ay ( g ),Ay ( g ),Raw Az ( g ),Az ( g ),Raw Gx ( deg/s ),Gx ( deg/s ),Raw Gy ( deg/s ),Gy ( deg/s ),Raw Gz ( deg/s ),Gz ( deg/s ), Temperature ( *C ), Pressure ( kpA ), Altitude ( m )" );
   myFile.print( "Time,RAx,Ax,RAy,Ay,RAz,Az,RGx,Gx,RGy,Gy,RGz,Gz, Temp ( *C ), P ( kPa ), Alt ( m )" );

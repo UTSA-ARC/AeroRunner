@@ -88,6 +88,34 @@ int Set_Gyro_Range( short range ) {
 
 }
 
+void initMPU() { // Initialize MPU
+
+  Wire.begin();                        // Initialize comunication
+  Wire.beginTransmission( MPU );       // Start communication with MPU6050 // MPU=0x68
+  Wire.write( 0x6B );                  // Talk to the register 6B
+  Wire.write( 0x00 );                  // Make reset - place a 0 into the 6B register
+  Wire.endTransmission( true );        //end the transmission
+
+}
+ 
+void configureMPU() { // Configure Accelerometer Sensitivity - Full Scale Range ( default +/- 2g )
+
+  Wire.beginTransmission( MPU );
+  Wire.write( 0x1C );                  //Talk to the ACCEL_CONFIG register ( 1C hex )
+  Wire.write( AFS_SEL );               //Set the register bits as 00010000 ( +/- 8g full scale range )
+  Wire.endTransmission( true );
+
+}
+
+void configureGyro() { // Configure Gyro Sensitivity - Full Scale Range ( default +/- 250deg/s )
+  
+  Wire.beginTransmission( MPU );
+  Wire.write( 0x1B );                   // Talk to the GYRO_CONFIG register ( 1B hex )
+  Wire.write( GFS_SEL );                // Set the register bits as 00010000 ( 1000deg/s full scale )
+  Wire.endTransmission( true );
+
+}
+
 Vector<int> Get_Raw_Accel() {
 
   Wire.beginTransmission( MPU );

@@ -16,7 +16,7 @@ void setup() {
   // Builtin SD Card Initialization 
   Serial.print("Initializing SD card...");
 
-  while ( !SD.begin(BUILTIN_SDCARD) )
+  while ( !SD.begin( BUILTIN_SDCARD ) )
     Serial.println("Card not readable");
 
   Serial.println("Card initialized");

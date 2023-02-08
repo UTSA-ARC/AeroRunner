@@ -87,7 +87,7 @@ void setup() {
   // Find hexadecimal representation of gyroscope range based on decimal global variable GyroRange defined above
   // Find decimal representation of LSB Sensitivity based on decimal global variable GyroRange defined above
 
-  Init_MPU();            // initialize MPU
+  Init_MPU();            // Initialize MPU
   Configure_MPU( 0x1C ); // Config Register
  
   Configure_Gyro( 0x1B ); // Config Register
@@ -95,7 +95,7 @@ void setup() {
   // ----------------------------------------------------------------
 
   // CSV Setup
-  myFile.print( "Time ( seconds ),Raw Ax ( g ),Ax ( g ),Raw Ay ( g ),Ay ( g ),Raw Az ( g ),Az ( g ),Raw Gx ( deg/s ),Gx ( deg/s ),Raw Gy ( deg/s ),Gy ( deg/s ),Raw Gz ( deg/s ),Gz ( deg/s ), Temperature ( *C ), Pressure ( kpA ), Altitude ( m )" );
+  myFile.print( "Time ( seconds ),Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),Ax ( g ),Ay ( g ),Az ( g ),Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),Gx ( deg/s ),Gy ( deg/s ),Gz ( deg/s ),Temperature ( *C ),Pressure ( kpA ),Altitude ( m )" );
  
   myFile.println();
   myFile.close();
@@ -107,7 +107,7 @@ void setup() {
 }
 
 void loop() {
-  
+
   // Print All Values
   Print_All_Values();
 

@@ -98,25 +98,25 @@ void initMPU() { // Initialize MPU
 
 }
  
-void configureMPU() { // Configure Accelerometer Sensitivity - Full Scale Range ( default +/- 2g )
+void configureMPU( int ACCEL_CONFIG ) { // Configure Accelerometer Sensitivity - Full Scale Range ( default +/- 2g )
 
   Wire.beginTransmission( MPU );
-  Wire.write( 0x1C );                  //Talk to the ACCEL_CONFIG register ( 1C hex )
+  Wire.write( ACCEL_CONFIG );                  //Talk to the ACCEL_CONFIG register ( 1C hex )
   Wire.write( AFS_SEL );               //Set the register bits as 00010000 ( +/- 8g full scale range )
   Wire.endTransmission( true );
 
 }
 
-void configureGyro() { // Configure Gyro Sensitivity - Full Scale Range ( default +/- 250deg/s )
+void configureGyro( int GYRO_CONFIG ) { // Configure Gyro Sensitivity - Full Scale Range ( default +/- 250deg/s )
   
   Wire.beginTransmission( MPU );
-  Wire.write( 0x1B );                   // Talk to the GYRO_CONFIG register ( 1B hex )
+  Wire.write( GYRO_CONFIG );                   // Talk to the GYRO_CONFIG register ( 1B hex )
   Wire.write( GFS_SEL );                // Set the register bits as 00010000 ( 1000deg/s full scale )
   Wire.endTransmission( true );
 
 }
 
-Vector<int> Get_Raw_Accel() {
+Vector<int> Get_Raw_Accel() { // Returns an int vector of the raw acceleration values from the MPU
 
   Wire.beginTransmission( MPU );
   Wire.write( 0x3B ); // Start with register 0x3B ( ACCEL_XOUT_H )
@@ -145,7 +145,7 @@ Vector<int> Normalized_Accel( const Vector<int>& raw_accel ) {
 
 }
 
-Vector<int> Get_Raw_Gyro() {
+Vector<int> Get_Raw_Gyro() { // Returns an int vector containing the raw gyrospocic values from the MPU
 
   Wire.beginTransmission( MPU );
   Wire.write( 0x43 ); // Gyro data first register address 0x43
@@ -162,7 +162,7 @@ Vector<int> Get_Raw_Gyro() {
 
 }
 
-Vector<int> Normalized_Gyro( const Vector<int>& raw_gyro ) {
+Vector<int> Normalized_Gyro( const Vector<int>& raw_gyro ) { // Returns an int vector containing the raw gyrospocic values from the MPU
 
   Vector<int> normalized_gyro;
 

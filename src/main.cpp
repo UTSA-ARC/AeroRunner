@@ -63,10 +63,10 @@ void setup() {
   // Find hexadecimal representation of gyroscope range based on decimal global variable GyroRange defined above
   // Find decimal representation of LSB Sensitivity based on decimal global variable GyroRange defined above
 
-  initMPU();
-  configureMPU( 0x1C ); // Config Register
+  Init_MPU();
+  Configure_MPU( 0x1C ); // Config Register
  
-  configureGyro( 0x1B ); // Config Register
+  Configure_Gyro( 0x1B ); // Config Register
 
   myFile.print( "Time ( seconds ),Raw Ax ( g ),Ax ( g ),Raw Ay ( g ),Ay ( g ),Raw Az ( g ),Az ( g ),Raw Gx ( deg/s ),Gx ( deg/s ),Raw Gy ( deg/s ),Gy ( deg/s ),Raw Gz ( deg/s ),Gz ( deg/s ), Temperature ( *C ), Pressure ( kpA ), Altitude ( m )" );
   myFile.print( "Time,RAx,Ax,RAy,Ay,RAz,Az,RGx,Gx,RGy,Gy,RGz,Gz, Temp ( *C ), P ( kPa ), Alt ( m )" );

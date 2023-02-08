@@ -3,10 +3,10 @@ name: PlatformIO Minor CI
 on:
   pull_request:
     branches: 
-      - 'origin/V*.*.0'
+      - 'release/V*.*.0'
   push:
     branches: 
-      - 'origin/V*.*.0'
+      - 'release/V*.*.0'
 
 jobs:
   build:

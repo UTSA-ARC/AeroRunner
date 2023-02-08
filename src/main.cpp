@@ -12,21 +12,36 @@ void setup() {
   Serial.begin( 115200 ); //Changed to higher rate 4/21/22
 
   while ( !Serial );
-  
+
+  // ----------------------------------------------------------------
+
   // Builtin SD Card Initialization 
   Serial.print("Initializing SD card...");
 
-  while ( !SD.begin(BUILTIN_SDCARD) )
-    Serial.println("Card not readable");
+  while ( !SD.begin( BUILTIN_SDCARD ) ) {
 
-  Serial.println("Card initialized");
+    Serial.println( "Card not readable" );
+    delay( 2000 );
 
+  }
+
+  Serial.println( "SD card is ready!" );
+
+  // ----------------------------------------------------------------
+
+  Serial.println( "Initializing BMP3..." );
   while ( !bmp.begin_I2C() ) { // hardware I2C mode, can pass in address & alt Wire
 
     Serial.println( "Could not find a valid BMP3 sensor, check wiring!\n" );
     delay( 2000 );
     
   }
+
+  Serial.println( "Found and initialized a valid BMP3 I2C sensor!" );
+
+  // ----------------------------------------------------------------
+
+  Serial.println( "Initializing MPU6050..." );
 
   Wire.beginTransmission( MPU );
   while ( ( Wire.endTransmission() != 0 ) ) {
@@ -36,16 +51,23 @@ void setup() {
     
   }
 
-  // Set up oversampling and filter initialization
+  // ----------------------------------------------------------------
 
+  // Set up oversampling and filter initialization
   bmp.setTemperatureOversampling( BMP3_OVERSAMPLING_8X );
   bmp.setPressureOversampling( BMP3_OVERSAMPLING_4X );
   bmp.setIIRFilterCoeff( BMP3_IIR_FILTER_COEFF_3 );
   bmp.setOutputDataRate( BMP3_ODR_50_HZ );
 
+  // ----------------------------------------------------------------
+
+  // Pin configuration
   pinMode( pinCS, OUTPUT );
   pinMode( pinMOSI, OUTPUT );
 
+  // ----------------------------------------------------------------
+
+  // Set Ranges
   while ( Set_Accel_Range( AccelRange ) != 0 ) {
     
     Serial.println( "Please Fix Accel Range" );
@@ -60,11 +82,20 @@ void setup() {
 
   }
 
+  // ----------------------------------------------------------------
+
   // Find hexadecimal representation of gyroscope range based on decimal global variable GyroRange defined above
   // Find decimal representation of LSB Sensitivity based on decimal global variable GyroRange defined above
 
+  Init_MPU();            // initialize MPU
+  Configure_MPU( 0x1C ); // Config Register
+ 
+  Configure_Gyro( 0x1B ); // Config Register
+
+  // ----------------------------------------------------------------
+
+  // CSV Setup
   myFile.print( "Time ( seconds ),Raw Ax ( g ),Ax ( g ),Raw Ay ( g ),Ay ( g ),Raw Az ( g ),Az ( g ),Raw Gx ( deg/s ),Gx ( deg/s ),Raw Gy ( deg/s ),Gy ( deg/s ),Raw Gz ( deg/s ),Gz ( deg/s ), Temperature ( *C ), Pressure ( kpA ), Altitude ( m )" );
-  myFile.print( "Time,RAx,Ax,RAy,Ay,RAz,Az,RGx,Gx,RGy,Gy,RGz,Gz, Temp ( *C ), P ( kPa ), Alt ( m )" );
  
   myFile.println();
   myFile.close();
@@ -114,9 +145,9 @@ void loop() {
 
   Serial.end();
 
-  // myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
-  // myFile.println( String( bmp.temperature ) + c + String( bmp.pressure / 1000.0 ) + c + String( bmp.readAltitude( SEALEVELPRESSURE_HPA ) ) + '\n' );
-  // myFile.close();
+  myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
+  myFile.println( String( bmp.temperature ) + c + String( bmp.pressure / 1000.0 ) + c + String( bmp.readAltitude( SEALEVELPRESSURE_HPA ) ) + '\n' );
+  myFile.close();
 
   delay( 2000 );
 }

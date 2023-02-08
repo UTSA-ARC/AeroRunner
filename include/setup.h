@@ -88,40 +88,40 @@ int Set_Gyro_Range( short range ) {
 
 }
 
-void initMPU() { // Initialize MPU
+void Init_MPU() { // Initialize MPU
 
   Wire.begin();                        // Initialize comunication
   Wire.beginTransmission( MPU );       // Start communication with MPU6050 // MPU=0x68
   Wire.write( 0x6B );                  // Talk to the register 6B
   Wire.write( 0x00 );                  // Make reset - place a 0 into the 6B register
-  Wire.endTransmission( true );        //end the transmission
+  Wire.endTransmission( true );        // End the transmission
 
 }
  
-void configureMPU() { // Configure Accelerometer Sensitivity - Full Scale Range ( default +/- 2g )
+void Configure_MPU( int ACCEL_CONFIG ) { // Configure Accelerometer Sensitivity - Full Scale Range ( default +/- 2g )
 
   Wire.beginTransmission( MPU );
-  Wire.write( 0x1C );                  //Talk to the ACCEL_CONFIG register ( 1C hex )
+  Wire.write( ACCEL_CONFIG );          //Talk to the ACCEL_CONFIG register ( 1C hex )
   Wire.write( AFS_SEL );               //Set the register bits as 00010000 ( +/- 8g full scale range )
   Wire.endTransmission( true );
 
 }
 
-void configureGyro() { // Configure Gyro Sensitivity - Full Scale Range ( default +/- 250deg/s )
+void Configure_Gyro( int GYRO_CONFIG ) { // Configure Gyro Sensitivity - Full Scale Range ( default +/- 250deg/s )
   
   Wire.beginTransmission( MPU );
-  Wire.write( 0x1B );                   // Talk to the GYRO_CONFIG register ( 1B hex )
+  Wire.write( GYRO_CONFIG );            // Talk to the GYRO_CONFIG register ( 1B hex )
   Wire.write( GFS_SEL );                // Set the register bits as 00010000 ( 1000deg/s full scale )
   Wire.endTransmission( true );
 
 }
 
-Vector<int> Get_Raw_Accel() {
+Vector<int> Get_Raw_Accel() { // Returns an int vector of the raw acceleration values from the MPU
 
   Wire.beginTransmission( MPU );
-  Wire.write( 0x3B ); // Start with register 0x3B ( ACCEL_XOUT_H )
+  Wire.write( 0x3B );                   // Start with register 0x3B ( ACCEL_XOUT_H )
   Wire.endTransmission( false );
-  Wire.requestFrom( MPU, 6, true ); // Read 6 registers total, each axis value is stored in 2 registers
+  Wire.requestFrom( MPU, 6, true );     // Read 6 registers total, each axis value is stored in 2 registers
 
   Vector<int> result;
 
@@ -133,7 +133,7 @@ Vector<int> Get_Raw_Accel() {
 
 }
 
-Vector<int> Normalized_Accel( const Vector<int>& raw_accel ) {
+Vector<int> Normalized_Accel( const Vector<int>& raw_accel ) { // Returns the normalized acceleration values from the MPU
   
   Vector<int> normalized_accel;
 
@@ -145,12 +145,12 @@ Vector<int> Normalized_Accel( const Vector<int>& raw_accel ) {
 
 }
 
-Vector<int> Get_Raw_Gyro() {
+Vector<int> Get_Raw_Gyro() { // Returns an int vector containing the raw gyrospocic values from the MPU
 
   Wire.beginTransmission( MPU );
-  Wire.write( 0x43 ); // Gyro data first register address 0x43
+  Wire.write( 0x43 );                 // Gyro data first register address 0x43
   Wire.endTransmission( false );
-  Wire.requestFrom( MPU, 6, true ); // Read 4 registers total, each axis value is stored in 2 registers
+  Wire.requestFrom( MPU, 6, true );   // Read 4 registers total, each axis value is stored in 2 registers
 
   Vector<int> raw_gyro;
 
@@ -162,7 +162,7 @@ Vector<int> Get_Raw_Gyro() {
 
 }
 
-Vector<int> Normalized_Gyro( const Vector<int>& raw_gyro ) {
+Vector<int> Normalized_Gyro( const Vector<int>& raw_gyro ) { // Returns an int vector containing the normalized gyrospocic values from the MPU
 
   Vector<int> normalized_gyro;
 

@@ -145,9 +145,9 @@ void loop() {
 
   Serial.end();
 
-  // myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
-  // myFile.println( String( bmp.temperature ) + c + String( bmp.pressure / 1000.0 ) + c + String( bmp.readAltitude( SEALEVELPRESSURE_HPA ) ) + '\n' );
-  // myFile.close();
+  myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
+  myFile.println( String( bmp.temperature ) + c + String( bmp.pressure / 1000.0 ) + c + String( bmp.readAltitude( SEALEVELPRESSURE_HPA ) ) + '\n' );
+  myFile.close();
 
   delay( 2000 );
 }

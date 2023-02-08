@@ -2,7 +2,8 @@ name: PlatformIO Release CI
 
 on:
   pull_request:
-    branches: 'origin/V*.0.0'
+    branches: 
+      - 'origin/V*.0.0'
 
 jobs:
   build:
@@ -22,5 +23,5 @@ jobs:
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
 
-      - name: Build PlatformIO Project
+      - name: Build PlatformIO Release
         run: pio run

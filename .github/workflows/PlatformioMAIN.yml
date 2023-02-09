@@ -2,9 +2,11 @@ name: PlatformIO Main CI
 
 on:
   pull_request:
-    branches: ["main"]
+    branches: 
+      - "origin/main"
   push:
-    branches: ["main"]
+    branches:
+      - "origin/main"
 
 jobs:
   build:
@@ -24,5 +26,5 @@ jobs:
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
 
-      - name: Build PlatformIO Project
+      - name: Build PlatformIO Main Release
         run: pio run

@@ -1,9 +1,12 @@
-name: PlatformIO Patch CI
+name: PlatformIO Feature CI
 
 on:
-   push:
+  push:
     branches: 
-      - 'patch/V*.*.*'
+      - 'feature/*'
+  pull_request:
+    branches:
+      - 'feature/*'
 
 jobs:
   build:

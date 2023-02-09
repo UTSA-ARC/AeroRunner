@@ -1,9 +1,12 @@
-name: PlatformIO Release CI
+name: PlatformIO Feature CI
 
 on:
-  pull_request:
+  push:
     branches: 
-      - 'release/V*.*.*'
+      - 'feature/*'
+  pull_request:
+    branches:
+      - 'feature/*'
 
 jobs:
   build:
@@ -23,5 +26,5 @@ jobs:
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
 
-      - name: Build PlatformIO Release
+      - name: Build PlatformIO Patch
         run: pio run

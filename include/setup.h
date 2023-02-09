@@ -18,8 +18,6 @@
 byte AFS_SEL, GFS_SEL;
 short ALSB_Sensitivity, GLSB_Sensitivity;
 
-File myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
-
 Adafruit_BMP3XX bmp;
 
 int Set_Accel_Range( byte range ) {
@@ -88,88 +86,40 @@ int Set_Gyro_Range( short range ) {
 
 }
 
-void initMPU() { // Initialize MPU
+void Init_MPU() { // Initialize MPU
 
   Wire.begin();                        // Initialize comunication
   Wire.beginTransmission( MPU );       // Start communication with MPU6050 // MPU=0x68
   Wire.write( 0x6B );                  // Talk to the register 6B
   Wire.write( 0x00 );                  // Make reset - place a 0 into the 6B register
-  Wire.endTransmission( true );        //end the transmission
+  Wire.endTransmission( true );        // End the transmission
 
 }
  
-void configureMPU() { // Configure Accelerometer Sensitivity - Full Scale Range ( default +/- 2g )
+void Configure_MPU( int ACCEL_CONFIG ) { // Configure Accelerometer Sensitivity - Full Scale Range ( default +/- 2g )
 
   Wire.beginTransmission( MPU );
-  Wire.write( 0x1C );                  //Talk to the ACCEL_CONFIG register ( 1C hex )
+  Wire.write( ACCEL_CONFIG );          //Talk to the ACCEL_CONFIG register ( 1C hex )
   Wire.write( AFS_SEL );               //Set the register bits as 00010000 ( +/- 8g full scale range )
   Wire.endTransmission( true );
 
 }
 
-void configureGyro() { // Configure Gyro Sensitivity - Full Scale Range ( default +/- 250deg/s )
+void Configure_Gyro( int GYRO_CONFIG ) { // Configure Gyro Sensitivity - Full Scale Range ( default +/- 250deg/s )
   
   Wire.beginTransmission( MPU );
-  Wire.write( 0x1B );                   // Talk to the GYRO_CONFIG register ( 1B hex )
+  Wire.write( GYRO_CONFIG );            // Talk to the GYRO_CONFIG register ( 1B hex )
   Wire.write( GFS_SEL );                // Set the register bits as 00010000 ( 1000deg/s full scale )
   Wire.endTransmission( true );
 
 }
 
-Vector<int> Get_Raw_Accel() {
-
-  Wire.beginTransmission( MPU );
-  Wire.write( 0x3B ); // Start with register 0x3B ( ACCEL_XOUT_H )
-  Wire.endTransmission( false );
-  Wire.requestFrom( MPU, 6, true ); // Read 6 registers total, each axis value is stored in 2 registers
-
-  Vector<int> result;
-
-  result.push_back( ( Wire.read() << 8 | Wire.read() ) * 1000 ); // Raw X-axis value
-  result.push_back( ( Wire.read() << 8 | Wire.read() ) * 1000 ); // Raw Y-axis value
-  result.push_back( ( Wire.read() << 8 | Wire.read() ) * 1000 ); // Raw Z-axis value
-
-  return result;
-
-}
-
-Vector<int> Normalized_Accel( const Vector<int>& raw_accel ) {
+void Init_CSV() {
   
-  Vector<int> normalized_accel;
-
-  normalized_accel.push_back( raw_accel.at( 0 ) / ALSB_Sensitivity ); 
-  normalized_accel.push_back( raw_accel.at( 1 ) / ALSB_Sensitivity );
-  normalized_accel.push_back( raw_accel.at( 2 ) / ALSB_Sensitivity );
-
-  return normalized_accel;
-
-}
-
-Vector<int> Get_Raw_Gyro() {
-
-  Wire.beginTransmission( MPU );
-  Wire.write( 0x43 ); // Gyro data first register address 0x43
-  Wire.endTransmission( false );
-  Wire.requestFrom( MPU, 6, true ); // Read 4 registers total, each axis value is stored in 2 registers
-
-  Vector<int> raw_gyro;
-
-  raw_gyro.push_back( ( Wire.read() << 8 | Wire.read() ) * 10000 );
-  raw_gyro.push_back( ( Wire.read() << 8 | Wire.read() ) * 10000 );
-  raw_gyro.push_back( ( Wire.read() << 8 | Wire.read() ) * 10000 );
-
-  return raw_gyro;
-
-}
-
-Vector<int> Normalized_Gyro( const Vector<int>& raw_gyro ) {
-
-  Vector<int> normalized_gyro;
-
-  normalized_gyro.push_back( raw_gyro.at( 0 ) / GLSB_Sensitivity );
-  normalized_gyro.push_back( raw_gyro.at( 1 ) / GLSB_Sensitivity );
-  normalized_gyro.push_back( raw_gyro.at( 2 ) / GLSB_Sensitivity );
-
-  return normalized_gyro;
+  File myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
+  myFile.print( "Time ( seconds ),Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),Ax ( g ),Ay ( g ),Az ( g ),Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),Gx ( deg/s ),Gy ( deg/s ),Gz ( deg/s ),Temperature ( *C ),Pressure ( kpA ),Altitude ( m )" );
+ 
+  myFile.println();
+  myFile.close();
 
 }

@@ -1,13 +1,13 @@
-name: PlatformIO Minor CI
+name: PlatformIO Patch CI
 
 on:
-  pull_request:
-    branches: 
-      - 'release/V*.*.0'
   push:
     branches: 
-      - 'release/V*.*.0'
-
+      - 'patch/V*.*.*'
+  pull_request:
+    branches:
+      - 'patch/V*.*.*'
+      
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,5 +26,5 @@ jobs:
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
 
-      - name: Build PlatformIO Minor Release
+      - name: Build PlatformIO Patch
         run: pio run

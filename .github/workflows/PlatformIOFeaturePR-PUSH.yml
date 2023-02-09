@@ -1,8 +1,11 @@
 name: PlatformIO Feature CI
 
 on:
-   push:
+  push:
     branches: 
+      - 'feature/*'
+  pull_request:
+    branches:
       - 'feature/*'
 
 jobs:

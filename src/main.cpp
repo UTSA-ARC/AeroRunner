@@ -106,8 +106,10 @@ void setup() {
 
 void loop() {
 
+  Vector<int> values = Get_All_Values_MULT();
+  
   // Print & Save All Values
-  Record_Data();
+  Record_Data(values);
 
   delay( 2000 );
 

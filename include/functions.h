@@ -132,9 +132,7 @@ void Write_All_Values_To_SD(Vector<int>& Values) {
 
 }
 
-void Record_Data() {
-
-  Vector<int> Values = Get_All_Values_MULT();
+void Record_Data(Vector<int>& Values) {
 
   Print_All_Values( Values );
   Write_All_Values_To_SD( Values );

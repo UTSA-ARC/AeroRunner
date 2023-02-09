@@ -1,7 +1,12 @@
-/*
-   Arduino and MPU6050 Accelerometer and Gyroscope Sensor Tutorial
-   by Dejan, https://howtomechatronics.com
-*/
+/**
+ *
+ * @file main.cpp
+ * @author UTSA ARC Avionics Team 2023
+ * @brief The Avionics code for the Spaceport 2023 vehicle
+ * @version 1.0.0
+ * @date 2022-2023
+ * 
+ */
 
 #include "functions.h"
 
@@ -94,12 +99,11 @@ void setup() {
 
   // ----------------------------------------------------------------
 
-  // CSV Setup
   Init_CSV(); // Initialize CSV
 
-  Serial.end();
+  Serial.end(); // End Serial Transmission
 
-  delay( 20 );
+  delay( 20 ); // Delay for 20 Milliseconds before starting main loop
 
 }
 

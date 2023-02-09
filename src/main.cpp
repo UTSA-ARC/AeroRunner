@@ -89,9 +89,6 @@ void setup() {
 
   // ----------------------------------------------------------------
 
-  // Find hexadecimal representation of gyroscope range based on decimal global variable GyroRange defined above
-  // Find decimal representation of LSB Sensitivity based on decimal global variable GyroRange defined above
-
   Init_MPU();            // Initialize MPU
   Configure_MPU( 0x1C ); // Config Register
  

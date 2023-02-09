@@ -3,7 +3,7 @@ name: PlatformIO Release CI
 on:
   pull_request:
     branches: 
-      - 'release/V*.0.0'
+      - 'release/V*.*.*'
 
 jobs:
   build:

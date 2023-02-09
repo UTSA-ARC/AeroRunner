@@ -2,9 +2,11 @@ name: PlatformIO Main CI
 
 on:
   pull_request:
-    branches: ["main"]
+    branches: 
+      - "origin/main"
   push:
-    branches: ["main"]
+    branches:
+      - "origin/main"
 
 jobs:
   build:

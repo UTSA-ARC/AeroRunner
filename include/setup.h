@@ -20,32 +20,49 @@ short ALSB_Sensitivity, GLSB_Sensitivity;
 
 Adafruit_BMP3XX bmp;
 
-int Set_Accel_Range( byte range ) {
+// Structs
+typedef struct NonFData { //* All data in integer form 0.0X accuracy (Divide by 1000.0 for dec)
+
+  int time;
+
+  Vector<int> raw_accel;
+  Vector<int> normalized_accel;
+
+  Vector<int> raw_gyro;
+  Vector<int> normalized_gyro;
+
+  int temperature;
+  int pressure;
+  int altitude;
+
+} NonFData;
+
+int Set_Accel_Range( byte range ) { // Range and sensitivity of accelerometer
 
   switch ( AccelRange ) {
 
-    case 2:
+    case 2:                         // 2Gs of range 
       AFS_SEL = 0x00;
       ALSB_Sensitivity = 16384;
     break;
     
-    case 4:
+    case 4:                         // 4Gs of range
       AFS_SEL = 0x08;
       ALSB_Sensitivity = 8192;
     break;
     
-    case 8:
+    case 8:                         // 8Gs of range
       AFS_SEL = 0x10;
       ALSB_Sensitivity = 4096;  
     break;
 
-    case 16:
+    case 16:                        // 16Gs of range
       AFS_SEL = 0x18;
       ALSB_Sensitivity = 2048;
     break;
 
     default:
-      Serial.println( "Must input 2, 4, 8, or 16g for MPU6050 accelerometer range! Exiting..." );
+      Serial.println( "Must input 2, 4, 8, or 16Gs for MPU6050 accelerometer range! Exiting..." );
       return 1;
   }
 
@@ -53,26 +70,26 @@ int Set_Accel_Range( byte range ) {
 
 }
 
-int Set_Gyro_Range( short range ) {
+int Set_Gyro_Range( short range ) { //  Range and sensitivity of gyroscope
 
   switch ( GyroRange ) {
 
-    case 250:
+  case 250:                        // 250 deg/s of range 
       GFS_SEL = 0x00;
       GLSB_Sensitivity = 131;
       break;
   
-    case 500:
+    case 500:                     // 500 deg/s of range
       GFS_SEL = 0x08;
       GLSB_Sensitivity = 65.5;
       break;
     
-    case 1000:
+    case 1000:                    // 1000 deg/s of range 
       GFS_SEL = 0x10;
       GLSB_Sensitivity = 32.8;  
       break;
 
-    case 2000:
+    case 2000:                   // 2000 deg/s of range
       GFS_SEL = 0x18;
       GLSB_Sensitivity = 16.4;
       break;

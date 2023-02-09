@@ -106,11 +106,11 @@ void setup() {
 
 void loop() {
 
-  Vector<int> values = Get_All_Values_MULT();
-  
+  Vector<int> values = Get_All_Values_MULT(); // Get all data values
+
+  if (values.at())
+
   // Print & Save All Values
   Record_Data(values);
-
-  delay( 2000 );
 
 }

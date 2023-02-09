@@ -108,11 +108,11 @@ void Print_All_Values( INTData& Values ) { // Print the Values on the serial mon
 
 }
 
-void Write_All_Values_To_SD(INTData& Values) {
+void Write_All_Values_To_SD( INTData& Values ) {
 
   File myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
 
-  
+
 
   myFile.println("\n");
 
@@ -120,7 +120,7 @@ void Write_All_Values_To_SD(INTData& Values) {
 
 }
 
-void Record_Data(Vector<uint>& Values) {
+void Record_Data(INTData& Values) {
 
   Print_All_Values( Values );
   Write_All_Values_To_SD( Values );

@@ -21,21 +21,21 @@ short ALSB_Sensitivity, GLSB_Sensitivity;
 Adafruit_BMP3XX bmp;
 
 // Structs
-typedef struct NonFData { //* All data in integer form 0.0X accuracy (Divide by 1000.0 for dec)
+typedef struct INTData { //* All data in integer form 0.0X accuracy (Divide by 1000.0 for dec)
 
   int time;
 
-  Vector<int> raw_accel;
-  Vector<int> normalized_accel;
+  Vector<uint> raw_accel;
+  Vector<uint> normalized_accel;
 
-  Vector<int> raw_gyro;
-  Vector<int> normalized_gyro;
+  Vector<uint> raw_gyro;
+  Vector<uint> normalized_gyro;
 
   int temperature;
   int pressure;
-  int altitude;
+  uint altitude;
 
-} NonFData;
+} INTData;
 
 int Set_Accel_Range( byte range ) { // Range and sensitivity of accelerometer
 

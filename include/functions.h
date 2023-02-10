@@ -149,13 +149,13 @@ void Record_Data( INTData& Values ) { // Prints data to screen and saves it to f
 
 // -----------------------Parachute Functions---------------------------------------
 
-void Deploy_Parachute( uint pin ) {
+void Deploy_Parachute( uint pin ) { // Arms Parachute
 
   //TODO: Implement
 
 }
 
-void Launch_Parachute( uint pin ) {
+void Launch_Parachute( uint schute ) { // Launches Parachute
 
   //TODO: Implement
 
@@ -163,7 +163,7 @@ void Launch_Parachute( uint pin ) {
 
 // -----------------------Internal Trigger Functions--------------------------------
 
-int Check_Altitude( uint altitude ) {
+int Check_Altitude( uint altitude ) { // Checks if altitude is safe
 
   //TODO: Implement
 
@@ -171,7 +171,7 @@ int Check_Altitude( uint altitude ) {
 
 }
 
-int Check_Pressure( uint pressure ) {
+int Check_Pressure( uint pressure ) { // Checks if pressure is safe
 
   //TODO: Implement
 
@@ -179,7 +179,7 @@ int Check_Pressure( uint pressure ) {
 
 }
 
-int Check_Tilt( Vector<unit> gyro ) {
+int Check_Tilt( Vector<unit> gyro ) { // Checks if tilt is safe
 
   //TODO: Implement
 
@@ -187,7 +187,7 @@ int Check_Tilt( Vector<unit> gyro ) {
 
 }
 
-int Check_Accel( Vector<unit> accel ) {
+int Check_Accel( Vector<unit> accel ) { // Checks if accel is correct
 
   //TODO: Implement
 
@@ -197,10 +197,12 @@ int Check_Accel( Vector<unit> accel ) {
 
 // -----------------------External Trigger Functions--------------------------------
 
-int Check_Systems( INTData& Values ) { //* Will trigger LED based on error code
+int Check_Systems( INTData& Values ) { // Checks if systems are safe
 
- //TODO: Implement
+  //TODO: Implement
+  
+  //* Will trigger LED based on error code
 
- return 0; // Safe
+  return 0; // Safe
 
 }

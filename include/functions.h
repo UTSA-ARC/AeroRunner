@@ -110,7 +110,7 @@ void Print_All_Values( INTData& Values ) { // Print the Values on the serial mon
 
 }
 
-void Write_All_Values_To_SD( INTData& Values ) {
+void Write_All_Values_To_SD( INTData& Values ) { // Records values to Sd card
 
   File myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
 
@@ -119,7 +119,7 @@ void Write_All_Values_To_SD( INTData& Values ) {
   myFile.print( String( Values.time / 1000.0 ) + ',');
 
   int i;
-  
+
   for ( i = 0; i < 3; i++ ) myFile.print( String( Values.raw_accel.at( i ) ) + ',' );
 
   for ( i = 0; i < 3; i++ ) myFile.print( String( Values.normalized_accel.at( i ) ) + ',' );
@@ -132,7 +132,7 @@ void Write_All_Values_To_SD( INTData& Values ) {
 
 }
 
-void Record_Data( INTData& Values ) {
+void Record_Data( INTData& Values ) { // Prints data to screen and saves it to file
 
   Print_All_Values( Values );
   Write_All_Values_To_SD( Values );

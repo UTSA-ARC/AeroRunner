@@ -179,7 +179,7 @@ int Check_Pressure( uint pressure ) { // Checks if pressure is safe
 
 }
 
-int Check_Tilt( Vector<unit> gyro ) { // Checks if tilt is safe
+int Check_Tilt( Vector<uint> gyro ) { // Checks if tilt is safe
 
   //TODO: Implement
 
@@ -187,7 +187,7 @@ int Check_Tilt( Vector<unit> gyro ) { // Checks if tilt is safe
 
 }
 
-int Check_Accel( Vector<unit> accel ) { // Checks if accel is correct
+int Check_Accel( Vector<uint> accel ) { // Checks if accel is correct
 
   //TODO: Implement
 

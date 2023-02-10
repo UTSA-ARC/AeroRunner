@@ -114,19 +114,27 @@ void Write_All_Values_To_SD( INTData& Values ) { // Records values to Sd card
 
   File myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
 
-  //* Time ( seconds ),Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),Ax ( g ),Ay ( g ),Az ( g ),Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),Gx ( deg/s ),Gy ( deg/s ),Gz ( deg/s ),Temperature ( *C ),Pressure ( kpA ),Altitude ( m )
+  //* Time ( seconds ),Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),Ax ( g ),Ay ( g ),Az ( g ),Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),Gx ( deg/s ),Gy ( deg/s ),Gz ( deg/s ),Temperature ( *C ),Pressure ( kpA ),Altitude ( m ),Message
 
-  myFile.print( String( Values.time / 1000.0 ) + ',');
+  myFile.print( String( Values.time / 1000.0f ) + ',');
 
   int i;
 
-  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.raw_accel.at( i ) ) + ',' );
+  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.raw_accel.at( i ) / 1000.0f ) + ',' );
 
-  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.normalized_accel.at( i ) ) + ',' );
+  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.normalized_accel.at( i ) / 1000.0f ) + ',' );
 
-  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.raw_gyro.at( i ) ) + ',' );
+  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.raw_gyro.at( i ) / 1000.0f ) + ',' );
 
-  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.normalized_gyro.at( i ) ) + ',' );
+  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.normalized_gyro.at( i ) / 1000.0f ) + ',' );
+
+  myFile.print( String( Values.temperature / 1000.0f ) + ',' );
+
+  myFile.print( String( Values.pressure / 1000.0f ) + ',' );
+
+  myFile.print( String( Values.altitude / 1000.0f ) + ',' );
+
+  myFile.print( Values.message );
 
   myFile.close();
 

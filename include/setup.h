@@ -35,6 +35,8 @@ typedef struct INTData { //* All data in integer form 0.0X accuracy (Divide by 1
   int pressure;
   uint altitude;
 
+  String message = "-";
+
 } INTData;
 
 int Set_Accel_Range( byte range ) { // Range and sensitivity of accelerometer
@@ -134,7 +136,7 @@ void Configure_Gyro( int GYRO_CONFIG ) { // Configure Gyro Sensitivity - Full Sc
 void Init_CSV() {
   
   File myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
-  myFile.print( "Time ( seconds ),Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),Ax ( g ),Ay ( g ),Az ( g ),Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),Gx ( deg/s ),Gy ( deg/s ),Gz ( deg/s ),Temperature ( *C ),Pressure ( kpA ),Altitude ( m )" );
+  myFile.print( "Time ( seconds ),Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),Ax ( g ),Ay ( g ),Az ( g ),Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),Gx ( deg/s ),Gy ( deg/s ),Gz ( deg/s ),Temperature ( *C ),Pressure ( kpA ),Altitude ( m ),Message" );
  
   myFile.println();
   myFile.close();

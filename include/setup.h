@@ -16,7 +16,7 @@
 #define GyroRange 2000
 
 byte AFS_SEL, GFS_SEL;
-short ALSB_Sensitivity, GLSB_Sensitivity;
+uint ALSB_Sensitivity, GLSB_Sensitivity;
 
 Adafruit_BMP3XX bmp;
 
@@ -72,7 +72,7 @@ int Set_Accel_Range( byte range ) { // Range and sensitivity of accelerometer
 
 }
 
-int Set_Gyro_Range( short range ) { //  Range and sensitivity of gyroscope
+int Set_Gyro_Range( uint range ) { //  Range and sensitivity of gyroscope
 
   switch ( GyroRange ) {
 

@@ -106,11 +106,11 @@ void setup() {
 
 void loop() {
 
-  Vector<int> values = Get_All_Values_MULT(); // Get all data values
+  INTData values = Get_All_Values_INT(); // Get all data values
 
   
 
   // Print & Save All Values
-  Record_Data(values);
+  Record_Data( values );
 
 }

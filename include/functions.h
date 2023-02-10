@@ -61,6 +61,8 @@ Vector<uint> Get_Normalized_Gyro( const Vector<uint>& raw_gyro ) { // Returns an
 
 }
 
+// -----------------------Struct Functions------------------------------------------
+
 INTData Get_All_Values_INT() {
 
   INTData data;
@@ -112,15 +114,25 @@ void Write_All_Values_To_SD( INTData& Values ) {
 
   File myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
 
+  //* Time ( seconds ),Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),Ax ( g ),Ay ( g ),Az ( g ),Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),Gx ( deg/s ),Gy ( deg/s ),Gz ( deg/s ),Temperature ( *C ),Pressure ( kpA ),Altitude ( m )
 
+  myFile.print( String( Values.time / 1000.0 ) + ',');
 
-  myFile.println("\n");
+  int i;
+  
+  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.raw_accel.at( i ) ) + ',' );
+
+  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.normalized_accel.at( i ) ) + ',' );
+
+  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.raw_gyro.at( i ) ) + ',' );
+
+  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.normalized_gyro.at( i ) ) + ',' );
 
   myFile.close();
 
 }
 
-void Record_Data(INTData& Values) {
+void Record_Data( INTData& Values ) {
 
   Print_All_Values( Values );
   Write_All_Values_To_SD( Values );

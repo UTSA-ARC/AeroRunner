@@ -151,7 +151,7 @@ void Record_Data( INTData& Values ) { // Prints data to screen and saves it to f
 
 void Deploy_Parachute( uint pin ) { // Arms Parachute
 
-  //TODO: Implement
+  Para_Armed = 1;
 
 }
 

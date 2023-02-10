@@ -15,6 +15,7 @@
 #define AccelRange 16
 #define GyroRange 2000
 
+bool Para_Armed = 0;
 byte AFS_SEL, GFS_SEL;
 uint ALSB_Sensitivity, GLSB_Sensitivity;
 

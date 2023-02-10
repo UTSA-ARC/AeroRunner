@@ -85,7 +85,7 @@ INTData Get_All_Values_INT() {
 
 }
 
-// -----------------------Supplimentary Functions------------------------------------
+// -----------------------Data Handling Functions-----------------------------------
 
 void Print_All_Values( INTData& Values ) { // Print the Values on the serial monitor
 
@@ -93,15 +93,15 @@ void Print_All_Values( INTData& Values ) { // Print the Values on the serial mon
 
   String output = ""; // init output string
 
-  output.append( "Time ( S ): " + String( Values.time / 1000.0f ) + "\n" );
-  output.append( "Raw Acceleration ( X, Y, Z ): " + String( Values.raw_accel.at( 0 ) / 1000.0f, 2 ) + ',' + String( Values.raw_accel.at( 1 ) / 1000.0f, 2 ) + ',' + String( Values.raw_accel.at( 2 )  / 1000.0f, 2 ) + "\n" );
-  output.append( "Normalized Acceleration ( X, Y, Z ): " + String( Values.normalized_accel.at( 0 )  / 1000.0f, 2 ) + ',' + String( Values.normalized_accel.at( 1 ) / 1000.0f, 2 ) + ',' + String( Values.normalized_accel.at( 2 ) / 1000.0f, 2 ) + "\n" );
-  output.append( "Raw GyroRange ( X, Y, Z ): " + String( Values.raw_gyro.at( 0 ) / 1000.0f, 2 ) + ',' + String( Values.raw_gyro.at( 1 ) / 1000.0f, 2 ) + ',' + String( Values.raw_gyro.at( 2 ) / 1000.0f, 2 ) + "\n" );
+  output.append( "Time ( S ): " + String( Values.time / 1000.0f ) + '\n' );
+  output.append( "Raw Acceleration ( X, Y, Z ): " + String( Values.raw_accel.at( 0 ) / 1000.0f, 2 ) + ',' + String( Values.raw_accel.at( 1 ) / 1000.0f, 2 ) + ',' + String( Values.raw_accel.at( 2 )  / 1000.0f, 2 ) + '\n' );
+  output.append( "Normalized Acceleration ( X, Y, Z ): " + String( Values.normalized_accel.at( 0 )  / 1000.0f, 2 ) + ',' + String( Values.normalized_accel.at( 1 ) / 1000.0f, 2 ) + ',' + String( Values.normalized_accel.at( 2 ) / 1000.0f, 2 ) + '\n' );
+  output.append( "Raw GyroRange ( X, Y, Z ): " + String( Values.raw_gyro.at( 0 ) / 1000.0f, 2 ) + ',' + String( Values.raw_gyro.at( 1 ) / 1000.0f, 2 ) + ',' + String( Values.raw_gyro.at( 2 ) / 1000.0f, 2 ) + '\n' );
   output.append( "Normalized Gyro Range ( X, Y, Z ): " + String( Values.normalized_gyro.at( 0 ) / 1000.0f, 2 ) + ',' + String( Values.normalized_gyro.at( 1 ) / 1000.0f, 2 ) + ',' + String( Values.normalized_gyro.at( 2 ) / 1000.0f, 2 ) + '\n' );
 
   output.append( "\n\n Now reading BMP390...\n" );
-  output.append( "Tempurature ( C ): " + String( Values.temperature / 1000.0f ) + "\n" );
-  output.append( "Pressure ( kPa ): " + String( Values.pressure / 1000.0f ) + "\n" );
+  output.append( "Tempurature ( C ): " + String( Values.temperature / 1000.0f ) + '\n' );
+  output.append( "Pressure ( kPa ): " + String( Values.pressure / 1000.0f ) + '\n' );
   output.append( "Altitude ( m ): " + String( Values.altitude / 1000.0f ) + '\n' );
 
   Serial.println( output ); // Print output to screen
@@ -144,5 +144,63 @@ void Record_Data( INTData& Values ) { // Prints data to screen and saves it to f
 
   Print_All_Values( Values );
   Write_All_Values_To_SD( Values );
+
+}
+
+// -----------------------Parachute Functions---------------------------------------
+
+void Deploy_Parachute( uint pin ) {
+
+  //TODO: Implement
+
+}
+
+void Launch_Parachute( uint pin ) {
+
+  //TODO: Implement
+
+}
+
+// -----------------------Internal Trigger Functions--------------------------------
+
+int Check_Altitude( uint altitude ) {
+
+  //TODO: Implement
+
+  return 0; // Safe
+
+}
+
+int Check_Pressure( uint pressure ) {
+
+  //TODO: Implement
+
+  return 0; // Safe
+
+}
+
+int Check_Tilt( Vector<unit> gyro ) {
+
+  //TODO: Implement
+
+  return 0; // Safe
+
+}
+
+int Check_Accel( Vector<unit> accel ) {
+
+  //TODO: Implement
+
+  return 0; // Safe
+
+}
+
+// -----------------------External Trigger Functions--------------------------------
+
+int Check_Systems( INTData& Values ) { //* Will trigger LED based on error code
+
+ //TODO: Implement
+
+ return 0; // Safe
 
 }

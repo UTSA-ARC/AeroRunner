@@ -109,6 +109,13 @@ int Set_Gyro_Range( uint range ) { //  Range and sensitivity of gyroscope
 
 }
 
+void Init_Paras() {
+
+  pinMode(pinMain, OUTPUT);
+  pinMode(pinDrouge, OUTPUT);
+
+}
+
 void Init_MPU() { // Initialize MPU
 
   Wire.begin();                        // Initialize comunication

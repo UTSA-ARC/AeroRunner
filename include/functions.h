@@ -157,7 +157,15 @@ void Deploy_Parachute( uint pin ) { // Arms Parachute
 
 void Launch_Parachute( uint schute ) { // Launches Parachute
 
-  //TODO: Implement
+  switch ( schute ) {
+
+    case 0: // Main Schute
+      digitalWrite( pinMain, HIGH );
+    
+    case 1: // Drouge Schute
+      digitalWrite( pinDrouge, HIGH );
+
+  }
 
 }
 

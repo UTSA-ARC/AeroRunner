@@ -11,6 +11,9 @@
 #define pinCS 10
 #define pinMOSI 13
 
+#define pinDrouge 39
+#define pinMain 33
+
 #define MPU 0x68  // MPU6050 I2C address
 #define AccelRange 16
 #define GyroRange 2000

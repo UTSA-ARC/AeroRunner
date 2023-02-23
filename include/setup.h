@@ -43,7 +43,7 @@ typedef struct INTData { //* All data in integer form 0.0X accuracy (Divide by 1
   Vector<uint> normalized_gyro;
 
   int temperature;
-  int pressure;
+  uint pressure;
   uint altitude;
 
   String message = "-";

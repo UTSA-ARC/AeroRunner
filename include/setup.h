@@ -53,7 +53,7 @@ typedef struct INTData { //* All data in integer form 0.0X accuracy (Divide by 1
 typedef struct Result {
 
   int error;
-  String message;
+  String msg;
 
 } Result;
 

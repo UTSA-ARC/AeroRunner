@@ -171,39 +171,39 @@ void Launch_Parachute( uint schute ) { // Launches Parachute
 
 // -----------------------Internal Trigger Functions--------------------------------
 
-int Check_Altitude( uint altitude ) { // Checks if altitude is safe
+Result Check_Altitude( uint altitude ) { // Checks if altitude is safe
 
-  if ( altitude > safeAltitude ) return 0; // Safe
+  if ( altitude > safeAltitude ) return { .error = 0, .msg = "Safe Altitude"  }; // Safe
 
-  return 1; // Unsafe
-
-}
-
-int Check_Pressure( uint pressure ) { // Checks if pressure is safe
-
-  if ( pressure > safePressure ) return 0; // Safe
-
-  return 1; // Unsafe
+  return { .error = 1; .msg = "Dangerous Altitude" }; // Unsafe
 
 }
 
-int Check_Tilt( Vector<uint> gyro ) { // Checks if tilt is safe
+Result Check_Pressure( uint pressure ) { // Checks if pressure is safe
 
-  if ( gyro.at( 0 ) - 10 > 0 ) return 1; // Unsafe
-  if ( gyro.at( 1 ) - 10 > 0 ) return 1; // Unsafe
-  if ( gyro.at( 2 ) - 10 > 0 ) return 1; // Unsafe
+  if ( pressure > safePressure ) return { .error = 0, .msg = "Safe Pressure" }; // Safe
 
-  return 0; // Safe
+  return { .error = 0, .msg = "Dangerous Pressure" }; // Unsafe
 
 }
 
-int Check_Accel( Vector<uint> old_accel, Vector<uint> new_accel ) { // Checks if accel is correct
+Result Check_Tilt( Vector<uint> gyro ) { // Checks if tilt is safe
 
-  if ( old_accel.at( 0 ) - new_accel.at( 0 ) > 0 ) return 1; // Unsafe
-  if ( old_accel.at( 1 ) - new_accel.at( 1 ) > 0 ) return 1; // Unsafe
-  if ( old_accel.at( 2 ) - new_accel.at( 2 ) > 0 ) return 1; // Unsafe
+  if ( gyro.at( 0 ) - 10 > 0 ) return { .error = 1, .msg = "X axis tilt is Dangerous" }; // Unsafe
+  if ( gyro.at( 1 ) - 10 > 0 ) return { .error = 2, .msg = "Y axis tilt is Dangerous" }; // Unsafe
+  if ( gyro.at( 2 ) - 10 > 0 ) return { .error = 3, .msg = "Z axis tilt is Dangerous" }; // Unsafe
 
-  return 0; // Safe
+  return { .error = 0, .msg = "Safe All-Axis Tilt" }; // Safe
+
+}
+
+Result Check_Accel( Vector<uint> old_accel, Vector<uint> new_accel ) { // Checks if accel is correct
+
+  if ( old_accel.at( 0 ) - new_accel.at( 0 ) > 0 ) return { .error = 1, .msg = "Dangerous X axis acceleration" }; // Unsafe
+  if ( old_accel.at( 1 ) - new_accel.at( 1 ) > 0 ) return { .error = 2, .msg = "Dangerous Y axis acceleration" }; // Unsafe
+  if ( old_accel.at( 2 ) - new_accel.at( 2 ) > 0 ) return { .error = 3, .msg = "Dangerous Z axis acceleration" }; // Unsafe
+
+  return { .error = 0, .msg = "Safe acceleration direction" }; // Safe
 
 }
 

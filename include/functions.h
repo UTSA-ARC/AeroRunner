@@ -175,7 +175,7 @@ Result Check_Altitude( uint altitude ) { // Checks if altitude is safe
 
   if ( altitude > safeAltitude ) return { .error = 0, .msg = "Safe Altitude"  }; // Safe
 
-  return { .error = 1; .msg = "Dangerous Altitude" }; // Unsafe
+  return { .error = 1, .msg = "Dangerous Altitude" }; // Unsafe
 
 }
 

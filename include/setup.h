@@ -18,6 +18,13 @@
 #define AccelRange 16
 #define GyroRange 2000
 
+#define safeAltitude 16 // In meters
+#define safePressure 16 // In kPa
+
+#define safeTiltX 10
+#define safeTilty 10
+#define safeTiltZ 10
+
 bool Para_Armed = 0;
 byte AFS_SEL, GFS_SEL;
 uint ALSB_Sensitivity, GLSB_Sensitivity;
@@ -42,6 +49,14 @@ typedef struct INTData { //* All data in integer form 0.0X accuracy (Divide by 1
   String message = "-";
 
 } INTData;
+
+typedef struct Result {
+
+  int error;
+  String message;
+
+} Result;
+
 
 int Set_Accel_Range( byte range ) { // Range and sensitivity of accelerometer
 

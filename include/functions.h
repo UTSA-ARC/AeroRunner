@@ -78,7 +78,7 @@ INTData Get_All_Values_INT() {
   data.time = millis();
 
   data.temperature = static_cast<int>( bmp.temperature * 1000 );
-  data.pressure = static_cast<int>( bmp.pressure * 1000 );
+  data.pressure = static_cast<uint>( bmp.pressure * 1000 );
   data.altitude = static_cast<uint>( bmp.readAltitude( SEALEVELPRESSURE_HPA ) * 1000 );
 
   return data;
@@ -171,39 +171,35 @@ void Launch_Parachute( uint schute ) { // Launches Parachute
 
 // -----------------------Internal Trigger Functions--------------------------------
 
-Result Check_Altitude( uint altitude ) { // Checks if altitude is safe
+int Check_Altitude( uint altitude ) { // Checks if altitude is safe
 
-  if ( altitude > safeAltitude ) return { .error = 0, .msg = "Safe Altitude"  }; // Safe
+  //TODO: Implement
 
-  return { .error = 1, .msg = "Dangerous Altitude" }; // Unsafe
-
-}
-
-Result Check_Pressure( uint pressure ) { // Checks if pressure is safe
-
-  if ( pressure > safePressure ) return { .error = 0, .msg = "Safe Pressure" }; // Safe
-
-  return { .error = 0, .msg = "Dangerous Pressure" }; // Unsafe
+  return 0; // Safe
 
 }
 
-Result Check_Tilt( Vector<uint> gyro ) { // Checks if tilt is safe
+int Check_Pressure( uint pressure ) { // Checks if pressure is safe
 
-  if ( gyro.at( 0 ) - 10 > 0 ) return { .error = 1, .msg = "X axis tilt is Dangerous" }; // Unsafe
-  if ( gyro.at( 1 ) - 10 > 0 ) return { .error = 2, .msg = "Y axis tilt is Dangerous" }; // Unsafe
-  if ( gyro.at( 2 ) - 10 > 0 ) return { .error = 3, .msg = "Z axis tilt is Dangerous" }; // Unsafe
+  //TODO: Implement
 
-  return { .error = 0, .msg = "Safe All-Axis Tilt" }; // Safe
+  return 0; // Safe
 
 }
 
-Result Check_Accel( Vector<uint> old_accel, Vector<uint> new_accel ) { // Checks if accel is correct
+int Check_Tilt( Vector<uint> gyro ) { // Checks if tilt is safe
 
-  if ( old_accel.at( 0 ) - new_accel.at( 0 ) > 0 ) return { .error = 1, .msg = "Dangerous X axis acceleration" }; // Unsafe
-  if ( old_accel.at( 1 ) - new_accel.at( 1 ) > 0 ) return { .error = 2, .msg = "Dangerous Y axis acceleration" }; // Unsafe
-  if ( old_accel.at( 2 ) - new_accel.at( 2 ) > 0 ) return { .error = 3, .msg = "Dangerous Z axis acceleration" }; // Unsafe
+  //TODO: Implement
 
-  return { .error = 0, .msg = "Safe acceleration direction" }; // Safe
+  return 0; // Safe
+
+}
+
+int Check_Accel( Vector<uint> accel ) { // Checks if accel is correct
+
+  //TODO: Implement
+
+  return 0; // Safe
 
 }
 

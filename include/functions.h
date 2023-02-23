@@ -173,31 +173,35 @@ void Launch_Parachute( uint schute ) { // Launches Parachute
 
 int Check_Altitude( uint altitude ) { // Checks if altitude is safe
 
-  //TODO: Implement
+  if ( altitude > safeAltitude ) return 0; // Safe
 
-  return 0; // Safe
+  return 1; // Unsafe
 
 }
 
 int Check_Pressure( uint pressure ) { // Checks if pressure is safe
 
-  //TODO: Implement
+  if ( pressure > safePressure ) return 0; // Safe
 
-  return 0; // Safe
+  return 1; // Unsafe
 
 }
 
 int Check_Tilt( Vector<uint> gyro ) { // Checks if tilt is safe
 
-  //TODO: Implement
+  if ( gyro.at( 0 ) - 10 > 0 ) return 1; // Unsafe
+  if ( gyro.at( 1 ) - 10 > 0 ) return 1; // Unsafe
+  if ( gyro.at( 2 ) - 10 > 0 ) return 1; // Unsafe
 
   return 0; // Safe
 
 }
 
-int Check_Accel( Vector<uint> accel ) { // Checks if accel is correct
+int Check_Accel( Vector<uint> old_accel, Vector<uint> new_accel ) { // Checks if accel is correct
 
-  //TODO: Implement
+  if ( old_accel.at( 0 ) - new_accel.at( 0 ) > 0 ) return 1; // Unsafe
+  if ( old_accel.at( 1 ) - new_accel.at( 1 ) > 0 ) return 1; // Unsafe
+  if ( old_accel.at( 2 ) - new_accel.at( 2 ) > 0 ) return 1; // Unsafe
 
   return 0; // Safe
 

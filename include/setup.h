@@ -117,10 +117,10 @@ int Set_Gyro_Range( uint range ) { //  Range and sensitivity of gyroscope
 
     default:
       Serial.println( "Must input 250, 500, 1000, or 2000 deg/s for MPU6050 gyroscope range! Exiting..." );
-      return 0;
+      return 1;
   }
 
-  return 1;
+  return 0;
 
 }
 

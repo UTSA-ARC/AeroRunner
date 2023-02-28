@@ -56,6 +56,8 @@ void setup() {
     
   }
 
+  Serial.println( "Initialized MPU6050! ");
+
   // ----------------------------------------------------------------
 
   // Set up oversampling and filter initialization

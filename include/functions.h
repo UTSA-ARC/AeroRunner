@@ -12,7 +12,7 @@ int* Get_Raw_Accel() { // Returns an int vector of the raw acceleration Values f
    
   static int* result;
 
-  for (int i = 0; i < 3; i++) result[i] = ( ( Wire.read() << 8 | Wire.read() ) * 1000 ); // Raw values
+  for ( int i = 0; i < 3; i++ ) result[ i ] = ( ( Wire.read() << 8 | Wire.read() ) * 1000 ); // Raw values
 
   return result;
 
@@ -37,7 +37,7 @@ int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyrospocic Val
 
   static int* raw_gyro;
   
-  for ( int i = 0; i < 3; i++ ) raw_gyro[i] = ( Wire.read() << 8 | Wire.read() ) * 1000;
+  for ( int i = 0; i < 3; i++ ) raw_gyro[ i ] = ( Wire.read() << 8 | Wire.read() ) * 1000;
 
   return raw_gyro;
 
@@ -47,7 +47,7 @@ int* Get_Normalized_Gyro( int* raw_gyro ) { // Returns an int vector containing 
 
   static int* normalized_gyro;
 
-  for ( int i = 0; i < 3; i++ ) normalized_gyro[i] = raw_gyro[ 0 ] / GLSB_Sensitivity;
+  for ( int i = 0; i < 3; i++ ) normalized_gyro[ i ] = raw_gyro[ 0 ] / GLSB_Sensitivity;
 
   return normalized_gyro;
 

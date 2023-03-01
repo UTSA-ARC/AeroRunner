@@ -2,7 +2,6 @@
 #include <SD.h>
 #include <SPI.h>
 #include <Adafruit_BMP3XX.h>
-#include <Vector.h>
 
 #define BMP_SCL A5
 #define BMP_SDA A4 
@@ -36,15 +35,15 @@ typedef struct INTData { //* All data in integer form 0.0X accuracy (Divide by 1
 
   int time;
 
-  Vector<uint> raw_accel;
-  Vector<uint> normalized_accel;
+  int raw_accel[3];
+  int normalized_accel[3];
 
-  Vector<uint> raw_gyro;
-  Vector<uint> normalized_gyro;
+  int raw_gyro[3];
+  int normalized_gyro[3];
 
   int temperature;
-  uint pressure;
-  uint altitude;
+  int pressure;
+  int altitude;
 
   String message = "-";
 
@@ -56,7 +55,6 @@ typedef struct Result {
   String msg;
 
 } Result;
-
 
 int Set_Accel_Range( byte range ) { // Range and sensitivity of accelerometer
 

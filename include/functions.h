@@ -3,59 +3,51 @@
 
 // -------------------------Vector Functions-----------------------
 
-Vector<uint> Get_Raw_Accel() { // Returns an uint vector of the raw acceleration Values from the MPU
+int* Get_Raw_Accel() { // Returns an int vector of the raw acceleration Values from the MPU
 
   Wire.beginTransmission( MPU );
   Wire.write( 0x3B );                   // Start with register 0x3B ( ACCEL_XOUT_H )
   Wire.endTransmission( false );
   Wire.requestFrom( MPU, 6, true );     // Read 6 registers total, each axis value is stored in 2 registers
+   
+  static int* result;
 
-  Vector<uint> result;
-
-  result.push_back( ( Wire.read() << 8 | Wire.read() ) * 1000 ); // Raw X-axis value
-  result.push_back( ( Wire.read() << 8 | Wire.read() ) * 1000 ); // Raw Y-axis value
-  result.push_back( ( Wire.read() << 8 | Wire.read() ) * 1000 ); // Raw Z-axis value
+  for (int i = 0; i < 3; i++) result[i] = ( ( Wire.read() << 8 | Wire.read() ) * 1000 ); // Raw values
 
   return result;
 
 }
 
-Vector<uint> Get_Normalized_Accel( const Vector<uint>& raw_accel ) { // Returns the normalized acceleration Values from the MPU
+int* Get_Normalized_Accel( int* raw_accel ) { // Returns the normalized acceleration Values from the MPU
   
-  Vector<uint> normalized_accel;
+  static int* normalized_accel;
 
-  normalized_accel.push_back( raw_accel.at( 0 ) / ALSB_Sensitivity ); 
-  normalized_accel.push_back( raw_accel.at( 1 ) / ALSB_Sensitivity );
-  normalized_accel.push_back( raw_accel.at( 2 ) / ALSB_Sensitivity );
+  for ( int i = 0; i < 3; i++ ) normalized_accel[ i ] = raw_accel[ i ] / ALSB_Sensitivity ;
 
   return normalized_accel;
 
 }
 
-Vector<uint> Get_Raw_Gyro() { // Returns an uint vector containing the raw gyrospocic Values from the MPU
+int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyrospocic Values from the MPU
 
   Wire.beginTransmission( MPU );
   Wire.write( 0x43 );                 // Gyro data first register address 0x43
   Wire.endTransmission( false );
   Wire.requestFrom( MPU, 6, true );   // Read 4 registers total, each axis value is stored in 2 registers
 
-  Vector<uint> raw_gyro;
-
-  raw_gyro.push_back( ( Wire.read() << 8 | Wire.read() ) * 10000 );
-  raw_gyro.push_back( ( Wire.read() << 8 | Wire.read() ) * 10000 );
-  raw_gyro.push_back( ( Wire.read() << 8 | Wire.read() ) * 10000 );
+  static int* raw_gyro;
+  
+  for ( int i = 0; i < 3; i++ ) raw_gyro[i] = ( Wire.read() << 8 | Wire.read() ) * 1000;
 
   return raw_gyro;
 
 }
 
-Vector<uint> Get_Normalized_Gyro( const Vector<uint>& raw_gyro ) { // Returns an uint vector containing the normalized gyrospocic Values from the MPU
+int* Get_Normalized_Gyro( int* raw_gyro ) { // Returns an int vector containing the normalized gyrospocic Values from the MPU
 
-  Vector<uint> normalized_gyro;
+  static int* normalized_gyro;
 
-  normalized_gyro.push_back( raw_gyro.at( 0 ) / GLSB_Sensitivity );
-  normalized_gyro.push_back( raw_gyro.at( 1 ) / GLSB_Sensitivity );
-  normalized_gyro.push_back( raw_gyro.at( 2 ) / GLSB_Sensitivity );
+  for ( int i = 0; i < 3; i++ ) normalized_gyro[i] = raw_gyro[ 0 ] / GLSB_Sensitivity;
 
   return normalized_gyro;
 
@@ -67,19 +59,27 @@ INTData Get_All_Values_INT() {
 
   INTData data;
 
+  int i = 0;
   // Get Values from Accelorometer
-  data.raw_accel = Get_Raw_Accel();
-  data.normalized_accel = Get_Normalized_Accel( data.raw_accel );
+  int *raw_a_ptr = Get_Raw_Accel();
+  int *raw_g_ptr = Get_Raw_Gyro();
+  int *norm_a_ptr = Get_Normalized_Accel( raw_a_ptr );
+  int *norm_g_ptr = Get_Normalized_Gyro( raw_g_ptr );
 
-  // Get Values from Gyroscope
-  data.raw_gyro = Get_Raw_Gyro();
-  data.normalized_gyro = Get_Normalized_Gyro( data.raw_gyro );
+  for ( i = 0; i < 3; i++ ) {
+
+    data.raw_accel[ i ] = raw_a_ptr[ i ];
+    data.raw_gyro[ i ] = raw_g_ptr[ i ];
+    data.normalized_accel[ i ] = norm_a_ptr[ i ];
+    data.normalized_gyro[ i ] = norm_g_ptr[ i ];
+
+  }
 
   data.time = millis();
 
   data.temperature = static_cast<int>( bmp.temperature * 1000 );
-  data.pressure = static_cast<uint>( bmp.pressure * 1000 );
-  data.altitude = static_cast<uint>( bmp.readAltitude( SEALEVELPRESSURE_HPA ) * 1000 );
+  data.pressure = static_cast<int>( bmp.pressure * 1000 );
+  data.altitude = static_cast<int>( bmp.readAltitude( SEALEVELPRESSURE_HPA ) * 1000 );
 
   return data;
 
@@ -94,10 +94,10 @@ void Print_All_Values( INTData& Values ) { // Print the Values on the serial mon
   String output = ""; // init output string
 
   output.append( "Time ( S ): " + String( Values.time / 1000.0f ) + '\n' );
-  output.append( "Raw Acceleration ( X, Y, Z ): " + String( Values.raw_accel.at( 0 ) / 1000.0f, 2 ) + ',' + String( Values.raw_accel.at( 1 ) / 1000.0f, 2 ) + ',' + String( Values.raw_accel.at( 2 )  / 1000.0f, 2 ) + '\n' );
-  output.append( "Normalized Acceleration ( X, Y, Z ): " + String( Values.normalized_accel.at( 0 )  / 1000.0f, 2 ) + ',' + String( Values.normalized_accel.at( 1 ) / 1000.0f, 2 ) + ',' + String( Values.normalized_accel.at( 2 ) / 1000.0f, 2 ) + '\n' );
-  output.append( "Raw GyroRange ( X, Y, Z ): " + String( Values.raw_gyro.at( 0 ) / 1000.0f, 2 ) + ',' + String( Values.raw_gyro.at( 1 ) / 1000.0f, 2 ) + ',' + String( Values.raw_gyro.at( 2 ) / 1000.0f, 2 ) + '\n' );
-  output.append( "Normalized Gyro Range ( X, Y, Z ): " + String( Values.normalized_gyro.at( 0 ) / 1000.0f, 2 ) + ',' + String( Values.normalized_gyro.at( 1 ) / 1000.0f, 2 ) + ',' + String( Values.normalized_gyro.at( 2 ) / 1000.0f, 2 ) + '\n' );
+  output.append( "Raw Acceleration ( X, Y, Z ): " + String( Values.raw_accel[ 0 ] / 1000.0f, 2 ) + ',' + String( Values.raw_accel[ 1 ] / 1000.0f, 2 ) + ',' + String( Values.raw_accel[ 2 ]  / 1000.0f, 2 ) + '\n' );
+  output.append( "Normalized Acceleration ( X, Y, Z ): " + String( Values.normalized_accel[ 0 ] / 1000.0f, 2 ) + ',' + String( Values.normalized_accel[ 1 ] / 1000.0f, 2 ) + ',' + String( Values.normalized_accel[ 2 ] / 1000.0f, 2 ) + '\n' );
+  output.append( "Raw GyroRange ( X, Y, Z ): " + String( Values.raw_gyro[ 0 ] / 1000.0f, 2 ) + ',' + String( Values.raw_gyro[ 1 ] / 1000.0f, 2 ) + ',' + String( Values.raw_gyro[ 2 ] / 1000.0f, 2 ) + '\n' );
+  output.append( "Normalized Gyro Range ( X, Y, Z ): " + String( Values.normalized_gyro[ 0 ] / 1000.0f, 2 ) + ',' + String( Values.normalized_gyro[ 1 ] / 1000.0f, 2 ) + ',' + String( Values.normalized_gyro[ 2 ] / 1000.0f, 2 ) + '\n' );
 
   output.append( "\n\n Now reading BMP390...\n" );
   output.append( "Tempurature ( C ): " + String( Values.temperature / 1000.0f ) + '\n' );
@@ -120,13 +120,13 @@ void Write_All_Values_To_SD( INTData& Values ) { // Records values to Sd card
 
   int i;
 
-  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.raw_accel.at( i ) / 1000.0f ) + ',' );
+  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.raw_accel[ i ] / 1000.0f ) + ',' );
 
-  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.normalized_accel.at( i ) / 1000.0f ) + ',' );
+  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.normalized_accel[ i ] / 1000.0f ) + ',' );
 
-  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.raw_gyro.at( i ) / 1000.0f ) + ',' );
+  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.raw_gyro[ i ] / 1000.0f ) + ',' );
 
-  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.normalized_gyro.at( i ) / 1000.0f ) + ',' );
+  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.normalized_gyro[ i ] / 1000.0f ) + ',' );
 
   myFile.print( String( Values.temperature / 1000.0f ) + ',' );
 
@@ -149,13 +149,13 @@ void Record_Data( INTData& Values ) { // Prints data to screen and saves it to f
 
 // -----------------------Parachute Functions---------------------------------------
 
-void Deploy_Parachute( uint pin ) { // Arms Parachute
+void Deploy_Parachute( int pin ) { // Arms Parachute
 
   Para_Armed = 1;
 
 }
 
-void Launch_Parachute( uint schute ) { // Launches Parachute
+void Launch_Parachute( int schute ) { // Launches Parachute
 
   switch ( schute ) {
 
@@ -171,7 +171,7 @@ void Launch_Parachute( uint schute ) { // Launches Parachute
 
 // -----------------------Internal Trigger Functions--------------------------------
 
-int Check_Altitude( uint altitude ) { // Checks if altitude is safe
+int Check_Altitude( int altitude ) { // Checks if altitude is safe
 
   //TODO: Implement
 
@@ -179,7 +179,7 @@ int Check_Altitude( uint altitude ) { // Checks if altitude is safe
 
 }
 
-int Check_Pressure( uint pressure ) { // Checks if pressure is safe
+int Check_Pressure( int pressure ) { // Checks if pressure is safe
 
   //TODO: Implement
 
@@ -187,7 +187,7 @@ int Check_Pressure( uint pressure ) { // Checks if pressure is safe
 
 }
 
-int Check_Tilt( Vector<uint> gyro ) { // Checks if tilt is safe
+int Check_Tilt( int gyro ) { // Checks if tilt is safe
 
   //TODO: Implement
 
@@ -195,7 +195,7 @@ int Check_Tilt( Vector<uint> gyro ) { // Checks if tilt is safe
 
 }
 
-int Check_Accel( Vector<uint> accel ) { // Checks if accel is correct
+int Check_Accel( int accel ) { // Checks if accel is correct
 
   //TODO: Implement
 

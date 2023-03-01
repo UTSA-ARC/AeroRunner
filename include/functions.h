@@ -10,7 +10,7 @@ int* Get_Raw_Accel() { // Returns an int vector of the raw acceleration Values f
   Wire.endTransmission( false );
   Wire.requestFrom( MPU, 6, true );     // Read 6 registers total, each axis value is stored in 2 registers
    
-  static int* result;
+  static int result[ 3 ];
 
   for ( int i = 0; i < 3; i++ ) result[ i ] = ( ( Wire.read() << 8 | Wire.read() ) * 1000 ); // Raw values
 
@@ -20,7 +20,7 @@ int* Get_Raw_Accel() { // Returns an int vector of the raw acceleration Values f
 
 int* Get_Normalized_Accel( int* raw_accel ) { // Returns the normalized acceleration Values from the MPU
   
-  static int* normalized_accel;
+  static int normalized_accel[ 3 ];
 
   for ( int i = 0; i < 3; i++ ) normalized_accel[ i ] = raw_accel[ i ] / ALSB_Sensitivity ;
 
@@ -35,7 +35,7 @@ int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyrospocic Val
   Wire.endTransmission( false );
   Wire.requestFrom( MPU, 6, true );   // Read 4 registers total, each axis value is stored in 2 registers
 
-  static int* raw_gyro;
+  static int raw_gyro[ 3 ];
   
   for ( int i = 0; i < 3; i++ ) raw_gyro[ i ] = ( Wire.read() << 8 | Wire.read() ) * 1000;
 
@@ -45,7 +45,7 @@ int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyrospocic Val
 
 int* Get_Normalized_Gyro( int* raw_gyro ) { // Returns an int vector containing the normalized gyrospocic Values from the MPU
 
-  static int* normalized_gyro;
+  static int normalized_gyro[ 3 ];
 
   for ( int i = 0; i < 3; i++ ) normalized_gyro[ i ] = raw_gyro[ 0 ] / GLSB_Sensitivity;
 
@@ -99,7 +99,7 @@ void Print_All_Values( INTData& Values ) { // Print the Values on the serial mon
   output.append( "Raw GyroRange ( X, Y, Z ): " + String( Values.raw_gyro[ 0 ] / 1000.0f, 2 ) + ',' + String( Values.raw_gyro[ 1 ] / 1000.0f, 2 ) + ',' + String( Values.raw_gyro[ 2 ] / 1000.0f, 2 ) + '\n' );
   output.append( "Normalized Gyro Range ( X, Y, Z ): " + String( Values.normalized_gyro[ 0 ] / 1000.0f, 2 ) + ',' + String( Values.normalized_gyro[ 1 ] / 1000.0f, 2 ) + ',' + String( Values.normalized_gyro[ 2 ] / 1000.0f, 2 ) + '\n' );
 
-  output.append( "\n\n Now reading BMP390...\n" );
+  output.append( "\n\nNow reading BMP390...\n" );
   output.append( "Tempurature ( C ): " + String( Values.temperature / 1000.0f ) + '\n' );
   output.append( "Pressure ( kPa ): " + String( Values.pressure / 1000.0f ) + '\n' );
   output.append( "Altitude ( m ): " + String( Values.altitude / 1000.0f ) + '\n' );

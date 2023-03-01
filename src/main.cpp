@@ -114,5 +114,5 @@ void loop() {
 
   // Print & Save All Values
   Record_Data( values );
-
+  delay(1000);
 }

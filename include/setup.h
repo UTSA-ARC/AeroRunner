@@ -2,6 +2,7 @@
 #include <SD.h>
 #include <SPI.h>
 #include <Adafruit_BMP3XX.h>
+#include <Arduino.h>
 
 #define BMP_SCL A5
 #define BMP_SDA A4 
@@ -26,7 +27,7 @@
 
 bool Para_Armed = 0;
 byte AFS_SEL, GFS_SEL;
-uint ALSB_Sensitivity, GLSB_Sensitivity;
+unsigned int ALSB_Sensitivity, GLSB_Sensitivity;
 
 Adafruit_BMP3XX bmp;
 
@@ -89,7 +90,7 @@ int Set_Accel_Range( byte range ) { // Range and sensitivity of accelerometer
 
 }
 
-int Set_Gyro_Range( uint range ) { //  Range and sensitivity of gyroscope
+int Set_Gyro_Range( unsigned int range ) { //  Range and sensitivity of gyroscope
 
   switch ( GyroRange ) {
 

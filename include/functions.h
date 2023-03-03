@@ -151,7 +151,8 @@ void Print_All_Values( INTData& Values ) { // Print the Values on the serial mon
 
 void Write_All_Values_To_SD( INTData& Values ) { // Records values to Sd card
 
-    File myFile = SD.open( "Raw_V05.csv", FILE_WRITE );
+    String file_string = String( month() + '-' + day() + '-' + year() ) + ".csv";
+    File myFile = SD.open( file_string.c_str(), FILE_WRITE );
 
     //* Time ( seconds ),
     //* Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),

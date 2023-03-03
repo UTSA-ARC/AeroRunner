@@ -116,25 +116,29 @@ void Write_All_Values_To_SD( INTData& Values ) { // Records values to Sd card
 
   //* Time ( seconds ),Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),Ax ( g ),Ay ( g ),Az ( g ),Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),Gx ( deg/s ),Gy ( deg/s ),Gz ( deg/s ),Temperature ( *C ),Pressure ( kpA ),Altitude ( m ),Message
 
-  myFile.print( String( Values.time / 1000.0f ) + ',');
+  String output = "";
+
+  output += ( String( Values.time / 1000 ) + ',' );
 
   int i;
 
-  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.raw_accel[ i ] / 1000.0f ) + ',' );
+  for ( i = 0; i < 3; i++ ) output += ( String( Values.raw_accel[ i ] / 1000.0f ) + ',' );
 
-  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.normalized_accel[ i ] / 1000.0f ) + ',' );
+  for ( i = 0; i < 3; i++ ) output += ( String( Values.normalized_accel[ i ] / 1000.0f ) + ',' );
 
-  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.raw_gyro[ i ] / 1000.0f ) + ',' );
+  for ( i = 0; i < 3; i++ ) output += ( String( Values.raw_gyro[ i ] / 1000.0f ) + ',' );
 
-  for ( i = 0; i < 3; i++ ) myFile.print( String( Values.normalized_gyro[ i ] / 1000.0f ) + ',' );
+  for ( i = 0; i < 3; i++ ) output += ( String( Values.normalized_gyro[ i ] / 1000.0f ) + ',' );
 
-  myFile.print( String( Values.temperature / 1000.0f ) + ',' );
+  output += ( String( Values.temperature / 1000.0f ) + ',' );
 
-  myFile.print( String( Values.pressure / 1000.0f ) + ',' );
+  output += ( String( Values.pressure / 1000.0f ) + ',' );
 
-  myFile.print( String( Values.altitude / 1000.0f ) + ',' );
+  output += ( String( Values.altitude / 1000.0f ) + ',' );
 
-  myFile.print( Values.message );
+  output += ( Values.message );
+
+  myFile.println( output );
 
   myFile.close();
 

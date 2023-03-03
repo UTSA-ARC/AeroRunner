@@ -16,7 +16,7 @@ void setup() {
 
   Serial.begin( 115200 ); //Changed to higher rate 4/21/22
 
-  while ( !Serial );
+  while ( !Serial ); //! DELETE WHEN PUTTING IN ROCKET
 
   // ----------------------------------------------------------------
 

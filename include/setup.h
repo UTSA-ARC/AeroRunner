@@ -2,6 +2,7 @@
 #include <SD.h>
 #include <SPI.h>
 #include <Adafruit_BMP3XX.h>
+#include <TimeLib.h>
 #include <Arduino.h>
 
 #define BMP_SCL A5
@@ -34,7 +35,7 @@ Adafruit_BMP3XX bmp;
 // Structs
 typedef struct INTData { //* All data in integer form 0.0X accuracy (Divide by 1000.0 for dec)
 
-  int time;
+  String time;
 
   int raw_accel[3];
   int normalized_accel[3];

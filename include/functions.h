@@ -75,7 +75,14 @@ INTData Get_All_Values_INT() {
 
   }
 
-  data.time = millis();
+  time_t time_now = now();
+  data.time = (
+
+    String( hour( time_now ) ) + ":" + 
+    String( minute( time_now ) < 10 ? ( '0' + String( minute( time_now ) ) ) : minute( time_now ) ) + ":" + 
+    String( second( time_now ) < 10 ? ( '0' + String( second( time_now ) ) ) : second( time_now ) ) 
+    
+    );
 
   data.temperature = static_cast<int>( bmp.temperature * 1000 );
   data.pressure = static_cast<int>( bmp.pressure * 1000 );
@@ -93,7 +100,7 @@ void Print_All_Values( INTData& Values ) { // Print the Values on the serial mon
 
   String output = ""; // init output string
 
-  output.append( "Time ( S ): " + String( Values.time / 1000.0f ) + '\n' );
+  output.append( "Time ( S ): " + Values.time + '\n' );
   output.append( "Raw Acceleration ( X, Y, Z ): " + String( Values.raw_accel[ 0 ] / 1000.0f, 2 ) + ',' + String( Values.raw_accel[ 1 ] / 1000.0f, 2 ) + ',' + String( Values.raw_accel[ 2 ]  / 1000.0f, 2 ) + '\n' );
   output.append( "Normalized Acceleration ( X, Y, Z ): " + String( Values.normalized_accel[ 0 ] / 1000.0f, 2 ) + ',' + String( Values.normalized_accel[ 1 ] / 1000.0f, 2 ) + ',' + String( Values.normalized_accel[ 2 ] / 1000.0f, 2 ) + '\n' );
   output.append( "Raw GyroRange ( X, Y, Z ): " + String( Values.raw_gyro[ 0 ] / 1000.0f, 2 ) + ',' + String( Values.raw_gyro[ 1 ] / 1000.0f, 2 ) + ',' + String( Values.raw_gyro[ 2 ] / 1000.0f, 2 ) + '\n' );
@@ -118,7 +125,7 @@ void Write_All_Values_To_SD( INTData& Values ) { // Records values to Sd card
 
   String output = "";
 
-  output += ( String( Values.time / 1000 ) + ',' );
+  output += ( Values.time + ',' );
 
   int i;
 

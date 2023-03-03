@@ -7,7 +7,7 @@
 
 #define BMP_SCL A5
 #define BMP_SDA A4 
-#define SEALEVELPRESSURE_HPA ( 1013.25 )
+#define SEALEVELPRESSURE_HPA ( 1013.25f )
 
 #define pinCS 10
 #define pinMOSI 13
@@ -126,8 +126,8 @@ int Set_Gyro_Range( unsigned int range ) { //  Range and sensitivity of gyroscop
 
 void Init_Paras() {
 
-  pinMode(pinMain, OUTPUT);
-  pinMode(pinDrouge, OUTPUT);
+  pinMode( pinMain, OUTPUT );
+  pinMode( pinDrouge, OUTPUT );
 
 }
 
@@ -153,8 +153,8 @@ void Configure_MPU( int ACCEL_CONFIG ) { // Configure Accelerometer Sensitivity 
 void Configure_Gyro( int GYRO_CONFIG ) { // Configure Gyro Sensitivity - Full Scale Range ( default +/- 250deg/s )
   
   Wire.beginTransmission( MPU );
-  Wire.write( GYRO_CONFIG );            // Talk to the GYRO_CONFIG register ( 1B hex )
-  Wire.write( GFS_SEL );                // Set the register bits as 00010000 ( 1000deg/s full scale )
+  Wire.write( GYRO_CONFIG );           // Talk to the GYRO_CONFIG register ( 1B hex )
+  Wire.write( GFS_SEL );               // Set the register bits as 00010000 ( 1000deg/s full scale )
   Wire.endTransmission( true );
 
 }

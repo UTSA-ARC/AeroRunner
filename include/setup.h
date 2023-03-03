@@ -160,8 +160,10 @@ void Configure_Gyro( int GYRO_CONFIG ) { // Configure Gyro Sensitivity - Full Sc
 }
 
 void Init_CSV() {
-  
-  File myFile = SD.open( "Raw_V05.csv", FILE_WRITE | O_TRUNC );
+
+  String file_string = String( month() + '-' + day() + '-' + year() ) + ".csv";
+
+  File myFile = SD.open( file_string.c_str(), FILE_WRITE | O_TRUNC );
   myFile.println(
 
     "Time ( seconds ),Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),Ax ( g ),Ay ( g ),Az ( g ),Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),Gx ( deg/s ),Gy ( deg/s ),Gz ( deg/s ),Temperature ( *C ),Pressure ( kpA ),Altitude ( m ),Message" 

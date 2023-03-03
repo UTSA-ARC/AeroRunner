@@ -199,21 +199,40 @@ void Record_Data( INTData& Values ) { // Prints data to screen and saves it to f
 
 // -----------------------Parachute Functions---------------------------------------
 
-void Deploy_Parachute( int pin ) { // Arms Parachute
-
-    Para_Armed = 1;
+void Deploy_Parachute( int schute ) { // Arms Parachute
+   
+   Paras_Armed[ schute ] = 1;
 
 }
 
-void Launch_Parachute( int schute ) { // Launches Parachute
+Result Launch_Parachute( int schute ) { // Launches Parachute
 
     switch ( schute ) {
 
         case 0: // Main Schute
-            digitalWrite( pinMain, HIGH );
+
+            if ( Paras_Armed[ schute ] ) {
+
+                digitalWrite( pinMain, HIGH );
+                return { 0, "!!MAIN SCHUTE LAUNCHED!!" };
+
+                }
+            
+            else return { 1, "MAIN Schute Not Deployed!" };
 
         case 1: // Drouge Schute
-            digitalWrite( pinDrouge, HIGH );
+            
+            if ( Paras_Armed[ schute ] ) {
+
+                digitalWrite( pinDrouge, HIGH );
+                return { 0, "!!DROUGE SCHUTE LAUNCHED" };
+
+            }
+
+            else return { 2, "DROUGE Schute Not Deployed!" };
+        
+        default:
+            return { -1, "Not a Valid Schute!" };
 
     }
 

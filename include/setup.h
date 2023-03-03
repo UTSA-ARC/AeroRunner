@@ -7,7 +7,7 @@
 
 #include "params.h"
 
-bool Para_Armed = 0;
+bool Paras_Armed[2];
 byte AFS_SEL, GFS_SEL;
 unsigned int ALSB_Sensitivity, GLSB_Sensitivity;
 

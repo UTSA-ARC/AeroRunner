@@ -1,20 +1,25 @@
+#define INT_LOW -2147483647
+#define INT_HIGH 2147483647
+
 #define BMP_SCL A5
 #define BMP_SDA A4 
 #define SEALEVELPRESSURE_HPA ( 1013.25f )
 
-#define pinCS 10
-#define pinMOSI 13
+#define PinCS 10
+#define PinMOSI 13
 
-#define pinDrouge 39
-#define pinMain 33
+#define PinDrouge 39
+#define PinMain 33
 
-#define MPU 0x68    // MPU6050 I2C address
+#define MPU 0x68 // MPU6050 I2C address
 #define AccelRange 16
 #define GyroRange 2000
 
-#define safeAltitude 16 // In meters
-#define safePressure 16 // In kPa
+#define SafeAltitude 16 // In meters
 
-#define safeTiltX 10
-#define safeTilty 10
-#define safeTiltZ 10
+#define PTolerance 0.05f // % decimal form
+
+#define SafeTiltX 10
+#define SafeTiltY 10
+#define SafeTiltZ 10
+#define TTolerance 0.05f // % decimal form

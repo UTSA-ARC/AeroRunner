@@ -14,7 +14,7 @@ unsigned int ALSB_Sensitivity, GLSB_Sensitivity;
 Adafruit_BMP3XX bmp;
 
 // Structs
-typedef struct INTData { //* All data in integer form 0.0X accuracy (Divide by 1000.0 for dec)
+typedef struct INTData { //* All data in integer form 0.0X accuracy (Divide by MULT for dec)
 
     String time;
 
@@ -107,8 +107,8 @@ int Set_Gyro_Range( unsigned int range ) { //    Range and sensitivity of gyrosc
 
 void Init_Paras() {
 
-    pinMode( pinMain, OUTPUT );
-    pinMode( pinDrouge, OUTPUT );
+    pinMode( PinMain, OUTPUT );
+    pinMode( PinDrouge, OUTPUT );
 
 }
 

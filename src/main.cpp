@@ -69,8 +69,8 @@ void setup() {
     // ----------------------------------------------------------------
 
     // Pin configuration
-    pinMode( pinCS, OUTPUT );
-    pinMode( pinMOSI, OUTPUT );
+    pinMode( PinCS, OUTPUT );
+    pinMode( PinMOSI, OUTPUT );
 
     // ----------------------------------------------------------------
 

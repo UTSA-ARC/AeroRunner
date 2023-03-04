@@ -1,6 +1,8 @@
 #define INT_LOW -2147483647
 #define INT_HIGH 2147483647
 
+#define MULT 1000
+
 #define BMP_SCL A5
 #define BMP_SDA A4 
 #define SEALEVELPRESSURE_HPA ( 1013.25f )
@@ -23,3 +25,11 @@
 #define SafeTiltY 10
 #define SafeTiltZ 10
 #define TTolerance 0.05f // % decimal form
+
+#define SurfaceAccelX 0
+#define SurfaceAccelY -9.8f
+#define SurfaceAccelZ 0
+#define SafeAccelX 3
+#define SafeAccelY 3
+#define SafeAccelZ 3
+#define ATolerance 0.05f // % decimal form

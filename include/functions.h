@@ -319,11 +319,11 @@ Result Check_Accel( int* accel, int* prev_accel, bool surface ) { // Checks if a
 
         };
 
-        if ( accel[ 0 ] > Hs[ 0 ] || accel[ 0 ] < Ls[ 0 ] ) return { -10, "!!DANGEROUS X-AXIS SURFACE ACCELERATION!!" };
+        if ( accel[ 0 ] < Ls[ 0 ] || accel[ 0 ] > Hs[ 0 ] ) return { -10, "!!DANGEROUS X-AXIS SURFACE ACCELERATION!!" };
 
-        if ( accel[ 1 ] > Hs[ 1 ] || accel[ 1 ] < Ls[ 1 ] ) return { -20, "!!DANGEROUS Y-AXIS SURFACE ACCELERATION" };
+        if ( accel[ 1 ] < Ls[ 1 ] || accel[ 1 ] > Hs[ 1 ] ) return { -20, "!!DANGEROUS Y-AXIS SURFACE ACCELERATION" };
 
-        if ( accel[ 2 ] > Hs[ 2 ] || accel[ 2 ] < Ls[ 2 ] ) return { -30, "!!DANGEROUS Z-AXIS SURFACE ACCELERATION" };
+        if ( accel[ 2 ] < Ls[ 2 ] || accel[ 2 ] > Hs[ 2 ] ) return { -30, "!!DANGEROUS Z-AXIS SURFACE ACCELERATION" };
 
     }
 

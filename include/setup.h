@@ -35,7 +35,7 @@ typedef struct INTData { //* All data in integer form 0.0X accuracy (Divide by M
 typedef struct Result {
 
     int error;
-    String msg;
+    String message;
 
 } Result;
 

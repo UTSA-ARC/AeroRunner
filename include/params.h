@@ -1,6 +1,3 @@
-#define INT_LOW -2147483647
-#define INT_HIGH 2147483647
-
 #define MULT 1000
 
 #define BMP_SCL A5
@@ -18,6 +15,8 @@
 #define GyroRange 2000
 
 #define SafeAltitude 16 // In meters
+#define MainParaADelta 100 // In meters
+#define ATolerance 0.05f // % in decimal form
 
 #define PTolerance 0.05f // % decimal form
 

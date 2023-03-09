@@ -10,6 +10,9 @@
 
 #include "functions.h"
 
+INTData prev_data;
+int apogee;
+
 void setup() {
     // Find hexadecimal representation of accelerometer range based on decimal global variable AccelRange defined above // 
     // Find decimal representation of LSB Sensitivity based on decimal global variable AccelRange defined above // 
@@ -110,7 +113,41 @@ void loop() {
 
     INTData values = Get_All_Values_INT(); // Get all data values
 
-    
+    Result alt_result = Check_Altitude( values.altitude, prev_data.altitude, apogee );
+    Result pres_result = Check_Pressure_Delta( values.pressure, prev_data.pressure );
+    Result tilt_result = Check_Tilt( values.normalized_gyro, prev_data.normalized_gyro );
+    Result accel_result = Check_Accel( values.normalized_accel, prev_data.normalized_accel, alt_result.error );
+
+    values.message = alt_result.message + ',' +
+                      pres_result.message + ',' +
+                      tilt_result.message + ',' +
+                      accel_result.message + ',';
+
+    switch ( alt_result.error ) {
+
+        case 0: // Reached Safe Altitude
+
+            Deploy_Parachute( 0 ); // Deploy Main
+            Deploy_Parachute( 1 ); // Deploy Drouge
+            break;
+        
+        case 1: // Reached Apogee
+
+            Launch_Parachute( 1 ); // Launch Drouge
+            apogee = values.altitude;
+            break;
+
+        case 2: // Reached Main Parachute Altitude
+
+            Launch_Parachute( 0 ); // Launch Main
+            break;
+
+        default: // If no special case
+            break;
+
+    }
+
+    prev_data = values;
 
     // Print & Save All Values
     Record_Data( values );

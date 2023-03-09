@@ -240,13 +240,22 @@ Result Launch_Parachute( int schute ) { // Launches Parachute
 
 // -----------------------Internal Trigger Functions--------------------------------
 
-Result Check_Altitude( int altitude, int prev_altitude = -1 ) { // Checks if altitude is safe/at apogee
+Result Check_Altitude( int altitude, int prev_altitude, int apogee ) { // Checks if altitude is safe/at apogee
 
-    if ( altitude > SafeAltitude * MULT )
+    if ( altitude > SafeAltitude * MULT ) {
 
-        if ( altitude <= prev_altitude ) return { 2, "!!AT APOGEE!!" }; // Around Apogee
+        if ( altitude <= prev_altitude ) {
+
+            if ( altitude >= static_cast<int>( prev_altitude * ( 1 - ATolerance ) ) ) return { 1, "!!AT APOGEE!!" }; // Around Apogee
+
+            if ( ( altitude <= apogee - MainParaADelta ) && 
+                 ( altitude >= apogee - static_cast<int>( MainParaADelta * ( 1 - ATolerance ) ) * MULT ) ) return { 2, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
+
+        }
 
         else return { 0, "Safe Altitude" }; // Safe
+
+    }
 
     return { -1, "unsafe altitude" }; // Unsafe
 
@@ -257,11 +266,11 @@ Result Check_Pressure_Delta( int pressure, int prev_pressure ) { // Checks press
     int H = prev_pressure * ( 1 + PTolerance ); // Upperbound
     int L = prev_pressure * ( 1 - PTolerance ); // Lowerbound
 
-    if ( pressure <= H && pressure >= L ) return { 0, "Constant Pressure" };
-
     if ( pressure < L ) return { 1, "Pressure Decreasing" };
 
     if ( pressure > H ) return { 2, "Pressure Increasing" };
+
+    return { 0, "Constant Pressure" };
 
 }
 
@@ -269,17 +278,17 @@ Result Check_Tilt( int* gyro, int* prev_gyro ) { // Checks if tilt is safe
     
     int H[ 3 ] = { // Upperbounds (X,Y,Z)
 
-        prev_gyro[ 0 ] * ( 1 + TTolerance ),
-        prev_gyro[ 1 ] * ( 1 + TTolerance ),
-        prev_gyro[ 2 ] * ( 1 + TTolerance )
+        static_cast<int>( prev_gyro[ 0 ] * ( 1 + TTolerance ) ),
+        static_cast<int>( prev_gyro[ 1 ] * ( 1 + TTolerance ) ),
+        static_cast<int>( prev_gyro[ 2 ] * ( 1 + TTolerance ) )
 
         };
 
     int L[ 3 ] = { // Lowerbounds (X,Y,Z)
 
-        prev_gyro[ 0 ] * ( 1 - TTolerance ),
-        prev_gyro[ 1 ] * ( 1 - TTolerance ),
-        prev_gyro[ 2 ] * ( 1 - TTolerance )
+        static_cast<int>( prev_gyro[ 0 ] * ( 1 - TTolerance ) ),
+        static_cast<int>( prev_gyro[ 1 ] * ( 1 - TTolerance ) ),
+        static_cast<int>( prev_gyro[ 2 ] * ( 1 - TTolerance ) )
 
         };
 
@@ -305,17 +314,17 @@ Result Check_Accel( int* accel, int* prev_accel, bool surface ) { // Checks if a
 
         int Hs[ 3 ] = { // Surface Upperbounds (X,Y,Z)
 
-            ( SurfaceAccelX * ( 1 + ATolerance ) ) == 0 ? ATolerance : ( SurfaceAccelX * ( 1 + ATolerance ) ),
-            ( SurfaceAccelY * ( 1 + ATolerance ) ) == 0 ? ATolerance : ( SurfaceAccelY * ( 1 + ATolerance ) ),
-            ( SurfaceAccelZ * ( 1 + ATolerance ) ) == 0 ? ATolerance : ( SurfaceAccelZ * ( 1 + ATolerance ) )
+            static_cast<int>( SurfaceAccelX * ( 1 + ATolerance ) ) == 0 ? ATolerance : ( SurfaceAccelX * ( 1 + ATolerance ) ),
+            static_cast<int>( SurfaceAccelY * ( 1 + ATolerance ) ) == 0 ? ATolerance : ( SurfaceAccelY * ( 1 + ATolerance ) ),
+            static_cast<int>( SurfaceAccelZ * ( 1 + ATolerance ) ) == 0 ? ATolerance : ( SurfaceAccelZ * ( 1 + ATolerance ) )
 
         };
 
         int Ls[ 3 ] = {
 
-            ( SurfaceAccelX * ( 1 - ATolerance ) ) == 0 ? -1 * ATolerance : ( SurfaceAccelX * ( 1 - ATolerance ) ),
-            ( SurfaceAccelY * ( 1 - ATolerance ) ) == 0 ? -1 * ATolerance : ( SurfaceAccelY * ( 1 - ATolerance ) ),
-            ( SurfaceAccelZ * ( 1 - ATolerance ) ) == 0 ? -1 * ATolerance : ( SurfaceAccelZ * ( 1 - ATolerance ) )
+            static_cast<int>( SurfaceAccelX * ( 1 - ATolerance ) ) == 0 ? -1 * ATolerance : ( SurfaceAccelX * ( 1 - ATolerance ) ),
+            static_cast<int>( SurfaceAccelY * ( 1 - ATolerance ) ) == 0 ? -1 * ATolerance : ( SurfaceAccelY * ( 1 - ATolerance ) ),
+            static_cast<int>( SurfaceAccelZ * ( 1 - ATolerance ) ) == 0 ? -1 * ATolerance : ( SurfaceAccelZ * ( 1 - ATolerance ) )
 
         };
 
@@ -331,17 +340,17 @@ Result Check_Accel( int* accel, int* prev_accel, bool surface ) { // Checks if a
         
         int H[ 3 ] = { // Upperbounds (X,Y,Z)
 
-            prev_accel[ 0 ] * ( 1 + ATolerance ),
-            prev_accel[ 1 ] * ( 1 + ATolerance ),
-            prev_accel[ 2 ] * ( 1 + ATolerance )
+            static_cast<int>( prev_accel[ 0 ] * ( 1 + ATolerance ) ),
+            static_cast<int>( prev_accel[ 1 ] * ( 1 + ATolerance ) ),
+            static_cast<int>( prev_accel[ 2 ] * ( 1 + ATolerance ) )
 
         };
 
         int L[ 3 ] = { // Lowerbounds (X,Y,Z)
 
-            prev_accel[ 0 ] * ( 1 - ATolerance ),
-            prev_accel[ 1 ] * ( 1 - ATolerance ),
-            prev_accel[ 2 ] * ( 1 - ATolerance )
+            static_cast<int>( prev_accel[ 0 ] * ( 1 - ATolerance ) ),
+            static_cast<int>( prev_accel[ 1 ] * ( 1 - ATolerance ) ),
+            static_cast<int>( prev_accel[ 2 ] * ( 1 - ATolerance ) )
 
         };
 

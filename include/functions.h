@@ -199,7 +199,7 @@ void Record_Data( INTData& Values ) { // Prints data to screen and saves it to f
 
 // -----------------------Parachute Functions---------------------------------------
 
-void Deploy_Parachute( int schute ) { // Arms Parachute
+void Arm_Parachute( int schute ) { // Arms Parachute
 
    Paras_Armed[ schute ] = 1;
 
@@ -249,7 +249,7 @@ Result Check_Altitude( int altitude, int prev_altitude, int apogee ) { // Checks
             if ( altitude >= static_cast<int>( prev_altitude * ( 1 - ATolerance ) ) ) return { 1, "!!AT APOGEE!!" }; // Around Apogee
 
             if ( ( altitude <= apogee - MainParaADelta ) && 
-                 ( altitude >= apogee - static_cast<int>( MainParaADelta * ( 1 - ATolerance ) ) * MULT ) ) return { 2, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
+                 ( altitude >= apogee - static_cast<int>( MainParaADelta * ( 1 + ATolerance ) ) * MULT ) ) return { 2, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
 
         }
 
@@ -298,11 +298,11 @@ Result Check_Tilt( int* gyro, int* prev_gyro ) { // Checks if tilt is safe
 
     if ( gyro[ 2 ] > SafeTiltZ * MULT ) return { -3, "!!DANGEROUS Z-AXIS TILT!!" };
 
-    if ( gyro[ 0 ] < L[ 0 ] || gyro[ 0 ] > H[ 0 ] ) return { 1, "!!X-AXIS TILT DETECTED!!" };
+    if ( gyro[ 0 ] < L[ 0 ] || gyro[ 0 ] > H[ 0 ] ) return { 1, "X-AXIS TILT DETECTED" };
 
-    if ( gyro[ 1 ] < L[ 1 ] || gyro[ 1 ] > H[ 1 ] ) return { 2, "!!Y-AXIS TILT DETECTED!!" };
+    if ( gyro[ 1 ] < L[ 1 ] || gyro[ 1 ] > H[ 1 ] ) return { 2, "Y-AXIS TILT DETECTED" };
 
-    if ( gyro[ 2 ] < L[ 2 ] || gyro[ 2 ] > H[ 2 ] ) return { 3, "!!Z-AXIS TILT DETECTED!!" };
+    if ( gyro[ 2 ] < L[ 2 ] || gyro[ 2 ] > H[ 2 ] ) return { 3, "Z-AXIS TILT DETECTED" };
 
     return { 0, "safe tilt"};
 
@@ -368,7 +368,7 @@ Result Check_Accel( int* accel, int* prev_accel, bool surface ) { // Checks if a
 
     }
 
-    return { 0, "safe accel" }; // Safe
+    return { 0, "Safe Accel" }; // Safe
 
 }
 

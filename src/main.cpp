@@ -94,7 +94,7 @@ void setup() {
 
     // ----------------------------------------------------------------
 
-    Init_MPU();                        // Initialize MPU
+    Init_MPU();            // Initialize MPU
     Configure_MPU( 0x1C ); // Config Register
  
     Configure_Gyro( 0x1B ); // Config Register
@@ -127,8 +127,8 @@ void loop() {
 
         case 0: // Reached Safe Altitude
 
-            Deploy_Parachute( 0 ); // Deploy Main
-            Deploy_Parachute( 1 ); // Deploy Drouge
+            Arm_Parachute( 0 ); // Deploy Main
+            Arm_Parachute( 1 ); // Deploy Drouge
             break;
         
         case 1: // Reached Apogee
@@ -151,5 +151,7 @@ void loop() {
 
     // Print & Save All Values
     Record_Data( values );
-    delay(1000);
+    delay(1000); //! FOR JUST EASY READING
+
 }
+

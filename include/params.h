@@ -4,8 +4,8 @@
 #define BMP_SDA A4 
 #define SEALEVELPRESSURE_HPA ( 1013.25f )
 
-#define PinCS 10
-#define PinMOSI 13
+#define PinCS 10 //! remove
+#define PinMOSI 13 //! remove
 
 #define PinDrouge 39
 #define PinMain 33
@@ -15,7 +15,7 @@
 #define GyroRange 2000
 
 #define SafeAltitude 16 // In meters
-#define MainParaADelta 100 // In meters
+#define MainParaADelta 100 // In meters //* Change as ratio from apogee
 #define ATolerance 0.05f // % in decimal form
 
 #define PTolerance 0.05f // % decimal form

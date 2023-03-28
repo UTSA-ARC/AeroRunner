@@ -63,6 +63,7 @@ void setup() {
 
     // ----------------------------------------------------------------
 
+    // Check if connected to sufficient voltage
     int input_voltage = analogRead( PinInputVoltage );
     Result input_safe = Check_Input_Voltage( input_voltage );
     while ( input_safe.error != 0 ) {

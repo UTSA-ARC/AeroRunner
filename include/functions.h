@@ -248,7 +248,7 @@ Result Check_Altitude( int altitude, int prev_altitude, int apogee ) { // Checks
 
             if ( altitude >= static_cast<int>( prev_altitude * ( 1 - ATolerance ) ) ) return { 1, "!!AT APOGEE!!" }; // Around Apogee
 
-            if ( ( altitude <= apogee - MainParaADelta ) && 
+            if ( ( altitude <= apogee - MainParaADelta ) &&
                  ( altitude >= apogee - static_cast<int>( MainParaADelta * ( 1 + ATolerance ) ) * MULT ) ) return { 2, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
 
         }
@@ -275,7 +275,7 @@ Result Check_Pressure_Delta( int pressure, int prev_pressure ) { // Checks press
 }
 
 Result Check_Tilt( int* gyro, int* prev_gyro ) { // Checks if tilt is safe
-    
+
     int H[ 3 ] = { // Upperbounds (X,Y,Z)
 
         static_cast<int>( prev_gyro[ 0 ] * ( 1 + TTolerance ) ),
@@ -309,7 +309,7 @@ Result Check_Tilt( int* gyro, int* prev_gyro ) { // Checks if tilt is safe
 }
 
 Result Check_Accel( int* accel, int* prev_accel, bool surface ) { // Checks if accel is correct
-     
+
     if ( surface ) {
 
         int Hs[ 3 ] = { // Surface Upperbounds (X,Y,Z)
@@ -337,7 +337,7 @@ Result Check_Accel( int* accel, int* prev_accel, bool surface ) { // Checks if a
     }
 
     else {
-        
+
         int H[ 3 ] = { // Upperbounds (X,Y,Z)
 
             static_cast<int>( prev_accel[ 0 ] * ( 1 + ATolerance ) ),

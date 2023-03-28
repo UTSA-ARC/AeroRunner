@@ -1,7 +1,11 @@
 #define MULT 1000
 
+#define PinInputVoltage A9
+#define MINIMUM_INPUT_VOLTAGE 3.4
+#define MAXIMUM_INPUT_VOLTAGE 5
+
 #define BMP_SCL A5
-#define BMP_SDA A4 
+#define BMP_SDA A4
 #define SEALEVELPRESSURE_HPA ( 1013.25f )
 
 #define PinCS 10 //! remove

@@ -5,7 +5,7 @@
  * @brief The Avionics code for the Spaceport 2023 vehicle
  * @version 1.0.0
  * @date 2022-2023
- * 
+ *
  */
 
 #include "functions.h"
@@ -14,8 +14,8 @@ INTData prev_data;
 int apogee;
 
 void setup() {
-    // Find hexadecimal representation of accelerometer range based on decimal global variable AccelRange defined above // 
-    // Find decimal representation of LSB Sensitivity based on decimal global variable AccelRange defined above // 
+    // Find hexadecimal representation of accelerometer range based on decimal global variable AccelRange defined above //
+    // Find decimal representation of LSB Sensitivity based on decimal global variable AccelRange defined above //
 
     Serial.begin( 115200 ); //Changed to higher rate 4/21/22
 
@@ -23,7 +23,7 @@ void setup() {
 
     // ----------------------------------------------------------------
 
-    // Builtin SD Card Initialization 
+    // Builtin SD Card Initialization
     Serial.print("Initializing SD card...");
 
     while ( !SD.begin( BUILTIN_SDCARD ) ) {
@@ -42,7 +42,7 @@ void setup() {
 
         Serial.println( "Could not find a valid BMP3 sensor, check wiring!\n" );
         delay( 2000 );
-        
+
     }
 
     Serial.println( "Found and initialized a valid BMP3 I2C sensor!" );
@@ -56,10 +56,21 @@ void setup() {
 
         Serial.println( "Could not find MPU\n" );
         delay( 2000 );
-        
+
     }
 
     Serial.println( "Initialized MPU6050! ");
+
+    // ----------------------------------------------------------------
+
+    // Check if connected to sufficient voltage
+    int input_voltage = analogRead( PinInputVoltage );
+    Result input_safe = Check_Input_Voltage( input_voltage );
+    while ( input_safe.error != 0 ) {
+
+        Serial.println( input_safe.message );
+
+    }
 
     // ----------------------------------------------------------------
 
@@ -79,12 +90,12 @@ void setup() {
 
     // Set Ranges
     while ( Set_Accel_Range( AccelRange ) != 0 ) {
-        
+
         Serial.println( "Please Fix Accel Range" );
         delay( 2000 );
 
         }
-    
+
     while ( Set_Gyro_Range( GyroRange ) != 0 ) {
 
         Serial.println( "Please Fix Gyro Range" );
@@ -95,8 +106,9 @@ void setup() {
     // ----------------------------------------------------------------
 
     Init_MPU();            // Initialize MPU
+
     Configure_MPU( 0x1C ); // Config Register
- 
+
     Configure_Gyro( 0x1B ); // Config Register
 
     // ----------------------------------------------------------------
@@ -130,7 +142,7 @@ void loop() {
             Arm_Parachute( 0 ); // Deploy Main
             Arm_Parachute( 1 ); // Deploy Drouge
             break;
-        
+
         case 1: // Reached Apogee
 
             Launch_Parachute( 1 ); // Launch Drouge

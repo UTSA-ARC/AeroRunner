@@ -1,8 +1,8 @@
 #define MULT 1000
 
 #define PinInputVoltage A9
-#define MINIMUM_INPUT_VOLTAGE 3.4
-#define MAXIMUM_INPUT_VOLTAGE 5
+#define MINIMUM_INPUT_VOLTAGE 3.4f
+#define MAXIMUM_INPUT_VOLTAGE 5.0f
 
 #define BMP_SCL A5
 #define BMP_SDA A4

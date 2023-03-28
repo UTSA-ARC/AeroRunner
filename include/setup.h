@@ -107,8 +107,9 @@ int Set_Gyro_Range( unsigned int range ) { // Range and sensitivity of gyroscope
 
 Result Check_Input_Voltage( int input_voltage ) {
 
-    if ( input_voltage < MINIMUM_INPUT_VOLTAGE ) return { -1, "!!INPUT VOLTAGE LESS THAN MINIMUM!!" };
-    if ( input_voltage > MAXIMUM_INPUT_VOLTAGE ) return { -2, "!!INPUT VOLTAGE MORE THAN MAXIMUM!!" };
+    float real_input_voltage = input_voltage / 1023.0;
+    if ( real_input_voltage < MINIMUM_INPUT_VOLTAGE ) return { -1, "!!INPUT VOLTAGE LESS THAN MINIMUM!!" };
+    if ( real_input_voltage > MAXIMUM_INPUT_VOLTAGE ) return { -2, "!!INPUT VOLTAGE MORE THAN MAXIMUM!!" };
 
     return { 0, "Safe Input Voltage" };
 

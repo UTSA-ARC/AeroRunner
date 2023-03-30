@@ -1,6 +1,9 @@
 name: PlatformIO Release CI
 
 on:
+  push:
+    branches:
+      - 'release/V*.*.*'
   pull_request:
     branches: 
       - 'release/V*.*.*'

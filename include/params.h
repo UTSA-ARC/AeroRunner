@@ -6,6 +6,12 @@
 
 #define PinVBAT 49
 
+#define SurfaceAccelX 0
+#define SurfaceAccelY -9.8f
+#define SurfaceAccelZ 0
+#define SurfacePressure 40
+#define SurfaceTilt 5
+
 #define BMP_SCL A5
 #define BMP_SDA A4
 #define SEALEVELPRESSURE_HPA ( 1013.25f )
@@ -31,9 +37,6 @@
 #define SafeTiltZ 10
 #define TTolerance 0.05f // % decimal form
 
-#define SurfaceAccelX 0
-#define SurfaceAccelY -9.8f
-#define SurfaceAccelZ 0
 #define SafeAccelX 3
 #define SafeAccelY 3
 #define SafeAccelZ 3

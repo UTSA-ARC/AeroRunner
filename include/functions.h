@@ -274,7 +274,7 @@ Result Check_Pressure_Delta( int pressure, int prev_pressure ) { // Checks press
 
 }
 
-Result Check_Tilt( int* gyro, int* prev_gyro ) { // Checks if tilt is safe
+Result Check_Tilt( int* gyro, int* prev_gyro, bool surface = false ) { // Checks if tilt is safe
 
     int H[ 3 ] = { // Upperbounds (X,Y,Z)
 
@@ -292,11 +292,23 @@ Result Check_Tilt( int* gyro, int* prev_gyro ) { // Checks if tilt is safe
 
         };
 
-    if ( gyro[ 0 ] > SafeTiltX * MULT ) return { -1, "!!DANGEROUS X-AXIS TILT!!" };
+    if ( surface ) {
 
-    if ( gyro[ 1 ] > SafeTiltY * MULT ) return { -2, "!!DANGEROUS Y-AXIS TILT!!" };
+        if ( abs( gyro[ 0 ] ) > SurfaceTiltX * MULT ) return { -10, "!!DANGEROUS X-AXIS SURFACE TILT!!" };
 
-    if ( gyro[ 2 ] > SafeTiltZ * MULT ) return { -3, "!!DANGEROUS Z-AXIS TILT!!" };
+        if ( abs( gyro[ 1 ] ) > SurfaceTiltY * MULT ) return { -20, "!!DANGEROUS Y-AXIS SURFACE TILT!!" };
+
+        if ( abs( gyro[ 2 ] ) > SurfaceTiltZ * MULT ) return { -30, "!!DANGEROUS Z-AXIS SURFACE TILT!!" };
+
+        return { 0, "Safe Surface Tilt" };
+
+    }
+
+    if ( abs( gyro[ 0 ] ) > SafeTiltX * MULT ) return { -1, "!!DANGEROUS X-AXIS TILT!!" };
+
+    if ( abs( gyro[ 1 ] ) > SafeTiltY * MULT ) return { -2, "!!DANGEROUS Y-AXIS TILT!!" };
+
+    if ( abs( gyro[ 2 ] ) > SafeTiltZ * MULT ) return { -3, "!!DANGEROUS Z-AXIS TILT!!" };
 
     if ( gyro[ 0 ] < L[ 0 ] || gyro[ 0 ] > H[ 0 ] ) return { 1, "X-AXIS TILT DETECTED" };
 
@@ -308,7 +320,7 @@ Result Check_Tilt( int* gyro, int* prev_gyro ) { // Checks if tilt is safe
 
 }
 
-Result Check_Accel( int* accel, int* prev_accel, bool surface ) { // Checks if accel is correct
+Result Check_Accel( int* accel, int* prev_accel, bool surface = false ) { // Checks if accel is correct
 
     if ( surface ) {
 
@@ -354,11 +366,11 @@ Result Check_Accel( int* accel, int* prev_accel, bool surface ) { // Checks if a
 
         };
 
-        if ( accel[ 0 ] > SafeAccelX * MULT ) return { -1, "!!DANGEROUS X-AXIS ACCELERATION!!" };
+        if ( abs( accel[ 0 ] ) > SafeAccelX * MULT ) return { -1, "!!DANGEROUS X-AXIS ACCELERATION!!" };
 
-        if ( accel[ 1 ] > SafeAccelY * MULT ) return { -2, "!!DANGEROUS Y-AXIS ACCEL!!" };
+        if ( abs( accel[ 1 ] ) > SafeAccelY * MULT ) return { -2, "!!DANGEROUS Y-AXIS ACCEL!!" };
 
-        if ( accel[ 2 ] > SafeAccelX * MULT ) return { -3, "!!DANGEROUS Z-AXIS ACCEL!!" };
+        if ( abs( accel[ 2 ] ) > SafeAccelX * MULT ) return { -3, "!!DANGEROUS Z-AXIS ACCEL!!" };
 
         if ( accel[ 0 ] < L[ 0 ] || accel[ 0 ] > H[ 0 ] ) return { 1, "EXTRA X-AXIS ACCEL DETECTED" };
 
@@ -374,12 +386,45 @@ Result Check_Accel( int* accel, int* prev_accel, bool surface ) { // Checks if a
 
 // -----------------------External Trigger Functions--------------------------------
 
-int Check_Systems( INTData& Values ) { // Checks if systems are safe
-
-    //TODO: Implement
+Result Check_Systems( INTData Values, INTData Prev_Values ) { // Checks if systems are safe
 
     //* Will trigger LED based on error code
+    
+    Result results[ 5 ];
 
-    return 0; // Safe
+    pinMode( PinSystemsGood, OUTPUT );
+    pinMode( PinSystemsBad, OUTPUT );
+    pinMode( PinInputVoltage, INPUT );
+    pinMode( PinVBAT, INPUT );
+
+    // Check if connected to sufficient voltage
+    results[ 0 ] = Check_Input_Voltage( analogRead( PinInputVoltage ) );
+    
+    // Check if VBAT is Connected
+    results[ 1 ] = Check_VBAT_Connection();
+
+    results[ 2 ] = Check_Pressure_Delta( Values.pressure, Prev_Values.pressure );
+
+    results[ 3 ] = Check_Tilt( Values.normalized_gyro, Prev_Values.normalized_gyro, true );
+
+    results[ 4 ] = Check_Accel( Values.normalized_accel, Prev_Values.normalized_accel, true );
+
+    for ( int i = 0; i < 4; i++ ) {
+
+        if ( results[ i ].error < 0 ) {
+
+            digitalWrite( PinSystemsGood, 0 );
+            digitalWrite( PinSystemsBad, 1 );
+            
+            return { -1, ( "SYSTEMS BAD - " + results[ i ].message ) };
+
+        }
+
+    }
+
+    digitalWrite( PinSystemsBad, 0 );
+    digitalWrite( PinSystemsGood, 1 );
+
+    return { 0, "Systems Good" }; // Safe
 
 }

@@ -10,7 +10,7 @@
 
 #include "functions.h"
 
-INTData prev_data;
+INTData prev_values;
 int apogee;
 
 void setup() {
@@ -63,34 +63,6 @@ void setup() {
 
     // ----------------------------------------------------------------
 
-    // Check if connected to sufficient voltage
-    pinMode( PinInputVoltage, INPUT );
-
-    Result input_safe = Check_Input_Voltage( analogRead( PinInputVoltage ) );
-
-    while ( input_safe.error != 0 ) {
-
-        Serial.println( input_safe.message );
-        input_safe = Check_Input_Voltage( analogRead( PinInputVoltage ) );
-
-    }
-
-    // ----------------------------------------------------------------
-
-    // Check if VBAT is connected
-    pinMode( PinVBAT, INPUT );
-
-    Result VBAT_Connected = Check_VBAT_Connection();
-
-    while ( VBAT_Connected.error != 0 ) {
-
-        Serial.println( VBAT_Connected.message );
-        VBAT_Connected = Check_VBAT_Connection();
-
-    }
-
-    // ----------------------------------------------------------------
-
     // Set up oversampling and filter initialization
     bmp.setTemperatureOversampling( BMP3_OVERSAMPLING_8X );
     bmp.setPressureOversampling( BMP3_OVERSAMPLING_4X );
@@ -132,6 +104,23 @@ void setup() {
 
     Init_CSV(); // Initialize CSV
 
+    // ----------------------------------------------------------------
+    
+    INTData values = prev_values = Get_All_Values_INT();
+    Result Check_Systems_result = Check_Systems( values, prev_values );
+    while ( Check_Systems_result.error != 0 ) {
+
+        Serial.println( Check_Systems_result.message );
+
+        prev_values = values;
+        values = Get_All_Values_INT();
+
+        Check_Systems_result = Check_Systems( values, prev_values );
+
+    }
+
+    // ----------------------------------------------------------------
+
     Serial.end(); // End Serial Transmission
 
     delay( 20 ); // Delay for 20 Milliseconds before starting main loop
@@ -142,10 +131,10 @@ void loop() {
 
     INTData values = Get_All_Values_INT(); // Get all data values
 
-    Result alt_result = Check_Altitude( values.altitude, prev_data.altitude, apogee );
-    Result pres_result = Check_Pressure_Delta( values.pressure, prev_data.pressure );
-    Result tilt_result = Check_Tilt( values.normalized_gyro, prev_data.normalized_gyro );
-    Result accel_result = Check_Accel( values.normalized_accel, prev_data.normalized_accel, alt_result.error );
+    Result alt_result = Check_Altitude( values.altitude, prev_values.altitude, apogee );
+    Result pres_result = Check_Pressure_Delta( values.pressure, prev_values.pressure );
+    Result tilt_result = Check_Tilt( values.normalized_gyro, prev_values.normalized_gyro );
+    Result accel_result = Check_Accel( values.normalized_accel, prev_values.normalized_accel, alt_result.error );
 
     values.message = alt_result.message + ',' +
                       pres_result.message + ',' +
@@ -176,7 +165,7 @@ void loop() {
 
     }
 
-    prev_data = values;
+    prev_values = values;
 
     // Print & Save All Values
     Record_Data( values );

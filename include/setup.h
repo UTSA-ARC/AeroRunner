@@ -172,4 +172,3 @@ void Configure_Gyro( int GYRO_CONFIG ) { // Configure Gyro Sensitivity - Full Sc
     Wire.endTransmission( true );
 
 }
-

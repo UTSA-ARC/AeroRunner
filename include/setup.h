@@ -14,23 +14,23 @@ unsigned int ALSB_Sensitivity, GLSB_Sensitivity;
 Adafruit_BMP3XX bmp;
 
 // Structs
-typedef struct INTData { //* All data in integer form 0.0X accuracy (Divide by MULT for dec)
+typedef struct Data { //* All data in integer form 0.0X accuracy (Divide by MULT for dec)
 
     String time;
 
     int raw_accel[3];
-    int normalized_accel[3];
+    float normalized_accel[3];
 
     int raw_gyro[3];
-    int normalized_gyro[3];
+    float normalized_gyro[3];
 
-    int temperature;
-    int pressure;
-    int altitude;
+    float temperature;
+    float pressure;
+    float altitude;
 
     String message = "-";
 
-} INTData;
+} Data;
 
 typedef struct Result {
 

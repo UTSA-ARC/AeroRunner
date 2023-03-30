@@ -116,6 +116,14 @@ Result Check_Input_Voltage( int input_voltage ) {
 
 }
 
+Result Check_VBAT_Connection() {
+
+    if ( digitalRead( PinVBAT ) ) return { 0, "VBAT Connected"};
+
+    return { -1, "!!VBAT NOT CONNECTED!!"};
+
+}
+
 void Init_Paras() {
 
     pinMode( PinMain, OUTPUT );

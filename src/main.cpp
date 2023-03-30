@@ -10,7 +10,7 @@
 
 #include "functions.h"
 
-INTData prev_values;
+Data prev_values;
 int apogee;
 
 void setup() {
@@ -106,7 +106,7 @@ void setup() {
 
     // ----------------------------------------------------------------
     
-    INTData values = prev_values = Get_All_Values_INT();
+    Data values = prev_values = Get_All_Values_INT();
     Result Check_Systems_result = Check_Systems( values, prev_values );
     while ( Check_Systems_result.error != 0 ) {
 
@@ -129,7 +129,7 @@ void setup() {
 
 void loop() {
 
-    INTData values = Get_All_Values_INT(); // Get all data values
+    Data values = Get_All_Values_INT(); // Get all data values
 
     Result alt_result = Check_Altitude( values.altitude, prev_values.altitude, apogee );
     Result pres_result = Check_Pressure_Delta( values.pressure, prev_values.pressure );

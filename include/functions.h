@@ -374,12 +374,45 @@ Result Check_Accel( int* accel, int* prev_accel, bool surface ) { // Checks if a
 
 // -----------------------External Trigger Functions--------------------------------
 
-int Check_Systems( INTData& Values ) { // Checks if systems are safe
-
-    //TODO: Implement
+Result Check_Systems( INTData Values, INTData Prev_Values ) { // Checks if systems are safe
 
     //* Will trigger LED based on error code
+    
+    Result results[ 5 ];
 
-    return 0; // Safe
+    pinMode( PinSystemsGood, OUTPUT );
+    pinMode( PinSystemsBad, OUTPUT );
+    pinMode( PinInputVoltage, INPUT );
+    pinMode( PinVBAT, INPUT );
+
+    // Check if connected to sufficient voltage
+    results[ 0 ] = Check_Input_Voltage( analogRead( PinInputVoltage ) );
+    
+    // Check if VBAT is Connected
+    results[ 1 ] = Check_VBAT_Connection();
+
+    results[ 2 ] = Check_Pressure_Delta( Values.pressure, Prev_Values.pressure );
+
+    results[ 3 ] = Check_Tilt( Values.normalized_gyro, Prev_Values.normalized_gyro );
+
+    results[ 4 ] = Check_Accel( Values.normalized_accel, Prev_Values.normalized_accel, true );
+
+    for ( int i = 0; i < 4; i++ ) {
+
+        if ( results[ i ].error < 0 ) {
+
+            digitalWrite( PinSystemsGood, 0 );
+            digitalWrite( PinSystemsBad, 1 );
+            
+            return { -1, ( "SYSTEMS BAD - " + results[ i ].message ) };
+
+        }
+
+    }
+
+    digitalWrite( PinSystemsBad, 0 );
+    digitalWrite( PinSystemsGood, 1 );
+
+    return { 0, "Systems Good" }; // Safe
 
 }

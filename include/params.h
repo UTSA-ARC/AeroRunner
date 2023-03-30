@@ -11,6 +11,8 @@
 #define SurfaceAccelZ 0
 #define SurfacePressure 40
 #define SurfaceTilt 5
+#define PinSystemsGood 2
+#define PinSystemsBad 12
 
 #define BMP_SCL A5
 #define BMP_SDA A4

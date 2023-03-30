@@ -63,34 +63,6 @@ void setup() {
 
     // ----------------------------------------------------------------
 
-    // Check if connected to sufficient voltage
-    pinMode( PinInputVoltage, INPUT );
-
-    Result input_safe = Check_Input_Voltage( analogRead( PinInputVoltage ) );
-
-    while ( input_safe.error != 0 ) {
-
-        Serial.println( input_safe.message );
-        input_safe = Check_Input_Voltage( analogRead( PinInputVoltage ) );
-
-    }
-
-    // ----------------------------------------------------------------
-
-    // Check if VBAT is connected
-    pinMode( PinVBAT, INPUT );
-
-    Result VBAT_Connected = Check_VBAT_Connection();
-
-    while ( VBAT_Connected.error != 0 ) {
-
-        Serial.println( VBAT_Connected.message );
-        VBAT_Connected = Check_VBAT_Connection();
-
-    }
-
-    // ----------------------------------------------------------------
-
     // Set up oversampling and filter initialization
     bmp.setTemperatureOversampling( BMP3_OVERSAMPLING_8X );
     bmp.setPressureOversampling( BMP3_OVERSAMPLING_4X );

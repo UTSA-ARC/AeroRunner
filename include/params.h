@@ -13,6 +13,7 @@
 #define SurfaceTiltY 0
 #define SurfaceTiltZ 0
 #define SurfacePressure 40
+#define SurfPTolerance 0.05f // % in decimal form
 #define SurfaceTilt 5
 #define PinSystemsGood 2
 #define PinSystemsBad 12

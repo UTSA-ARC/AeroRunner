@@ -274,6 +274,23 @@ Result Check_Pressure_Delta( int pressure, int prev_pressure ) { // Checks press
 
 }
 
+Result Check_Pressure( int pressure, bool surface = 0 ) {
+ 
+    if ( surface ) {
+
+        int H = SurfacePressure * ( 1 + SurfPTolerance ); // Upperbound
+        int L = SurfacePressure * ( 1 - SurfPTolerance ); // Lowerbound
+
+        if ( pressure > H || pressure < L ) return { 0, "!!UNSAFE SURFACE PRESSURE!!" };
+
+        return { 0, "Safe Surface Pressure" };
+
+    }
+
+    return { 0, "Safe Pressure" };
+
+}
+
 Result Check_Tilt( int* gyro, int* prev_gyro, bool surface = false ) { // Checks if tilt is safe
 
     int H[ 3 ] = { // Upperbounds (X,Y,Z)
@@ -390,7 +407,7 @@ Result Check_Systems( INTData Values, INTData Prev_Values ) { // Checks if syste
 
     //* Will trigger LED based on error code
     
-    Result results[ 5 ];
+    Result results[ 6 ];
 
     pinMode( PinSystemsGood, OUTPUT );
     pinMode( PinSystemsBad, OUTPUT );
@@ -405,9 +422,11 @@ Result Check_Systems( INTData Values, INTData Prev_Values ) { // Checks if syste
 
     results[ 2 ] = Check_Pressure_Delta( Values.pressure, Prev_Values.pressure );
 
-    results[ 3 ] = Check_Tilt( Values.normalized_gyro, Prev_Values.normalized_gyro, true );
+    results[ 3 ] = Check_Pressure( Values.pressure, true );
 
-    results[ 4 ] = Check_Accel( Values.normalized_accel, Prev_Values.normalized_accel, true );
+    results[ 4 ] = Check_Tilt( Values.normalized_gyro, Prev_Values.normalized_gyro, true );
+
+    results[ 5 ] = Check_Accel( Values.normalized_accel, Prev_Values.normalized_accel, true );
 
     for ( int i = 0; i < 4; i++ ) {
 
@@ -416,7 +435,7 @@ Result Check_Systems( INTData Values, INTData Prev_Values ) { // Checks if syste
             digitalWrite( PinSystemsGood, 0 );
             digitalWrite( PinSystemsBad, 1 );
             
-            return { -1, ( "SYSTEMS BAD - " + results[ i ].message ) };
+            return { -1, ( "!!SYSTEMS BAD!! - " + results[ i ].message ) };
 
         }
 

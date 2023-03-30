@@ -10,7 +10,7 @@
 
 #include "functions.h"
 
-INTData prev_data;
+INTData prev_values;
 int apogee;
 
 void setup() {
@@ -104,6 +104,23 @@ void setup() {
 
     Init_CSV(); // Initialize CSV
 
+    // ----------------------------------------------------------------
+    
+    INTData values = prev_values = Get_All_Values_INT();
+    Result Check_Systems_result = Check_Systems( values, prev_values );
+    while ( Check_Systems_result.error != 0 ) {
+
+        Serial.println( Check_Systems_result.message );
+
+        prev_values = values;
+        values = Get_All_Values_INT();
+
+        Check_Systems_result = Check_Systems( values, prev_values );
+
+    }
+
+    // ----------------------------------------------------------------
+
     Serial.end(); // End Serial Transmission
 
     delay( 20 ); // Delay for 20 Milliseconds before starting main loop
@@ -114,10 +131,10 @@ void loop() {
 
     INTData values = Get_All_Values_INT(); // Get all data values
 
-    Result alt_result = Check_Altitude( values.altitude, prev_data.altitude, apogee );
-    Result pres_result = Check_Pressure_Delta( values.pressure, prev_data.pressure );
-    Result tilt_result = Check_Tilt( values.normalized_gyro, prev_data.normalized_gyro );
-    Result accel_result = Check_Accel( values.normalized_accel, prev_data.normalized_accel, alt_result.error );
+    Result alt_result = Check_Altitude( values.altitude, prev_values.altitude, apogee );
+    Result pres_result = Check_Pressure_Delta( values.pressure, prev_values.pressure );
+    Result tilt_result = Check_Tilt( values.normalized_gyro, prev_values.normalized_gyro );
+    Result accel_result = Check_Accel( values.normalized_accel, prev_values.normalized_accel, alt_result.error );
 
     values.message = alt_result.message + ',' +
                       pres_result.message + ',' +
@@ -148,7 +165,7 @@ void loop() {
 
     }
 
-    prev_data = values;
+    prev_values = values;
 
     // Print & Save All Values
     Record_Data( values );

@@ -9,6 +9,9 @@
 #define SurfaceAccelX 0
 #define SurfaceAccelY -9.8f
 #define SurfaceAccelZ 0
+#define SurfaceTiltX 0
+#define SurfaceTiltY 0
+#define SurfaceTiltZ 0
 #define SurfacePressure 40
 #define SurfaceTilt 5
 #define PinSystemsGood 2

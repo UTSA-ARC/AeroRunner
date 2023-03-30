@@ -4,6 +4,8 @@
 #define MINIMUM_INPUT_VOLTAGE 3.4f
 #define MAXIMUM_INPUT_VOLTAGE 5.0f
 
+#define PinVBAT 49
+
 #define BMP_SCL A5
 #define BMP_SDA A4
 #define SEALEVELPRESSURE_HPA ( 1013.25f )

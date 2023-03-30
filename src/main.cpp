@@ -64,11 +64,28 @@ void setup() {
     // ----------------------------------------------------------------
 
     // Check if connected to sufficient voltage
-    int input_voltage = analogRead( PinInputVoltage );
-    Result input_safe = Check_Input_Voltage( input_voltage );
+    pinMode( PinInputVoltage, INPUT );
+
+    Result input_safe = Check_Input_Voltage( analogRead( PinInputVoltage ) );
+
     while ( input_safe.error != 0 ) {
 
         Serial.println( input_safe.message );
+        input_safe = Check_Input_Voltage( analogRead( PinInputVoltage ) );
+
+    }
+
+    // ----------------------------------------------------------------
+
+    // Check if VBAT is connected
+    pinMode( PinVBAT, INPUT );
+
+    Result VBAT_Connected = Check_VBAT_Connection();
+
+    while ( VBAT_Connected.error != 0 ) {
+
+        Serial.println( VBAT_Connected.message );
+        VBAT_Connected = Check_VBAT_Connection();
 
     }
 

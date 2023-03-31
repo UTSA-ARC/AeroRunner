@@ -56,7 +56,7 @@ class Sample {
             for ( int i = 0; i < MeasurementAmount; i++ ) {
 
                 measurements[i] = Get_All_Values();
-                delay( SampleTimeSpan / MeasurementAmount );
+                delay( ( SampleTimeSpan * 1000 ) / MeasurementAmount );
 
             }
 

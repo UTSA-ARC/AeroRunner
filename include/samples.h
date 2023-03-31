@@ -5,15 +5,19 @@
 class Sample {
 
     private:
+
+        typedef struct SampleData : Data { String timeEnd; } SampleData;
+
         Data measurements[MeasurementAmount];
-        Data avg_data;
+        SampleData avg_data;
 
         void Set_Measurements( Data* new_measurements ) { *measurements = *new_measurements; }
 
         void Find_Avg() {
 
             avg_data.message = "";
-            avg_data.time = measurements[ MeasurementAmount - 1 ].time;
+            avg_data.time = measurements[0].time;
+            avg_data.timeEnd = measurements[MeasurementAmount -  1].time;
 
             for ( int i = 0; i < MeasurementAmount; i++ ) {
 
@@ -70,6 +74,6 @@ class Sample {
 
         Data* Get_Measurements() { return measurements; }
 
-        Data Get_Avg_Data() { return avg_data; }
+        SampleData Get_Avg_Data() { return avg_data; }
 
 };

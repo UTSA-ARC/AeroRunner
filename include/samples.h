@@ -77,3 +77,13 @@ class Sample {
         SampleData Get_Avg_Data() { return avg_data; }
 
 };
+
+Sample* Record_Samples() { 
+
+    Sample static samples[SampleAmount];
+
+    for ( int i = 0; i < SampleAmount; i++ ) samples[i] = Sample();
+
+    return samples;
+
+}

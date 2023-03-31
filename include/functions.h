@@ -1,5 +1,6 @@
+#pragma once
 
-#include "setup.h"
+#include "globals.h"
 
 // -------------------------Vector Functions-----------------------
 
@@ -55,7 +56,7 @@ float* Get_Normalized_Gyro( int* raw_gyro ) { // Returns an int vector containin
 
 // -----------------------Struct Functions------------------------------------------
 
-Data Get_All_Values_INT() {
+Data Get_All_Values() {
 
     Data data;
 

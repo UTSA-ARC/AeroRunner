@@ -1,3 +1,5 @@
+#pragma once
+
 #define PinInputVoltage A9
 #define MINIMUM_INPUT_VOLTAGE 3.4f
 #define MAXIMUM_INPUT_VOLTAGE 5.0f

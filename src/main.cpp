@@ -8,7 +8,9 @@
  *
  */
 
+#include "setup.h"
 #include "functions.h"
+#include "samples.h"
 
 Data prev_values;
 int apogee;
@@ -106,14 +108,14 @@ void setup() {
 
     // ----------------------------------------------------------------
     
-    Data values = prev_values = Get_All_Values_INT();
+    Data values = prev_values = Get_All_Values();
     Result Check_Systems_result = Check_Systems( values, prev_values );
     while ( Check_Systems_result.error != 0 ) {
 
         Serial.println( Check_Systems_result.message );
 
         prev_values = values;
-        values = Get_All_Values_INT();
+        values = Get_All_Values();
 
         Check_Systems_result = Check_Systems( values, prev_values );
 
@@ -129,7 +131,7 @@ void setup() {
 
 void loop() {
 
-    Data values = Get_All_Values_INT(); // Get all data values
+    Data values = Get_All_Values(); // Get all data values
 
     Result alt_result = Check_Altitude( values.altitude, prev_values.altitude, apogee );
     Result pres_result = Check_Pressure_Delta( values.pressure, prev_values.pressure );

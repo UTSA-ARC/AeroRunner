@@ -224,6 +224,44 @@ class SampleCollection {
 
         }
 
+        Result Compare_Normalized_Tilt( float* gyro_a, float* gyro_b ) {
+
+            float H[ 3 ] = {
+
+                ( gyro_a[0] * ( 1 + SampleTiltTolerance ) ),
+                ( gyro_a[1] * ( 1 + SampleTiltTolerance ) ),
+                ( gyro_a[2] * ( 1 + SampleTiltTolerance ) )
+
+            };
+
+            float L[ 3 ] = {
+
+                ( gyro_a[0] * ( 1 - SampleTiltTolerance ) ),
+                ( gyro_a[1] * ( 1 - SampleTiltTolerance ) ),
+                ( gyro_a[2] * ( 1 - SampleTiltTolerance ) )
+
+            };
+
+            bool X, Y, Z;
+
+            if ( gyro_b[0] > L[0] && gyro_b[0] < H[0] ) X = true;
+
+            if ( gyro_b[1] > L[1] && gyro_b[1] < H[1] ) Y = true;
+
+            if ( gyro_b[2] > L[2] && gyro_b[2] < H[2] ) Z = true;
+
+            if ( !X && Y && Z ) return { 1, "Y and Z Gyro Axis are Equal" };
+            if ( X && !Y && Z ) return { 2, "X and Z Gyro Axis are Equal" };
+            if ( X && Y && !Z ) return { 3, "X and Y Gyro Axis are Equal" };
+            if ( X && !Y && !Z ) return { 4, "Only X Gyro Axis is Equal" };
+            if ( !X && Y && !Z ) return { 5, "Only Y Gyro Axis is Equal" };
+            if ( !X && !Y && Z ) return { 6, "Only Z Gyro Axis is Equal" };
+            if ( !X && !Y && !Z ) return { -1, "No Gyro Axis are Equal" };
+            
+            return { 0, "All Gyro Axis are Equal " };
+
+        }
+
     public:
 
         SampleCollection() {

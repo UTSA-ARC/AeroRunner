@@ -6,3 +6,4 @@
 #define SamplePressureTolerance 0.05f // % in decimal form
 #define SampleAccelTolerance 0.05f // % in decimal form
 #define SampleTiltTolerance 0.05f // % in decimal form
+#define SampleTemperatureTolerance 0.05f // % in decimal form

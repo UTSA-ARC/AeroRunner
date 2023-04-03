@@ -106,7 +106,20 @@ class SampleCollection {
 
             if ( pressure_b < L ) return { 1, "Pressure A is Greater than Pressure B" };
 
-            return { 0, "Pressure A is equal to Pressure B" };
+            return { 0, "Pressure A is Equal to Pressure B" };
+
+        }
+
+        Result Compare_Temperature( float temperature_a, float temperature_b ) {
+
+            float H = temperature_a * ( 1 + SampleTemperatureTolerance );
+            float L = temperature_b * ( 1 - SampleTemperatureTolerance );
+
+            if ( temperature_b > H ) return { -1, "Temperature A is Less than Temperature B" };
+
+            if ( temperature_b < L ) return { 1, "Temperature A is Greater than Temperature B" };
+
+            return { 0, "Temperature A is Equal to Temperature B" };
 
         }
 

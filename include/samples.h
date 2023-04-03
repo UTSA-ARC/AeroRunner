@@ -241,27 +241,27 @@ class SampleCollection {
 
             float H[ 3 ] = {
 
-                ( gyro_a[0] * ( 1 + SampleTiltTolerance ) ),
-                ( gyro_a[1] * ( 1 + SampleTiltTolerance ) ),
-                ( gyro_a[2] * ( 1 + SampleTiltTolerance ) )
+                abs( gyro_a[0] * ( 1 + SampleTiltTolerance ) ),
+                abs( gyro_a[1] * ( 1 + SampleTiltTolerance ) ),
+                abs( gyro_a[2] * ( 1 + SampleTiltTolerance ) )
 
             };
 
             float L[ 3 ] = {
 
-                ( gyro_a[0] * ( 1 - SampleTiltTolerance ) ),
-                ( gyro_a[1] * ( 1 - SampleTiltTolerance ) ),
-                ( gyro_a[2] * ( 1 - SampleTiltTolerance ) )
+                abs( gyro_a[0] * ( 1 - SampleTiltTolerance ) ),
+                abs( gyro_a[1] * ( 1 - SampleTiltTolerance ) ),
+                abs( gyro_a[2] * ( 1 - SampleTiltTolerance ) )
 
             };
 
             bool X, Y, Z;
 
-            if ( gyro_b[0] > L[0] && gyro_b[0] < H[0] ) X = true;
+            if ( abs( gyro_b[0] ) > L[0] && abs( gyro_b[0] ) < H[0] ) X = true;
 
-            if ( gyro_b[1] > L[1] && gyro_b[1] < H[1] ) Y = true;
+            if ( abs( gyro_b[1] ) > L[1] && abs( gyro_b[1] ) < H[1] ) Y = true;
 
-            if ( gyro_b[2] > L[2] && gyro_b[2] < H[2] ) Z = true;
+            if ( abs( gyro_b[2] ) > L[2] && abs( gyro_b[2] ) < H[2] ) Z = true;
 
             if ( !X && Y && Z ) return { 1, "Y and Z Gyro Axis are Equal" };
             if ( X && !Y && Z ) return { 2, "X and Z Gyro Axis are Equal" };

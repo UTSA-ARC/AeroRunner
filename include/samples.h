@@ -78,12 +78,107 @@ class Sample {
 
 };
 
-Sample* Record_Samples() { 
+class SampleCollection {
 
-    Sample static samples[SampleAmount];
+    private:
+        Sample* Samples;
+        int size;
 
-    for ( int i = 0; i < SampleAmount; i++ ) samples[i] = Sample();
+        Result Compare_Altitude( float altitude_a, float altitude_b ) {
 
-    return samples;
+            float H = altitude_a * ( 1 + SampleAltTolerance );
+            float L = altitude_a * ( 1 - SampleAltTolerance );
 
-}
+            if ( altitude_b > H ) return { 1, "Altitude A Is Less Than Altitude B" };
+
+            if ( altitude_b < L ) return { 2, "Altitude A Is Greater Than Altitude B" };
+
+            return { 1, "Altitude A Is Equal to Altitude B" };
+
+        }
+
+        Result Compare_Pressure( float pressure_a, float pressure_b ) {
+
+            float H = pressure_a * ( 1 + SamplePressureTolerance );
+            float L = pressure_a * ( 1 - SamplePressureTolerance );
+
+            if ( pressure_b > H ) return { 1, "Pressure A is Less than Pressure B" };
+
+            if ( pressure_b < L ) return { 2, "Pressure A is Greater than Pressure B" };
+
+        }
+
+        Result Compare_Normalized_Accel( float* accel_a, float* accel_b ) {
+
+            float H[ 3 ] = {
+
+                ( accel_a[0] * ( 1 + SampleAccelTolerance ) ),
+                ( accel_a[1] * ( 1 + SampleAccelTolerance ) ),
+                ( accel_a[2] * ( 1 + SampleAccelTolerance ) )
+
+            };
+
+            float L[ 3 ] = {
+
+                ( accel_a[0] * ( 1 - SampleAccelTolerance ) ),
+                ( accel_a[1] * ( 1 - SampleAccelTolerance ) ),
+                ( accel_a[2] * ( 1 - SampleAccelTolerance ) )
+
+            };
+
+            bool X, Y, Z;
+
+            if ( accel_b[0] > L[0] && accel_b[0] < H[0] ) X = true;
+
+            if ( accel_b[1] > L[1] && accel_b[1] < H[1] ) Y = true;
+
+            if ( accel_b[2] > L[2] && accel_b[2] < H[2] ) Z = true;
+
+            if ( !X && Y && Z ) return { 1, "Y and Z Accel Axis are Equal" };
+            if ( X && !Y && Z ) return { 2, "X and Z Accel Axis are Equal" };
+            if ( X && Y && !Z ) return { 3, "X and Y Accel Axis are Equal" };
+            if ( X && !Y && !Z ) return { 4, "Only X Accel Axis is Equal" };
+            if ( !X && Y && !Z ) return { 5, "Only Y Accel Axis is Equal" };
+            if ( !X && !Y && Z ) return { 6, "Only Z Accel Axis is Equal" };
+            if ( !X && !Y && !Z ) return { -1, "No Accel Axis are Equal" };
+            
+            return { 0, "All Accel Axis are Equal " };
+
+        }
+
+    public:
+
+        SampleCollection() {
+
+            Samples = new Sample[ SampleAmount ];
+            size = SampleAmount;
+
+        }
+
+        SampleCollection( int sample_amount ) {
+
+            Samples = new Sample[ sample_amount ];
+            size = sample_amount;
+
+        }
+
+        Sample* Get_Sample_Array() { return Samples; }
+
+        Sample Get_Sample( int index ) { return Samples[ index ]; }
+
+        Sample* Record_Samples() { 
+
+            static Sample samples[ SampleAmount ];
+
+            for ( int i = 0; i < SampleAmount; i++ ) samples[i] = Sample();
+
+            return samples;
+
+        }
+
+        Result Compare_Sample( Sample* sample_a, Sample* sample_b ) { // Return 0 if sample_a is equal, 1 if greater, 2 if lesser
+
+        }
+
+};
+

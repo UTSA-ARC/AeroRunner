@@ -93,7 +93,7 @@ class SampleCollection {
 
             if ( altitude_b < L ) return { 2, "Altitude A Is Greater Than Altitude B" };
 
-            return { 1, "Altitude A Is Equal to Altitude B" };
+            return { 0, "Altitude A Is Equal to Altitude B" };
 
         }
 
@@ -136,15 +136,15 @@ class SampleCollection {
 
             if ( accel_b[2] > L[2] && accel_b[2] < H[2] ) Z = true;
 
-            if ( !X && Y && Z ) return { 1, "Y and Z Accel Axis are Equal" };
-            if ( X && !Y && Z ) return { 2, "X and Z Accel Axis are Equal" };
-            if ( X && Y && !Z ) return { 3, "X and Y Accel Axis are Equal" };
-            if ( X && !Y && !Z ) return { 4, "Only X Accel Axis is Equal" };
-            if ( !X && Y && !Z ) return { 5, "Only Y Accel Axis is Equal" };
-            if ( !X && !Y && Z ) return { 6, "Only Z Accel Axis is Equal" };
-            if ( !X && !Y && !Z ) return { -1, "No Accel Axis are Equal" };
+            if ( !X && Y && Z ) return { 1, "Y and Z raw Accel Axis are Equal" };
+            if ( X && !Y && Z ) return { 2, "X and Z raw Accel Axis are Equal" };
+            if ( X && Y && !Z ) return { 3, "X and Y raw Accel Axis are Equal" };
+            if ( X && !Y && !Z ) return { 4, "Only X raw Accel Axis is Equal" };
+            if ( !X && Y && !Z ) return { 5, "Only Y raw Accel Axis is Equal" };
+            if ( !X && !Y && Z ) return { 6, "Only Z raw Accel Axis is Equal" };
+            if ( !X && !Y && !Z ) return { -1, "No raw Accel Axis are Equal" };
             
-            return { 0, "All Accel Axis are Equal " };
+            return { 0, "All raw Accel Axis are Equal " };
 
         }
 

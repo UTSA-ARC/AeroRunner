@@ -12,8 +12,9 @@
 #define PressureEqualityWeight 2
 #define TemperatureEqualityWeight 0
 #define RawAccelEqualityWeight 0
-#define NormlizedAccelEqualityWeight 1
+#define NormalizedAccelEqualityWeight 1
 #define RawGyroEqualityWeight 0
 #define NormalizedGyroEqualityWeight 1
 
-#define EqualitySumMin 10 // What the weights should sum to, to be considered equal
+#define EqualitySumMin -2 // What the weights should sum to, to be considered equal
+#define EqualitySumMax 2 // What the weights should sum under, to be considered equal

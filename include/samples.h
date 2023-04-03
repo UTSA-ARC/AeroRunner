@@ -123,7 +123,7 @@ class SampleCollection {
 
         }
 
-        Result Compare_Raw_Accel( float* raw_accel_a, float* raw_accel_b ) {
+        Result Compare_Raw_Accel( int* raw_accel_a, int* raw_accel_b ) {
 
             float H[ 3 ] = {
 
@@ -199,7 +199,7 @@ class SampleCollection {
 
         }
 
-        Result Compare_Raw_Tilt( float* raw_gyro_a, float* raw_gyro_b ) {
+        Result Compare_Raw_Tilt( int* raw_gyro_a, int* raw_gyro_b ) {
 
             float H[ 3 ] = {
 
@@ -305,9 +305,51 @@ class SampleCollection {
 
         Result Compare_Sample( Sample* sample_a, Sample* sample_b ) { // Return 0 if equal, 1 if greater, -1 if lesser
 
+        int eq = 0;
 
+        Result C_Alt = Compare_Altitude( sample_a->Get_Avg_Data().altitude, sample_b->Get_Avg_Data().altitude );
+
+        Result C_Pres = Compare_Pressure( sample_a->Get_Avg_Data().pressure, sample_b->Get_Avg_Data().pressure );
+
+        Result C_Temp = Compare_Temperature( sample_a->Get_Avg_Data().temperature, sample_b->Get_Avg_Data().temperature );
+
+        Result C_R_Accel = Compare_Raw_Accel( sample_a->Get_Avg_Data().raw_accel, sample_b->Get_Avg_Data().raw_accel );
+
+        Result C_N_Accel = Compare_Normalized_Accel( sample_a->Get_Avg_Data().normalized_accel, sample_b->Get_Avg_Data().normalized_accel );
+
+        Result C_R_Tilt = Compare_Raw_Tilt( sample_a->Get_Avg_Data().raw_gyro, sample_b->Get_Avg_Data().raw_gyro );
+
+        Result C_N_Tilt = Compare_Normalized_Tilt( sample_a->Get_Avg_Data().normalized_gyro, sample_b->Get_Avg_Data().normalized_gyro );
+
+        String msg = C_Alt.message + C_Pres.message + C_Temp.message + C_R_Accel.message + C_N_Accel.message + C_R_Tilt.message + C_N_Tilt.message;
+
+
+        if ( C_Alt.error > 0 ) eq += AltEqualityWeight;
+        else if ( C_Alt.error < 0 ) eq -= AltEqualityWeight;
+
+        if ( C_Pres.error > 0 ) eq += PressureEqualityWeight;
+        else if ( C_Pres.error < 0 ) eq -= PressureEqualityWeight;
+
+        if ( C_Temp.error > 0 ) eq += TemperatureEqualityWeight;
+        else if ( C_Temp.error < 0 ) eq -= TemperatureEqualityWeight;
+
+        if ( C_R_Accel.error > 0 ) eq +=  RawAccelEqualityWeight;
+        else if ( C_R_Accel.error < 0 ) eq -= RawAccelEqualityWeight;
+
+        if ( C_N_Accel.error > 0 ) eq += NormalizedAccelEqualityWeight;
+        else if ( C_N_Accel.error < 0 ) eq -= NormalizedAccelEqualityWeight;
+
+        if ( C_R_Tilt.error > 0 ) eq += RawGyroEqualityWeight;
+        else if ( C_R_Tilt.error < 0 ) eq -= RawGyroEqualityWeight;
+
+        if ( C_N_Tilt.error > 0 ) eq += NormalizedGyroEqualityWeight;
+        else if ( C_N_Tilt.error < 0 ) eq -= NormalizedGyroEqualityWeight;
+         
+        if ( eq > EqualitySumMax ) return { 1, msg };
+        if ( eq < EqualitySumMin ) return { 1, msg };
+
+        return { 0, msg };
 
         }
 
 };
-

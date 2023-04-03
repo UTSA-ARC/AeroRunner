@@ -102,9 +102,11 @@ class SampleCollection {
             float H = pressure_a * ( 1 + SamplePressureTolerance );
             float L = pressure_a * ( 1 - SamplePressureTolerance );
 
-            if ( pressure_b > H ) return { 1, "Pressure A is Less than Pressure B" };
+            if ( pressure_b > H ) return { -1, "Pressure A is Less than Pressure B" };
 
-            if ( pressure_b < L ) return { 2, "Pressure A is Greater than Pressure B" };
+            if ( pressure_b < L ) return { 1, "Pressure A is Greater than Pressure B" };
+
+            return { 0, "Pressure A is equal to Pressure B" };
 
         }
 
@@ -214,7 +216,7 @@ class SampleCollection {
 
         }
 
-        Result Compare_Sample( Sample* sample_a, Sample* sample_b ) { // Return 0 if sample_a is equal, 1 if greater, 2 if lesser
+        Result Compare_Sample( Sample* sample_a, Sample* sample_b ) { // Return 0 if sample_a is equal, 1 if greater, -1 if lesser
 
         }
 

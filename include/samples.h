@@ -108,6 +108,44 @@ class SampleCollection {
 
         }
 
+        Result Compare_Raw_Accel( float* accel_a, float* accel_b ) {
+
+            float H[ 3 ] = {
+
+                ( accel_a[0] * ( 1 + SampleAccelTolerance ) ),
+                ( accel_a[1] * ( 1 + SampleAccelTolerance ) ),
+                ( accel_a[2] * ( 1 + SampleAccelTolerance ) )
+
+            };
+
+            float L[ 3 ] = {
+
+                ( accel_a[0] * ( 1 - SampleAccelTolerance ) ),
+                ( accel_a[1] * ( 1 - SampleAccelTolerance ) ),
+                ( accel_a[2] * ( 1 - SampleAccelTolerance ) )
+
+            };
+
+            bool X, Y, Z;
+
+            if ( accel_b[0] > L[0] && accel_b[0] < H[0] ) X = true;
+
+            if ( accel_b[1] > L[1] && accel_b[1] < H[1] ) Y = true;
+
+            if ( accel_b[2] > L[2] && accel_b[2] < H[2] ) Z = true;
+
+            if ( !X && Y && Z ) return { 1, "Y and Z Accel Axis are Equal" };
+            if ( X && !Y && Z ) return { 2, "X and Z Accel Axis are Equal" };
+            if ( X && Y && !Z ) return { 3, "X and Y Accel Axis are Equal" };
+            if ( X && !Y && !Z ) return { 4, "Only X Accel Axis is Equal" };
+            if ( !X && Y && !Z ) return { 5, "Only Y Accel Axis is Equal" };
+            if ( !X && !Y && Z ) return { 6, "Only Z Accel Axis is Equal" };
+            if ( !X && !Y && !Z ) return { -1, "No Accel Axis are Equal" };
+            
+            return { 0, "All Accel Axis are Equal " };
+
+        }
+
         Result Compare_Normalized_Accel( float* accel_a, float* accel_b ) {
 
             float H[ 3 ] = {

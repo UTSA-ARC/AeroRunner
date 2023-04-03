@@ -186,7 +186,43 @@ class SampleCollection {
 
         }
 
-        Result Compare_Raw
+        Result Compare_Raw_Tilt( float* raw_gyro_a, float* raw_gyro_b ) {
+
+            float H[ 3 ] = {
+
+                ( raw_gyro_a[0] * ( 1 + SampleTiltTolerance ) ),
+                ( raw_gyro_a[1] * ( 1 + SampleTiltTolerance ) ),
+                ( raw_gyro_a[2] * ( 1 + SampleTiltTolerance ) )
+
+            };
+
+            float L[ 3 ] = {
+
+                ( raw_gyro_a[0] * ( 1 - SampleTiltTolerance ) ),
+                ( raw_gyro_a[1] * ( 1 - SampleTiltTolerance ) ),
+                ( raw_gyro_a[2] * ( 1 - SampleTiltTolerance ) )
+
+            };
+
+            bool X, Y, Z;
+
+            if ( raw_gyro_b[0] > L[0] && raw_gyro_b[0] < H[0] ) X = true;
+
+            if ( raw_gyro_b[1] > L[1] && raw_gyro_b[1] < H[1] ) Y = true;
+
+            if ( raw_gyro_b[2] > L[2] && raw_gyro_b[2] < H[2] ) Z = true;
+
+            if ( !X && Y && Z ) return { 1, "Y and Z Raw Gyro Axis are Equal" };
+            if ( X && !Y && Z ) return { 2, "X and Z Raw Gyro Axis are Equal" };
+            if ( X && Y && !Z ) return { 3, "X and Y Raw Gyro Axis are Equal" };
+            if ( X && !Y && !Z ) return { 4, "Only X Raw Gyro Axis is Equal" };
+            if ( !X && Y && !Z ) return { 5, "Only Y Raw Gyro Axis is Equal" };
+            if ( !X && !Y && Z ) return { 6, "Only Z Raw Gyro Axis is Equal" };
+            if ( !X && !Y && !Z ) return { -1, "No Raw Gyro Axis are Equal" };
+            
+            return { 0, "All Raw Gyro Axis are Equal " };
+
+        }
 
     public:
 

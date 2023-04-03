@@ -295,13 +295,11 @@ class SampleCollection {
 
         Sample Get_Sample( int index ) { return Samples[ index ]; }
 
-        Sample* Record_Samples() { 
+        Result Record_Samples() { 
 
-            static Sample samples[ SampleAmount ];
+            for ( int i = 0; i < size; i++ ) Samples[i] = Sample();
 
-            for ( int i = 0; i < SampleAmount; i++ ) samples[i] = Sample();
-
-            return samples;
+            return { 0, "Recorded Samples" };
 
         }
 

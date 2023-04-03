@@ -110,31 +110,31 @@ class SampleCollection {
 
         }
 
-        Result Compare_Raw_Accel( float* accel_a, float* accel_b ) {
+        Result Compare_Raw_Accel( float* raw_accel_a, float* raw_accel_b ) {
 
             float H[ 3 ] = {
 
-                ( accel_a[0] * ( 1 + SampleAccelTolerance ) ),
-                ( accel_a[1] * ( 1 + SampleAccelTolerance ) ),
-                ( accel_a[2] * ( 1 + SampleAccelTolerance ) )
+                ( raw_accel_a[0] * ( 1 + SampleAccelTolerance ) ),
+                ( raw_accel_a[1] * ( 1 + SampleAccelTolerance ) ),
+                ( raw_accel_a[2] * ( 1 + SampleAccelTolerance ) )
 
             };
 
             float L[ 3 ] = {
 
-                ( accel_a[0] * ( 1 - SampleAccelTolerance ) ),
-                ( accel_a[1] * ( 1 - SampleAccelTolerance ) ),
-                ( accel_a[2] * ( 1 - SampleAccelTolerance ) )
+                ( raw_accel_a[0] * ( 1 - SampleAccelTolerance ) ),
+                ( raw_accel_a[1] * ( 1 - SampleAccelTolerance ) ),
+                ( raw_accel_a[2] * ( 1 - SampleAccelTolerance ) )
 
             };
 
             bool X, Y, Z;
 
-            if ( accel_b[0] > L[0] && accel_b[0] < H[0] ) X = true;
+            if ( raw_accel_b[0] > L[0] && raw_accel_b[0] < H[0] ) X = true;
 
-            if ( accel_b[1] > L[1] && accel_b[1] < H[1] ) Y = true;
+            if ( raw_accel_b[1] > L[1] && raw_accel_b[1] < H[1] ) Y = true;
 
-            if ( accel_b[2] > L[2] && accel_b[2] < H[2] ) Z = true;
+            if ( raw_accel_b[2] > L[2] && raw_accel_b[2] < H[2] ) Z = true;
 
             if ( !X && Y && Z ) return { 1, "Y and Z raw Accel Axis are Equal" };
             if ( X && !Y && Z ) return { 2, "X and Z raw Accel Axis are Equal" };
@@ -185,6 +185,8 @@ class SampleCollection {
             return { 0, "All Accel Axis are Equal " };
 
         }
+
+        Result Compare_Raw
 
     public:
 

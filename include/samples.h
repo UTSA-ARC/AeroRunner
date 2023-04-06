@@ -293,6 +293,8 @@ class SampleCollection {
 
         Sample* Get_Sample_Array() { return Samples; }
 
+        int Size() { return size; }
+
         Sample Get_Sample( int index ) { return Samples[ index ]; }
 
         Result Record_Samples() { 

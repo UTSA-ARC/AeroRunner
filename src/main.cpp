@@ -12,7 +12,6 @@
 #include "functions.h"
 #include "samples.h"
 
-Data prev_values;
 int apogee;
 
 void setup() {
@@ -131,17 +130,32 @@ void setup() {
 
 void loop() {
 
-    Data values = Get_All_Values(); // Get all data values
+    SampleCollection Samples; // Get all data values
 
-    Result alt_result = Check_Altitude( values.altitude, prev_values.altitude, apogee );
-    Result pres_result = Check_Pressure_Delta( values.pressure, prev_values.pressure );
-    Result tilt_result = Check_Tilt( values.normalized_gyro, prev_values.normalized_gyro );
-    Result accel_result = Check_Accel( values.normalized_accel, prev_values.normalized_accel, alt_result.error );
+    Sample* sample_arr = Samples.Get_Sample_Array();
+    int sample_size = Samples.Size();
 
-    values.message = alt_result.message + ',' +
-                      pres_result.message + ',' +
-                      tilt_result.message + ',' +
-                      accel_result.message + ',';
+    String output;
+
+    Result alt_results[sample_size], pres_results[sample_size], tilt_results[sample_size], accel_results[sample_size];
+
+    for ( int i = sample_size - 1; i > 0; i--) {
+
+        alt_results[i - 1] = Check_Altitude(sample_arr[i].Get_Avg_Data().altitude, sample_arr[i - 1].Get_Avg_Data().altitude, apogee);
+        pres_results[i - 1] = Check_Pressure_Delta(sample_arr[i].Get_Avg_Data().pressure, sample_arr[i - 1].Get_Avg_Data().pressure);
+        tilt_results[i - 1] = Check_Tilt(sample_arr[i].Get_Avg_Data().normalized_gyro, sample_arr[i - 1].Get_Avg_Data().normalized_gyro);
+        accel_results[i - 1] = Check_Accel(sample_arr[i].Get_Avg_Data().normalized_accel, sample_arr[i - 1].Get_Avg_Data().normalized_accel, alt_results[i - 1].error);
+
+    }
+
+    for ( int i = 0; i < sample_size - 1; i++ ) {
+
+        output+= "ALT_RESULTS:" + alt_results[i].message + "; ";
+        output += "PRES_RESULTS:" + pres_results[i].message + "; ";
+        output += "TILT_RESULTS:" + tilt_results[i].message + "; ";
+        output += "ACCEL_RESULTS:" + accel_results[i].message + "; ";
+
+    }
 
     switch ( alt_result.error ) {
 

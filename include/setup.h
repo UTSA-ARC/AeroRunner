@@ -1,7 +1,7 @@
 #include <SD.h>
 #include <SPI.h>
 
-#include "params.h"
+#include "params./setup_params.h"
 #include "globals.h"
 
 bool Paras_Armed[2];

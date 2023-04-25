@@ -1,6 +1,7 @@
 #pragma once
 
 #include "globals.h"
+#include "params/function_params.h"
 
 // -------------------------Vector Functions-----------------------
 
@@ -247,10 +248,10 @@ Result Check_Altitude( int altitude, int prev_altitude, int apogee ) { // Checks
 
         if ( altitude <= prev_altitude ) {
 
-            if ( altitude >= ( prev_altitude * ( 1 - ATolerance ) ) ) return { 1, "!!AT APOGEE!!" }; // Around Apogee
+            if ( altitude >= ( prev_altitude * ( 1 - AlTolerance ) ) ) return { 1, "!!AT APOGEE!!" }; // Around Apogee
 
             if ( ( altitude <= apogee - MainParaADelta ) &&
-                 ( altitude >= apogee - ( MainParaADelta * ( 1 + ATolerance ) ) ) ) return { 2, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
+                 ( altitude >= apogee - ( MainParaADelta * ( 1 + AlTolerance ) ) ) ) return { 2, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
 
         }
 
@@ -312,11 +313,11 @@ Result Check_Tilt( float* gyro, float* prev_gyro, bool surface = false ) { // Ch
 
     if ( surface ) {
 
-        if ( abs( gyro[ 0 ] ) > SurfaceTiltX ) return { -10, "!!DANGEROUS X-AXIS SURFACE TILT!!" };
+        if ( abs( gyro[ 0 ] ) > SafeSurfaceTiltX ) return { -10, "!!DANGEROUS X-AXIS SURFACE TILT!!" };
 
-        if ( abs( gyro[ 1 ] ) > SurfaceTiltY ) return { -20, "!!DANGEROUS Y-AXIS SURFACE TILT!!" };
+        if ( abs( gyro[ 1 ] ) > SafeSurfaceTiltY ) return { -20, "!!DANGEROUS Y-AXIS SURFACE TILT!!" };
 
-        if ( abs( gyro[ 2 ] ) > SurfaceTiltZ ) return { -30, "!!DANGEROUS Z-AXIS SURFACE TILT!!" };
+        if ( abs( gyro[ 2 ] ) > SafeSurfaceTiltZ ) return { -30, "!!DANGEROUS Z-AXIS SURFACE TILT!!" };
 
         return { 0, "Safe Surface Tilt" };
 
@@ -344,17 +345,17 @@ Result Check_Accel( float* accel, float* prev_accel, bool surface = false ) { //
 
         float Hs[ 3 ] = { // Surface Upperbounds (X,Y,Z)
             
-            SurfaceAccelX * ( 1 + ATolerance ) == 0 ? ATolerance : SurfaceAccelX * ( 1 + ATolerance ),
-            SurfaceAccelY * ( 1 + ATolerance ) == 0 ? ATolerance : SurfaceAccelY * ( 1 + ATolerance ),
-            SurfaceAccelZ * ( 1 + ATolerance ) == 0 ? ATolerance : SurfaceAccelZ * ( 1 + ATolerance )
+            SurfaceAccelX * ( 1 + AccTolerance ) == 0 ? AccTolerance : SurfaceAccelX * ( 1 + AccTolerance ),
+            SurfaceAccelY * ( 1 + AccTolerance ) == 0 ? AccTolerance : SurfaceAccelY * ( 1 + AccTolerance ),
+            SurfaceAccelZ * ( 1 + AccTolerance ) == 0 ? AccTolerance : SurfaceAccelZ * ( 1 + AccTolerance )
 
         };
 
         float Ls[ 3 ] = {
 
-            SurfaceAccelX * ( 1 - ATolerance ) == 0 ? -1 * ATolerance : SurfaceAccelX * ( 1 - ATolerance ),
-            SurfaceAccelY * ( 1 - ATolerance ) == 0 ? -1 * ATolerance : SurfaceAccelY * ( 1 - ATolerance ),
-            SurfaceAccelZ * ( 1 - ATolerance ) == 0 ? -1 * ATolerance : SurfaceAccelZ * ( 1 - ATolerance )
+            SurfaceAccelX * ( 1 - AccTolerance ) == 0 ? -1 * AccTolerance : SurfaceAccelX * ( 1 - AccTolerance ),
+            SurfaceAccelY * ( 1 - AccTolerance ) == 0 ? -1 * AccTolerance : SurfaceAccelY * ( 1 - AccTolerance ),
+            SurfaceAccelZ * ( 1 - AccTolerance ) == 0 ? -1 * AccTolerance : SurfaceAccelZ * ( 1 - AccTolerance )
 
         };
 
@@ -370,17 +371,17 @@ Result Check_Accel( float* accel, float* prev_accel, bool surface = false ) { //
 
         float H[ 3 ] = { // Upperbounds (X,Y,Z)
 
-            prev_accel[ 0 ] * ( 1 + ATolerance ) ,
-            prev_accel[ 1 ] * ( 1 + ATolerance ) ,
-            prev_accel[ 2 ] * ( 1 + ATolerance )
+            prev_accel[ 0 ] * ( 1 + AccTolerance ) ,
+            prev_accel[ 1 ] * ( 1 + AccTolerance ) ,
+            prev_accel[ 2 ] * ( 1 + AccTolerance )
 
         };
 
         float L[ 3 ] = { // Lowerbounds (X,Y,Z)
 
-            prev_accel[ 0 ] * ( 1 - ATolerance ),
-            prev_accel[ 1 ] * ( 1 - ATolerance ),
-            prev_accel[ 2 ] * ( 1 - ATolerance )
+            prev_accel[ 0 ] * ( 1 - AccTolerance ),
+            prev_accel[ 1 ] * ( 1 - AccTolerance ),
+            prev_accel[ 2 ] * ( 1 - AccTolerance )
 
         };
 

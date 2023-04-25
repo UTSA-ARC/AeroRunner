@@ -72,12 +72,6 @@ void setup() {
 
     // ----------------------------------------------------------------
 
-    // Pin configuration
-    pinMode( PinCS, OUTPUT );
-    pinMode( PinMOSI, OUTPUT );
-
-    // ----------------------------------------------------------------
-
     // Set Ranges
     // while ( Set_Accel_Range( AccelRange ) != 0 ) {
 

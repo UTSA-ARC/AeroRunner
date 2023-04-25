@@ -50,17 +50,17 @@ void setup() {
 
     // ----------------------------------------------------------------
 
-    Serial.println( "Initializing MPU6050..." );
+    // Serial.println( "Initializing MPU6050..." );
 
-    Wire.beginTransmission( MPU );
-    while ( ( Wire.endTransmission() != 0 ) ) {
+    // Wire.beginTransmission( MPU );
+    // while ( ( Wire.endTransmission() != 0 ) ) {
 
-        Serial.println( "Could not find MPU\n" );
-        delay( 2000 );
+    //     Serial.println( "Could not find MPU\n" );
+    //     delay( 2000 );
 
-    }
+    // }
 
-    Serial.println( "Initialized MPU6050! ");
+    // Serial.println( "Initialized MPU6050! ");
 
     // ----------------------------------------------------------------
 
@@ -79,27 +79,27 @@ void setup() {
     // ----------------------------------------------------------------
 
     // Set Ranges
-    while ( Set_Accel_Range( AccelRange ) != 0 ) {
+    // while ( Set_Accel_Range( AccelRange ) != 0 ) {
 
-        Serial.println( "Please Fix Accel Range" );
-        delay( 2000 );
+    //     Serial.println( "Please Fix Accel Range" );
+    //     delay( 2000 );
 
-        }
+    //     }
 
-    while ( Set_Gyro_Range( GyroRange ) != 0 ) {
+    // while ( Set_Gyro_Range( GyroRange ) != 0 ) {
 
-        Serial.println( "Please Fix Gyro Range" );
-        delay( 2000 );
+    //     Serial.println( "Please Fix Gyro Range" );
+    //     delay( 2000 );
 
-    }
+    // }
 
     // ----------------------------------------------------------------
 
-    Init_MPU();            // Initialize MPU
+    // Init_MPU();            // Initialize MPU
 
-    Configure_MPU( 0x1C ); // Config Register
+    // Configure_MPU( 0x1C ); // Config Register
 
-    Configure_Gyro( 0x1B ); // Config Register
+    // Configure_Gyro( 0x1B ); // Config Register
 
     // ----------------------------------------------------------------
 
@@ -137,24 +137,20 @@ void loop() {
 
     String output;
 
-    Result alt_results[sample_size], pres_results[sample_size], tilt_results[sample_size], accel_results[sample_size];
+    Result alt_results[sample_size], pres_results[sample_size];
 
     for ( int i = sample_size - 1; i > 0; i--) {
 
         alt_results[i - 1] = Check_Altitude(sample_arr[i].Get_Avg_Data().altitude, sample_arr[i - 1].Get_Avg_Data().altitude, apogee);
         pres_results[i - 1] = Check_Pressure_Delta(sample_arr[i].Get_Avg_Data().pressure, sample_arr[i - 1].Get_Avg_Data().pressure);
-        tilt_results[i - 1] = Check_Tilt(sample_arr[i].Get_Avg_Data().normalized_gyro, sample_arr[i - 1].Get_Avg_Data().normalized_gyro);
-        accel_results[i - 1] = Check_Accel(sample_arr[i].Get_Avg_Data().normalized_accel, sample_arr[i - 1].Get_Avg_Data().normalized_accel, alt_results[i - 1].error);
-
+       
     }
 
     for ( int i = 0; i < sample_size - 1; i++ ) {
 
         output+= "ALT_RESULTS:" + alt_results[i].message + "; ";
         output += "PRES_RESULTS:" + pres_results[i].message + "; ";
-        output += "TILT_RESULTS:" + tilt_results[i].message + "; ";
-        output += "ACCEL_RESULTS:" + accel_results[i].message + "; ";
-
+    
     }
 
     switch ( alt_result.error ) {

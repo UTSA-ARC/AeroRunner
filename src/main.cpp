@@ -127,7 +127,7 @@ void loop() {
     SampleCollection Samples; // Get all data values
 
     Sample* sample_arr = Samples.Get_Sample_Array();
-    int sample_size = Samples.Size();
+    const int sample_size = Samples.Size();
 
     String output;
 
@@ -146,6 +146,10 @@ void loop() {
         output += "PRES_RESULTS:" + pres_results[i].message + "; ";
     
     }
+
+   int sample_movement;
+
+    for (int i = 1; i < sample_size; i++ ) { sample_movement += Samples.Compare_Sample( ( i - 1 ), i ).error; }
 
     switch ( alt_result.error ) {
 

@@ -305,23 +305,23 @@ class SampleCollection {
 
         }
 
-        Result Compare_Sample( Sample* sample_a, Sample* sample_b ) { // Return 0 if equal, 1 if greater, -1 if lesser
+        Result Compare_Sample( int sample_a_index, int sample_b_index ) { // Return 0 if equal, 1 if greater, -1 if lesser
 
         int eq = 0;
 
-        Result C_Alt = Compare_Altitude( sample_a->Get_Avg_Data().altitude, sample_b->Get_Avg_Data().altitude );
+        Result C_Alt = Compare_Altitude( Samples[sample_a_index].Get_Avg_Data().altitude, Samples[sample_b_index].Get_Avg_Data().altitude );
 
-        Result C_Pres = Compare_Pressure( sample_a->Get_Avg_Data().pressure, sample_b->Get_Avg_Data().pressure );
+        Result C_Pres = Compare_Pressure( Samples[sample_a_index].Get_Avg_Data().pressure, Samples[sample_b_index].Get_Avg_Data().pressure );
 
-        Result C_Temp = Compare_Temperature( sample_a->Get_Avg_Data().temperature, sample_b->Get_Avg_Data().temperature );
+        Result C_Temp = Compare_Temperature( Samples[sample_a_index].Get_Avg_Data().temperature, Samples[sample_b_index].Get_Avg_Data().temperature );
 
-        Result C_R_Accel = Compare_Raw_Accel( sample_a->Get_Avg_Data().raw_accel, sample_b->Get_Avg_Data().raw_accel );
+        Result C_R_Accel = Compare_Raw_Accel( Samples[sample_a_index].Get_Avg_Data().raw_accel, Samples[sample_b_index].Get_Avg_Data().raw_accel );
 
-        Result C_N_Accel = Compare_Normalized_Accel( sample_a->Get_Avg_Data().normalized_accel, sample_b->Get_Avg_Data().normalized_accel );
+        Result C_N_Accel = Compare_Normalized_Accel( Samples[sample_a_index].Get_Avg_Data().normalized_accel, Samples[sample_b_index].Get_Avg_Data().normalized_accel );
 
-        Result C_R_Tilt = Compare_Raw_Tilt( sample_a->Get_Avg_Data().raw_gyro, sample_b->Get_Avg_Data().raw_gyro );
+        Result C_R_Tilt = Compare_Raw_Tilt( Samples[sample_a_index].Get_Avg_Data().raw_gyro, Samples[sample_b_index].Get_Avg_Data().raw_gyro );
 
-        Result C_N_Tilt = Compare_Normalized_Tilt( sample_a->Get_Avg_Data().normalized_gyro, sample_b->Get_Avg_Data().normalized_gyro );
+        Result C_N_Tilt = Compare_Normalized_Tilt( Samples[sample_a_index].Get_Avg_Data().normalized_gyro, Samples[sample_b_index].Get_Avg_Data().normalized_gyro );
 
         String msg = C_Alt.message + C_Pres.message + C_Temp.message + C_R_Accel.message + C_N_Accel.message + C_R_Tilt.message + C_N_Tilt.message;
 
@@ -348,7 +348,7 @@ class SampleCollection {
         else if ( C_N_Tilt.error < 0 ) eq -= NormalizedGyroEqualityWeight;
          
         if ( eq > EqualitySumMax ) return { 1, msg };
-        if ( eq < EqualitySumMin ) return { 1, msg };
+        if ( eq < EqualitySumMin ) return { -1, msg };
 
         return { 0, msg };
 

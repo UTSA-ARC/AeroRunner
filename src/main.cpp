@@ -135,7 +135,20 @@ void loop() {
 
     for ( int i = 1; i < sample_size; i++ ) { sample_movement[i - 1] = Samples.Compare_Sample( ( i - 1 ), i ).error; } // Find movement of samples
 
-    if ( Paras_Armed[1] ) {
+    if ( !Paras_Armed[0] ) {
+
+        for ( int i = 0; i < sample_size; i++ ) {
+            
+            Result alt_result = Check_Altitude( sample_arr[i].Get_Avg_Data().altitude );
+            output += alt_result.message + ',';
+
+            if ( alt_result.error == 0 ) { Arm_Parachute( 0 ); Arm_Parachute( 1 ); break; }
+        
+        }
+
+    }
+
+    if ( Paras_Armed[1] && apogee == 0 ) {
         
         int i = 0;
         while ( sample_movement[i] > 0 && i < ( sample_size - 2 ) ) i++;
@@ -145,7 +158,8 @@ void loop() {
 
     }
 
-    if ( apogee > 0 )
+    if ( apogee > 0 ) {
+
         for ( int i = 0; i < sample_size; i++ ) {
         
             Result alt_result = Check_Main_Para( sample_arr[i].Get_Avg_Data().altitude );
@@ -154,26 +168,6 @@ void loop() {
             if ( alt_result.error == 1 ) { Launch_Parachute( 0 ); break; }
 
         }
-        
-    switch (  ) {
-
-        case 0: // Reached Safe Altitude
-            Arm_Parachute( 0 ); // Deploy Main
-            Arm_Parachute( 1 ); // Deploy Drouge
-            break;
-
-        case -1: // Reached Apogee
-
-            Launch_Parachute( 1 ); // Launch Drouge
-            break;
-
-        case 1: // Reached Main Parachute Altitude
-
-            Launch_Parachute( 0 ); // Launch Main
-            break;
-
-        default: // If no special case
-            break;
 
     }
 

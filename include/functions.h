@@ -250,16 +250,16 @@ Result Check_Main_Para( int altitude ) {
     
 }
 
-Result Check_Altitude( int altitude, int prev_altitude, int apogee ) { // Checks if altitude is safe/at apogee
+Result Check_Altitude( int altitude, int prev_altitude=0, int apogee=0 ) { // Checks if altitude is safe/at apogee
 
     if ( altitude > SafeAltitude  ) {
 
-        if ( altitude <= prev_altitude ) {
+        // if ( altitude <= prev_altitude ) {
 
-            if ( altitude >= ( prev_altitude * ( 1 - AlTolerance ) ) ) return { 1, "!!AT APOGEE!!" }; // Around Apogee
-           // if ( altitude <= MainParaAlt ) return { 2, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
+        //     if ( altitude >= ( prev_altitude * ( 1 - AlTolerance ) ) ) return { 1, "!!AT APOGEE!!" }; // Around Apogee
+        //     if ( altitude <= MainParaAlt ) return { 2, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
 
-        }
+        // }
 
         else return { 0, "Safe Altitude" }; // Safe
 

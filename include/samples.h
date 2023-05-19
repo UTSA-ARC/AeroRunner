@@ -91,7 +91,7 @@ class SampleCollection {
 
             if ( altitude_b > H ) return { 1, "Altitude A Is Less Than Altitude B" };
 
-            if ( altitude_b < L ) return { 2, "Altitude A Is Greater Than Altitude B" };
+            if ( altitude_b < L ) return { -1, "Altitude A Is Greater Than Altitude B" };
 
             return { 0, "Altitude A Is Equal to Altitude B" };
 
@@ -307,50 +307,50 @@ class SampleCollection {
 
         Result Compare_Sample( int sample_a_index, int sample_b_index ) { // Return 0 if equal, 1 if greater, -1 if lesser
 
-        int eq = 0;
+            int eq = 0;
 
-        Result C_Alt = Compare_Altitude( Samples[sample_a_index].Get_Avg_Data().altitude, Samples[sample_b_index].Get_Avg_Data().altitude );
+            Result C_Alt = Compare_Altitude( Samples[sample_a_index].Get_Avg_Data().altitude, Samples[sample_b_index].Get_Avg_Data().altitude );
 
-        Result C_Pres = Compare_Pressure( Samples[sample_a_index].Get_Avg_Data().pressure, Samples[sample_b_index].Get_Avg_Data().pressure );
+            Result C_Pres = Compare_Pressure( Samples[sample_a_index].Get_Avg_Data().pressure, Samples[sample_b_index].Get_Avg_Data().pressure );
 
-        Result C_Temp = Compare_Temperature( Samples[sample_a_index].Get_Avg_Data().temperature, Samples[sample_b_index].Get_Avg_Data().temperature );
+            Result C_Temp = Compare_Temperature( Samples[sample_a_index].Get_Avg_Data().temperature, Samples[sample_b_index].Get_Avg_Data().temperature );
 
-        Result C_R_Accel = Compare_Raw_Accel( Samples[sample_a_index].Get_Avg_Data().raw_accel, Samples[sample_b_index].Get_Avg_Data().raw_accel );
+            Result C_R_Accel = Compare_Raw_Accel( Samples[sample_a_index].Get_Avg_Data().raw_accel, Samples[sample_b_index].Get_Avg_Data().raw_accel );
 
-        Result C_N_Accel = Compare_Normalized_Accel( Samples[sample_a_index].Get_Avg_Data().normalized_accel, Samples[sample_b_index].Get_Avg_Data().normalized_accel );
+            Result C_N_Accel = Compare_Normalized_Accel( Samples[sample_a_index].Get_Avg_Data().normalized_accel, Samples[sample_b_index].Get_Avg_Data().normalized_accel );
 
-        Result C_R_Tilt = Compare_Raw_Tilt( Samples[sample_a_index].Get_Avg_Data().raw_gyro, Samples[sample_b_index].Get_Avg_Data().raw_gyro );
+            Result C_R_Tilt = Compare_Raw_Tilt( Samples[sample_a_index].Get_Avg_Data().raw_gyro, Samples[sample_b_index].Get_Avg_Data().raw_gyro );
 
-        Result C_N_Tilt = Compare_Normalized_Tilt( Samples[sample_a_index].Get_Avg_Data().normalized_gyro, Samples[sample_b_index].Get_Avg_Data().normalized_gyro );
+            Result C_N_Tilt = Compare_Normalized_Tilt( Samples[sample_a_index].Get_Avg_Data().normalized_gyro, Samples[sample_b_index].Get_Avg_Data().normalized_gyro );
 
-        String msg = C_Alt.message + C_Pres.message + C_Temp.message + C_R_Accel.message + C_N_Accel.message + C_R_Tilt.message + C_N_Tilt.message;
+            String msg = C_Alt.message + C_Pres.message + C_Temp.message + C_R_Accel.message + C_N_Accel.message + C_R_Tilt.message + C_N_Tilt.message;
 
 
-        if ( C_Alt.error > 0 ) eq += AltEqualityWeight;
-        else if ( C_Alt.error < 0 ) eq -= AltEqualityWeight;
+            if ( C_Alt.error > 0 ) eq += AltEqualityWeight;
+            else if ( C_Alt.error < 0 ) eq -= AltEqualityWeight;
 
-        if ( C_Pres.error > 0 ) eq += PressureEqualityWeight;
-        else if ( C_Pres.error < 0 ) eq -= PressureEqualityWeight;
+            if ( C_Pres.error > 0 ) eq += PressureEqualityWeight;
+            else if ( C_Pres.error < 0 ) eq -= PressureEqualityWeight;
 
-        if ( C_Temp.error > 0 ) eq += TemperatureEqualityWeight;
-        else if ( C_Temp.error < 0 ) eq -= TemperatureEqualityWeight;
+            if ( C_Temp.error > 0 ) eq += TemperatureEqualityWeight;
+            else if ( C_Temp.error < 0 ) eq -= TemperatureEqualityWeight;
 
-        if ( C_R_Accel.error > 0 ) eq +=  RawAccelEqualityWeight;
-        else if ( C_R_Accel.error < 0 ) eq -= RawAccelEqualityWeight;
+            if ( C_R_Accel.error > 0 ) eq +=  RawAccelEqualityWeight;
+            else if ( C_R_Accel.error < 0 ) eq -= RawAccelEqualityWeight;
 
-        if ( C_N_Accel.error > 0 ) eq += NormalizedAccelEqualityWeight;
-        else if ( C_N_Accel.error < 0 ) eq -= NormalizedAccelEqualityWeight;
+            if ( C_N_Accel.error > 0 ) eq += NormalizedAccelEqualityWeight;
+            else if ( C_N_Accel.error < 0 ) eq -= NormalizedAccelEqualityWeight;
 
-        if ( C_R_Tilt.error > 0 ) eq += RawGyroEqualityWeight;
-        else if ( C_R_Tilt.error < 0 ) eq -= RawGyroEqualityWeight;
+            if ( C_R_Tilt.error > 0 ) eq += RawGyroEqualityWeight;
+            else if ( C_R_Tilt.error < 0 ) eq -= RawGyroEqualityWeight;
 
-        if ( C_N_Tilt.error > 0 ) eq += NormalizedGyroEqualityWeight;
-        else if ( C_N_Tilt.error < 0 ) eq -= NormalizedGyroEqualityWeight;
-         
-        if ( eq > EqualitySumMax ) return { 1, msg };
-        if ( eq < EqualitySumMin ) return { -1, msg };
+            if ( C_N_Tilt.error > 0 ) eq += NormalizedGyroEqualityWeight;
+            else if ( C_N_Tilt.error < 0 ) eq -= NormalizedGyroEqualityWeight;
+            
+            if ( eq > EqualitySumMax ) return { 1, msg };
+            if ( eq < EqualitySumMin ) return { -1, msg };
 
-        return { 0, msg };
+            return { 0, msg };
 
         }
 

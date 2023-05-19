@@ -1,5 +1,5 @@
 #define SampleAmount 3
-#define MeasurementAmount 20
+#define MeasurementAmount 20 // Amount of measurements in 1 sample
 #define SampleTimeSpan 1 // In Seconds
 
 #define SampleAltTolerance 0.05f // % in decimal form

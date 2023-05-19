@@ -131,41 +131,43 @@ void loop() {
 
     String output;
 
-    Result alt_results[sample_size], pres_results[sample_size];
+    int sample_movement[sample_size - 1]; // Comparison array
 
-    for ( int i = sample_size - 1; i > 0; i--) {
+    for ( int i = 1; i < sample_size; i++ ) { sample_movement[i - 1] = Samples.Compare_Sample( ( i - 1 ), i ).error; } // Find movement of samples
 
-        alt_results[i - 1] = Check_Altitude(sample_arr[i].Get_Avg_Data().altitude, sample_arr[i - 1].Get_Avg_Data().altitude, apogee);
-        pres_results[i - 1] = Check_Pressure_Delta(sample_arr[i].Get_Avg_Data().pressure, sample_arr[i - 1].Get_Avg_Data().pressure);
-       
+    if ( Paras_Armed[1] ) {
+        
+        int i = 0;
+        while ( sample_movement[i] > 0 && i < ( sample_size - 2 ) ) i++;
+
+        if ( sample_movement[i + 1] < 0 ) Launch_Parachute( 1 ); // Drouge
+        apogee = sample_arr[i + 1].Get_Avg_Data().altitude;
+
     }
 
-    for ( int i = 0; i < sample_size - 1; i++ ) {
+    if ( apogee > 0 )
+        for ( int i = 0; i < sample_size; i++ ) {
+        
+            Result alt_result = Check_Main_Para( sample_arr[i].Get_Avg_Data().altitude );
+            output += alt_result.message + ',';
+            
+            if ( alt_result.error == 1 ) { Launch_Parachute( 0 ); break; }
 
-        output+= "ALT_RESULTS:" + alt_results[i].message + "; ";
-        output += "PRES_RESULTS:" + pres_results[i].message + "; ";
-    
-    }
-
-   int sample_movement;
-
-    for (int i = 1; i < sample_size; i++ ) { sample_movement += Samples.Compare_Sample( ( i - 1 ), i ).error; }
-
-    switch ( alt_result.error ) {
+        }
+        
+    switch (  ) {
 
         case 0: // Reached Safe Altitude
-
             Arm_Parachute( 0 ); // Deploy Main
             Arm_Parachute( 1 ); // Deploy Drouge
             break;
 
-        case 1: // Reached Apogee
+        case -1: // Reached Apogee
 
             Launch_Parachute( 1 ); // Launch Drouge
-            apogee = values.altitude;
             break;
 
-        case 2: // Reached Main Parachute Altitude
+        case 1: // Reached Main Parachute Altitude
 
             Launch_Parachute( 0 ); // Launch Main
             break;

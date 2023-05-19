@@ -12,7 +12,7 @@
 #define PinSystemsBad 12 // Pin for "Systems Bad"
 
 #define SafeAltitude 16 // In meters
-#define MainParaADelta 100 // In meters //* Change as ratio from apogee
+#define MainParaAlt 152 // In meters //* Change as ratio from apogee
 #define AlTolerance 0.05f // Altitude Tolerance, % in decimal form
 
 #define PTolerance 0.05f // Pressure Tolerance, % decimal form

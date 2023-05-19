@@ -216,9 +216,10 @@ Result Launch_Parachute( int schute ) { // Launches Parachute
             if ( Paras_Armed[ schute ] ) {
 
                 digitalWrite( PinMain, HIGH );
+                Paras_Armed[ schute ] = 0;
                 return { 0, "!!MAIN SCHUTE LAUNCHED!!" };
 
-                }
+            }
 
             else return { 1, "MAIN Schute Not Deployed!" };
 
@@ -242,6 +243,13 @@ Result Launch_Parachute( int schute ) { // Launches Parachute
 
 // -----------------------Internal Trigger Functions--------------------------------
 
+Result Check_Main_Para( int altitude ) { 
+
+    if ( altitude <= MainParaAlt ) return { 1, "!!MAIN PARACHUTE ALTITUDE REACHED!!" }; 
+    return { -1, "Not At Main Para Alt" }
+    
+}
+
 Result Check_Altitude( int altitude, int prev_altitude, int apogee ) { // Checks if altitude is safe/at apogee
 
     if ( altitude > SafeAltitude  ) {
@@ -249,9 +257,7 @@ Result Check_Altitude( int altitude, int prev_altitude, int apogee ) { // Checks
         if ( altitude <= prev_altitude ) {
 
             if ( altitude >= ( prev_altitude * ( 1 - AlTolerance ) ) ) return { 1, "!!AT APOGEE!!" }; // Around Apogee
-
-            if ( ( altitude <= apogee - MainParaADelta ) &&
-                 ( altitude >= apogee - ( MainParaADelta * ( 1 + AlTolerance ) ) ) ) return { 2, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
+           // if ( altitude <= MainParaAlt ) return { 2, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
 
         }
 

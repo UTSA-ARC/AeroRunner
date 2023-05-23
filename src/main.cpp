@@ -184,11 +184,9 @@ void loop() {
 
     }
 
-    for ( int i = 0; i < sample_size; i++ )
-        // Print & Save All Values
-        Record_Data( &sample_arr->Get_Avg_Data() );
+    for ( int i = 0; i < sample_size; i++ ) Record_Data( &sample_arr->Get_Avg_Data() ); // Print & Save All Values
 
-    delay(1000); //! FOR JUST EASY READING
+    delay( ConsoleDelay * 1000 ); //! FOR JUST EASY READING
 
 }
 

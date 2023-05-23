@@ -18,3 +18,5 @@
 #define PinMain 33
 
 #define InitValueDelay 2 // In seconds
+
+#define ConsoleDelay 1 // In seconds

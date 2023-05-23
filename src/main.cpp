@@ -12,7 +12,7 @@
 #include "functions.h"
 #include "samples.h"
 
-int apogee;
+int apogee = 0;
 
 void setup() {
     // Find hexadecimal representation of accelerometer range based on decimal global variable AccelRange defined above //
@@ -25,7 +25,7 @@ void setup() {
     // ----------------------------------------------------------------
 
     // Builtin SD Card Initialization
-    Serial.print("Initializing SD card...");
+    Serial.print( "Initializing SD card..." );
 
     while ( !SD.begin( BUILTIN_SDCARD ) ) {
 
@@ -100,17 +100,19 @@ void setup() {
     Init_CSV(); // Initialize CSV
 
     // ----------------------------------------------------------------
-    
-    Data values = prev_values = Get_All_Values();
-    Result Check_Systems_result = Check_Systems( values, prev_values );
-    while ( Check_Systems_result.error != 0 ) {
 
-        Serial.println( Check_Systems_result.message );
+    Data init_values = Get_All_Values(); // Set Initial Values
+    delay( InitValueDelay * 1000 ); // Delay to compare data
+    Data values = Get_All_Values(); // Get Current Values
+    Result Check_Systems_Result = Check_Systems( values, init_values );
+    while ( Check_Systems_Result.error != 0 ) {
 
-        prev_values = values;
+        Serial.println( Check_Systems_Result.message );
+
+        init_values = values;
         values = Get_All_Values();
 
-        Check_Systems_result = Check_Systems( values, prev_values );
+        Check_Systems_Result = Check_Systems( values, init_values );
 
     }
 
@@ -138,43 +140,54 @@ void loop() {
     if ( !Paras_Armed[0] ) {
 
         for ( int i = 0; i < sample_size; i++ ) {
-            
+
             Result alt_result = Check_Altitude( sample_arr[i].Get_Avg_Data().altitude );
             output += alt_result.message + ',';
 
             if ( alt_result.error == 0 ) { Arm_Parachute( 0 ); Arm_Parachute( 1 ); break; }
-        
+
         }
 
     }
 
     if ( Paras_Armed[1] && apogee == 0 ) {
-        
-        int i = 0;
-        while ( sample_movement[i] > 0 && i < ( sample_size - 2 ) ) i++;
 
-        if ( sample_movement[i + 1] < 0 ) Launch_Parachute( 1 ); // Drouge
-        apogee = sample_arr[i + 1].Get_Avg_Data().altitude;
+        int i = 0;
+        while ( sample_movement[ i ] > 0 && i < ( sample_size - 2 ) ) i++;
+
+        if ( sample_movement[ i + 1 ] < 0 ) {
+
+            Result launch_result = Launch_Parachute( 1 ); // Drouge
+            sample_arr[ i + 1 ].Append_Message( ( launch_result.message + ',' ) );
+
+        }
+        apogee = sample_arr[ i + 1 ].Get_Avg_Data().altitude;
 
     }
 
     if ( apogee > 0 ) {
 
         for ( int i = 0; i < sample_size; i++ ) {
-        
+
             Result alt_result = Check_Main_Para( sample_arr[i].Get_Avg_Data().altitude );
-            output += alt_result.message + ',';
-            
-            if ( alt_result.error == 1 ) { Launch_Parachute( 0 ); break; }
+            if ( alt_result.error == 1 ) {
+
+                Launch_Parachute( 0 );
+                sample_arr[ i ].Append_Message( ( alt_result.message + ',' ) );
+                break;
+
+            }
+
+
 
         }
 
     }
 
-    prev_values = values;
+    for ( int i = 0; i < sample_size; i++ )
+        // Print & Save All Values
+        Record_Data( &sample_arr->Get_Avg_Data() );
 
-    // Print & Save All Values
-    Record_Data( values );
     delay(1000); //! FOR JUST EASY READING
 
 }

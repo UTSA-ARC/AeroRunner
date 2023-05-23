@@ -16,3 +16,5 @@
 
 #define PinDrouge 39
 #define PinMain 33
+
+#define InitValueDelay 2 // In seconds

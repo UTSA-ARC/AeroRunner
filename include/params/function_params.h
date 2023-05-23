@@ -18,7 +18,7 @@
 #define PTolerance 0.05f // Pressure Tolerance, % decimal form
 
 #define SafeTiltX 10 // Safe X tilt
-#define SafeTiltY 10 // Safe Y tilt 
+#define SafeTiltY 10 // Safe Y tilt
 #define SafeTiltZ 10 // Safe Z tilt
 #define TTolerance 0.05f // Tilt Tolerance, % decimal form
 

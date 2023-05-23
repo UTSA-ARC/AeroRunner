@@ -39,7 +39,7 @@ int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyrospocic Val
 
     static int raw_gyro[ 3 ];
 
-    for ( int i = 0; i < 3; i++ ) raw_gyro[ i ] = ( Wire.read() << 8 | Wire.read() ) ;
+    for ( int i = 0; i < 3; i++ ) raw_gyro[ i ] = ( Wire.read() << 8 | Wire.read() );
 
     return raw_gyro;
 
@@ -96,54 +96,55 @@ Data Get_All_Values() {
 
 // -----------------------Data Handling Functions-----------------------------------
 
-void Print_All_Values( Data& Values ) { // Print the Values on the serial monitor
+void Print_All_Values( SampleData *Values ) { // Print the Values on the serial monitor
 
     Serial.begin( 115200 ); // Open Serial Port
 
     String output = ""; // init output string
 
-    output.append( "Time ( S ): " + Values.time + '\n' );
+    output.append( "Time ( S ): " + Values->time + '\n' );
+    output.append( "Time End ( S ) " + Values->timeEnd + '\n');
 
     output.append(
 
         "Raw Acceleration ( X, Y, Z ): " +
-        String( Values.raw_accel[ 0 ] / 1.0f, 2 ) + ',' +
-        String( Values.raw_accel[ 1 ] / 1.0f, 2 ) + ',' +
-        String( Values.raw_accel[ 2 ] / 1.0f, 2 ) + '\n'
+        String( Values->raw_accel[ 0 ] / 1.0f, 2 ) + ',' +
+        String( Values->raw_accel[ 1 ] / 1.0f, 2 ) + ',' +
+        String( Values->raw_accel[ 2 ] / 1.0f, 2 ) + '\n'
 
         );
 
     output.append(
 
         "Normalized Acceleration ( X, Y, Z ): " +
-        String( Values.normalized_accel[ 0 ] / 1.0f, 2 ) + ',' +
-        String( Values.normalized_accel[ 1 ] / 1.0f, 2 ) + ',' +
-        String( Values.normalized_accel[ 2 ] / 1.0f, 2 ) + '\n'
+        String( Values->normalized_accel[ 0 ] / 1.0f, 2 ) + ',' +
+        String( Values->normalized_accel[ 1 ] / 1.0f, 2 ) + ',' +
+        String( Values->normalized_accel[ 2 ] / 1.0f, 2 ) + '\n'
 
         );
 
     output.append(
 
         "Raw GyroRange ( X, Y, Z ): " +
-        String( Values.raw_gyro[ 0 ] / 1.0f, 2 ) + ',' +
-        String( Values.raw_gyro[ 1 ] / 1.0f, 2 ) + ',' +
-        String( Values.raw_gyro[ 2 ] / 1.0f, 2 ) + '\n'
+        String( Values->raw_gyro[ 0 ] / 1.0f, 2 ) + ',' +
+        String( Values->raw_gyro[ 1 ] / 1.0f, 2 ) + ',' +
+        String( Values->raw_gyro[ 2 ] / 1.0f, 2 ) + '\n'
 
         );
 
     output.append(
 
         "Normalized Gyro Range ( X, Y, Z ): " +
-        String( Values.normalized_gyro[ 0 ] / 1.0f, 2 ) + ',' +
-        String( Values.normalized_gyro[ 1 ] / 1.0f, 2 ) + ',' +
-        String( Values.normalized_gyro[ 2 ] / 1.0f, 2 ) + '\n'
+        String( Values->normalized_gyro[ 0 ] / 1.0f, 2 ) + ',' +
+        String( Values->normalized_gyro[ 1 ] / 1.0f, 2 ) + ',' +
+        String( Values->normalized_gyro[ 2 ] / 1.0f, 2 ) + '\n'
 
         );
 
     output.append( "\n\nNow reading BMP390...\n" );
-    output.append( "Tempurature ( C ): " + String( Values.temperature / 1.0f ) + '\n' );
-    output.append( "Pressure ( kPa ): " + String( Values.pressure / 1.0f ) + '\n' );
-    output.append( "Altitude ( m ): " + String( Values.altitude / 1.0f ) + '\n' );
+    output.append( "Tempurature ( C ): " + String( Values->temperature / 1.0f ) + '\n' );
+    output.append( "Pressure ( kPa ): " + String( Values->pressure / 1.0f ) + '\n' );
+    output.append( "Altitude ( m ): " + String( Values->altitude / 1.0f ) + '\n' );
 
     Serial.println( output ); // Print output to screen
 
@@ -151,12 +152,13 @@ void Print_All_Values( Data& Values ) { // Print the Values on the serial monito
 
 }
 
-void Write_All_Values_To_SD( Data& Values ) { // Records values to Sd card
+void Write_All_Values_To_SD( SampleData* Values ) { // Records values to Sd card
 
     String file_string = String( month() + '-' + day() + '-' + year() ) + ".csv";
     File myFile = SD.open( file_string.c_str(), FILE_WRITE );
 
-    //* Time ( seconds ),
+    //* Time ( RTC ),
+    //* TimeEnd ( RTC ),
     //* Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),
     //* Ax ( g ),Ay ( g ),Az ( g ),
     //* Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),
@@ -166,25 +168,25 @@ void Write_All_Values_To_SD( Data& Values ) { // Records values to Sd card
 
     String output = "";
 
-    output += ( Values.time + ',' );
+    output += ( Values->time + ',' );
 
-    int i;
+    output += ( Values->timeEnd );
 
-    for ( i = 0; i < 3; i++ ) output += ( String( Values.raw_accel[ i ] / 1.0f ) + ',' );
+    for ( int i = 0; i < 3; i++ ) output += ( String( Values->raw_accel[ i ] / 1.0f ) + ',' );
 
-    for ( i = 0; i < 3; i++ ) output += ( String( Values.normalized_accel[ i ] / 1.0f ) + ',' );
+    for ( int i = 0; i < 3; i++ ) output += ( String( Values->normalized_accel[ i ] / 1.0f ) + ',' );
 
-    for ( i = 0; i < 3; i++ ) output += ( String( Values.raw_gyro[ i ] / 1.0f ) + ',' );
+    for ( int i = 0; i < 3; i++ ) output += ( String( Values->raw_gyro[ i ] / 1.0f ) + ',' );
 
-    for ( i = 0; i < 3; i++ ) output += ( String( Values.normalized_gyro[ i ] / 1.0f ) + ',' );
+    for ( int i = 0; i < 3; i++ ) output += ( String( Values->normalized_gyro[ i ] / 1.0f ) + ',' );
 
-    output += ( String( Values.temperature / 1.0f ) + ',' );
+    output += ( String( Values->temperature / 1.0f ) + ',' );
 
-    output += ( String( Values.pressure / 1.0f ) + ',' );
+    output += ( String( Values->pressure / 1.0f ) + ',' );
 
-    output += ( String( Values.altitude / 1.0f ) + ',' );
+    output += ( String( Values->altitude / 1.0f ) + ',' );
 
-    output += ( Values.message );
+    output += ( Values->message );
 
     myFile.println( output );
 
@@ -192,7 +194,7 @@ void Write_All_Values_To_SD( Data& Values ) { // Records values to Sd card
 
 }
 
-void Record_Data( Data& Values ) { // Prints data to screen and saves it to file
+void Record_Data( SampleData *Values ) { // Prints data to screen and saves it to file
 
     Print_All_Values( Values );
     Write_All_Values_To_SD( Values );
@@ -243,11 +245,11 @@ Result Launch_Parachute( int schute ) { // Launches Parachute
 
 // -----------------------Internal Trigger Functions--------------------------------
 
-Result Check_Main_Para( int altitude ) { 
+Result Check_Main_Para( int altitude ) {
 
-    if ( altitude <= MainParaAlt ) return { 1, "!!MAIN PARACHUTE ALTITUDE REACHED!!" }; 
-    return { -1, "Not At Main Para Alt" }
-    
+    if ( altitude <= MainParaAlt ) return { 1, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
+    return { -1, "Not At Main Para Alt" };
+
 }
 
 Result Check_Altitude( int altitude, int prev_altitude=0, int apogee=0 ) { // Checks if altitude is safe/at apogee
@@ -261,7 +263,8 @@ Result Check_Altitude( int altitude, int prev_altitude=0, int apogee=0 ) { // Ch
 
         // }
 
-        else return { 0, "Safe Altitude" }; // Safe
+        // else
+        return { 0, "Safe Altitude" }; // Safe
 
     }
 
@@ -283,7 +286,7 @@ Result Check_Pressure_Delta( float pressure, float prev_pressure ) { // Checks p
 }
 
 Result Check_Pressure( float pressure, bool surface = 0 ) {
- 
+
     if ( surface ) {
 
         int H = SurfacePressure * ( 1 + SurfPTolerance ); // Upperbound
@@ -350,7 +353,7 @@ Result Check_Accel( float* accel, float* prev_accel, bool surface = false ) { //
     if ( surface ) {
 
         float Hs[ 3 ] = { // Surface Upperbounds (X,Y,Z)
-            
+
             SurfaceAccelX * ( 1 + AccTolerance ) == 0 ? AccTolerance : SurfaceAccelX * ( 1 + AccTolerance ),
             SurfaceAccelY * ( 1 + AccTolerance ) == 0 ? AccTolerance : SurfaceAccelY * ( 1 + AccTolerance ),
             SurfaceAccelZ * ( 1 + AccTolerance ) == 0 ? AccTolerance : SurfaceAccelZ * ( 1 + AccTolerance )
@@ -414,7 +417,7 @@ Result Check_Accel( float* accel, float* prev_accel, bool surface = false ) { //
 Result Check_Systems( Data Values, Data Prev_Values ) { // Checks if systems are safe
 
     //* Will trigger LED based on error code
-    
+
     Result results[ 6 ];
 
     pinMode( PinSystemsGood, OUTPUT );
@@ -424,7 +427,7 @@ Result Check_Systems( Data Values, Data Prev_Values ) { // Checks if systems are
 
     // Check if connected to sufficient voltage
     results[ 0 ] = Check_Input_Voltage( analogRead( PinInputVoltage ) );
-    
+
     // Check if VBAT is Connected
     results[ 1 ] = Check_VBAT_Connection();
 
@@ -432,9 +435,11 @@ Result Check_Systems( Data Values, Data Prev_Values ) { // Checks if systems are
 
     results[ 3 ] = Check_Pressure( Values.pressure, true );
 
-    results[ 4 ] = Check_Tilt( Values.normalized_gyro, Prev_Values.normalized_gyro, true );
+    // results[ 4 ] = Check_Tilt( Values.normalized_gyro, Prev_Values.normalized_gyro, true );
+    results[ 4 ] = { 0, "-" }; //! MPU no werk :'(
 
-    results[ 5 ] = Check_Accel( Values.normalized_accel, Prev_Values.normalized_accel, true );
+    // results[ 5 ] = Check_Accel( Values.normalized_accel, Prev_Values.normalized_accel, true );
+    results[ 5 ] = { 0, "-" }; //! MPU no werk :'(
 
     for ( int i = 0; i < 4; i++ ) {
 
@@ -442,7 +447,7 @@ Result Check_Systems( Data Values, Data Prev_Values ) { // Checks if systems are
 
             digitalWrite( PinSystemsGood, 0 );
             digitalWrite( PinSystemsBad, 1 );
-            
+
             return { -1, ( "!!SYSTEMS BAD!! - " + results[ i ].message ) };
 
         }

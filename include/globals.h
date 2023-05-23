@@ -26,6 +26,8 @@ typedef struct Data { //* All data in integer form 0.0X accuracy (Divide by MULT
 
 } Data;
 
+typedef struct SampleData : Data { String timeEnd; } SampleData;
+
 typedef struct Result {
 
     int error;

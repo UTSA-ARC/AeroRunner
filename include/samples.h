@@ -6,8 +6,6 @@ class Sample {
 
     private:
 
-        typedef struct SampleData : Data { String timeEnd; } SampleData;
-
         Data measurements[MeasurementAmount];
         SampleData avg_data;
 
@@ -76,6 +74,8 @@ class Sample {
 
         SampleData Get_Avg_Data() { return avg_data; }
 
+        void Append_Message( String message ) { avg_data.message += message;  }
+
 };
 
 class SampleCollection {
@@ -142,6 +142,7 @@ class SampleCollection {
             };
 
             bool X, Y, Z;
+            X = Y = Z = false;
 
             if ( abs( raw_accel_b[0] ) > L[0] && abs( raw_accel_b[0] ) < H[0] ) X = true;
 
@@ -156,7 +157,7 @@ class SampleCollection {
             if ( !X && Y && !Z ) return { 5, "Only Y raw Accel Axis is Equal" };
             if ( !X && !Y && Z ) return { 6, "Only Z raw Accel Axis is Equal" };
             if ( !X && !Y && !Z ) return { -1, "No raw Accel Axis are Equal" };
-            
+
             return { 0, "All raw Accel Axis are Equal " };
 
         }
@@ -180,6 +181,7 @@ class SampleCollection {
             };
 
             bool X, Y, Z;
+            X = Y = Z = false;
 
             if ( abs( accel_b[0] ) > L[0] && abs( accel_b[0] ) < H[0] ) X = true;
 
@@ -194,7 +196,7 @@ class SampleCollection {
             if ( !X && Y && !Z ) return { 5, "Only Y Accel Axis is Equal" };
             if ( !X && !Y && Z ) return { 6, "Only Z Accel Axis is Equal" };
             if ( !X && !Y && !Z ) return { -1, "No Accel Axis are Equal" };
-            
+
             return { 0, "All Accel Axis are Equal " };
 
         }
@@ -218,6 +220,7 @@ class SampleCollection {
             };
 
             bool X, Y, Z;
+            X = Y = Z = false;
 
             if ( raw_gyro_b[0] > L[0] && raw_gyro_b[0] < H[0] ) X = true;
 
@@ -232,7 +235,7 @@ class SampleCollection {
             if ( !X && Y && !Z ) return { 5, "Only Y Raw Gyro Axis is Equal" };
             if ( !X && !Y && Z ) return { 6, "Only Z Raw Gyro Axis is Equal" };
             if ( !X && !Y && !Z ) return { -1, "No Raw Gyro Axis are Equal" };
-            
+
             return { 0, "All Raw Gyro Axis are Equal " };
 
         }
@@ -256,6 +259,7 @@ class SampleCollection {
             };
 
             bool X, Y, Z;
+            X = Y = Z = false;
 
             if ( abs( gyro_b[0] ) > L[0] && abs( gyro_b[0] ) < H[0] ) X = true;
 
@@ -270,7 +274,7 @@ class SampleCollection {
             if ( !X && Y && !Z ) return { 5, "Only Y Gyro Axis is Equal" };
             if ( !X && !Y && Z ) return { 6, "Only Z Gyro Axis is Equal" };
             if ( !X && !Y && !Z ) return { -1, "No Gyro Axis are Equal" };
-            
+
             return { 0, "All Gyro Axis are Equal " };
 
         }
@@ -291,13 +295,21 @@ class SampleCollection {
 
         }
 
+        SampleCollection( SampleCollection &sc ) { // Copy Constructor
+
+            Samples = new Sample[ SampleAmount ];
+            *Samples = *sc.Samples;
+            size = sc.size;
+
+        }
+
         Sample* Get_Sample_Array() { return Samples; }
 
         int Size() { return size; }
 
         Sample Get_Sample( int index ) { return Samples[ index ]; }
 
-        Result Record_Samples() { 
+        Result Record_Samples() {
 
             for ( int i = 0; i < size; i++ ) Samples[i] = Sample();
 
@@ -346,7 +358,7 @@ class SampleCollection {
 
             if ( C_N_Tilt.error > 0 ) eq += NormalizedGyroEqualityWeight;
             else if ( C_N_Tilt.error < 0 ) eq -= NormalizedGyroEqualityWeight;
-            
+
             if ( eq > EqualitySumMax ) return { 1, msg };
             if ( eq < EqualitySumMin ) return { -1, msg };
 

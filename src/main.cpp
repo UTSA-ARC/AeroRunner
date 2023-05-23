@@ -8,10 +8,11 @@
  *
  */
 
+#include "setup.h"
 #include "functions.h"
+#include "samples.h"
 
-INTData prev_values;
-int apogee;
+int apogee = 0;
 
 void setup() {
     // Find hexadecimal representation of accelerometer range based on decimal global variable AccelRange defined above //
@@ -24,7 +25,7 @@ void setup() {
     // ----------------------------------------------------------------
 
     // Builtin SD Card Initialization
-    Serial.print("Initializing SD card...");
+    Serial.print( "Initializing SD card..." );
 
     while ( !SD.begin( BUILTIN_SDCARD ) ) {
 
@@ -49,17 +50,17 @@ void setup() {
 
     // ----------------------------------------------------------------
 
-    Serial.println( "Initializing MPU6050..." );
+    // Serial.println( "Initializing MPU6050..." );
 
-    Wire.beginTransmission( MPU );
-    while ( ( Wire.endTransmission() != 0 ) ) {
+    // Wire.beginTransmission( MPU );
+    // while ( ( Wire.endTransmission() != 0 ) ) {
 
-        Serial.println( "Could not find MPU\n" );
-        delay( 2000 );
+    //     Serial.println( "Could not find MPU\n" );
+    //     delay( 2000 );
 
-    }
+    // }
 
-    Serial.println( "Initialized MPU6050! ");
+    // Serial.println( "Initialized MPU6050! ");
 
     // ----------------------------------------------------------------
 
@@ -71,51 +72,47 @@ void setup() {
 
     // ----------------------------------------------------------------
 
-    // Pin configuration
-    pinMode( PinCS, OUTPUT );
-    pinMode( PinMOSI, OUTPUT );
-
-    // ----------------------------------------------------------------
-
     // Set Ranges
-    while ( Set_Accel_Range( AccelRange ) != 0 ) {
+    // while ( Set_Accel_Range( AccelRange ) != 0 ) {
 
-        Serial.println( "Please Fix Accel Range" );
-        delay( 2000 );
+    //     Serial.println( "Please Fix Accel Range" );
+    //     delay( 2000 );
 
-        }
+    //     }
 
-    while ( Set_Gyro_Range( GyroRange ) != 0 ) {
+    // while ( Set_Gyro_Range( GyroRange ) != 0 ) {
 
-        Serial.println( "Please Fix Gyro Range" );
-        delay( 2000 );
+    //     Serial.println( "Please Fix Gyro Range" );
+    //     delay( 2000 );
 
-    }
+    // }
 
     // ----------------------------------------------------------------
 
-    Init_MPU();            // Initialize MPU
+    // Init_MPU();            // Initialize MPU
 
-    Configure_MPU( 0x1C ); // Config Register
+    // Configure_MPU( 0x1C ); // Config Register
 
-    Configure_Gyro( 0x1B ); // Config Register
+    // Configure_Gyro( 0x1B ); // Config Register
 
     // ----------------------------------------------------------------
 
     Init_CSV(); // Initialize CSV
 
     // ----------------------------------------------------------------
-    
-    INTData values = prev_values = Get_All_Values_INT();
-    Result Check_Systems_result = Check_Systems( values, prev_values );
-    while ( Check_Systems_result.error != 0 ) {
 
-        Serial.println( Check_Systems_result.message );
+    Data init_values = Get_All_Values(); // Set Initial Values
+    delay( InitValueDelay * 1000 ); // Delay to compare data
+    Data values = Get_All_Values(); // Get Current Values
+    Result Check_Systems_Result = Check_Systems( values, init_values );
+    while ( Check_Systems_Result.error != 0 ) {
 
-        prev_values = values;
-        values = Get_All_Values_INT();
+        Serial.println( Check_Systems_Result.message );
 
-        Check_Systems_result = Check_Systems( values, prev_values );
+        init_values = values;
+        values = Get_All_Values();
+
+        Check_Systems_Result = Check_Systems( values, init_values );
 
     }
 
@@ -129,47 +126,67 @@ void setup() {
 
 void loop() {
 
-    INTData values = Get_All_Values_INT(); // Get all data values
+    SampleCollection Samples; // Get all data values
 
-    Result alt_result = Check_Altitude( values.altitude, prev_values.altitude, apogee );
-    Result pres_result = Check_Pressure_Delta( values.pressure, prev_values.pressure );
-    Result tilt_result = Check_Tilt( values.normalized_gyro, prev_values.normalized_gyro );
-    Result accel_result = Check_Accel( values.normalized_accel, prev_values.normalized_accel, alt_result.error );
+    Sample* sample_arr = Samples.Get_Sample_Array();
+    const int sample_size = Samples.Size();
 
-    values.message = alt_result.message + ',' +
-                      pres_result.message + ',' +
-                      tilt_result.message + ',' +
-                      accel_result.message + ',';
+    String output;
 
-    switch ( alt_result.error ) {
+    int sample_movement[sample_size - 1]; // Comparison array
 
-        case 0: // Reached Safe Altitude
+    for ( int i = 1; i < sample_size; i++ ) { sample_movement[i - 1] = Samples.Compare_Sample( ( i - 1 ), i ).error; } // Find movement of samples
 
-            Arm_Parachute( 0 ); // Deploy Main
-            Arm_Parachute( 1 ); // Deploy Drouge
-            break;
+    if ( !Paras_Armed[0] ) {
 
-        case 1: // Reached Apogee
+        for ( int i = 0; i < sample_size; i++ ) {
 
-            Launch_Parachute( 1 ); // Launch Drouge
-            apogee = values.altitude;
-            break;
+            Result alt_result = Check_Altitude( sample_arr[i].Get_Avg_Data().altitude );
+            output += alt_result.message + ',';
 
-        case 2: // Reached Main Parachute Altitude
+            if ( alt_result.error == 0 ) { Arm_Parachute( 0 ); Arm_Parachute( 1 ); break; }
 
-            Launch_Parachute( 0 ); // Launch Main
-            break;
-
-        default: // If no special case
-            break;
+        }
 
     }
 
-    prev_values = values;
+    if ( Paras_Armed[1] && apogee == 0 ) {
 
-    // Print & Save All Values
-    Record_Data( values );
-    delay(1000); //! FOR JUST EASY READING
+        int i = 0;
+        while ( sample_movement[ i ] > 0 && i < ( sample_size - 2 ) ) i++;
+
+        if ( sample_movement[ i + 1 ] < 0 ) {
+
+            Result launch_result = Launch_Parachute( 1 ); // Drouge
+            sample_arr[ i + 1 ].Append_Message( ( launch_result.message + ',' ) );
+
+        }
+        apogee = sample_arr[ i + 1 ].Get_Avg_Data().altitude;
+
+    }
+
+    if ( apogee > 0 ) {
+
+        for ( int i = 0; i < sample_size; i++ ) {
+
+            Result alt_result = Check_Main_Para( sample_arr[i].Get_Avg_Data().altitude );
+            if ( alt_result.error == 1 ) {
+
+                Launch_Parachute( 0 );
+                sample_arr[ i ].Append_Message( ( alt_result.message + ',' ) );
+                break;
+
+            }
+
+
+
+        }
+
+    }
+
+    for ( int i = 0; i < sample_size; i++ ) Record_Data( &sample_arr->Get_Avg_Data() ); // Print & Save All Values
+
+    delay( ConsoleDelay * 1000 ); //! FOR JUST EASY READING
 
 }
 

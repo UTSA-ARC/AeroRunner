@@ -1,5 +1,7 @@
+#pragma once
 
-#include "setup.h"
+#include "globals.h"
+#include "params/function_params.h"
 
 // -------------------------Vector Functions-----------------------
 
@@ -12,17 +14,17 @@ int* Get_Raw_Accel() { // Returns an int vector of the raw acceleration Values f
 
     static int result[ 3 ];
 
-    for ( int i = 0; i < 3; i++ ) result[ i ] = ( ( Wire.read() << 8 | Wire.read() ) * MULT ); // Raw values
+    for ( int i = 0; i < 3; i++ ) result[ i ] = ( Wire.read() << 8 | Wire.read() ); // Raw values
 
     return result;
 
 }
 
-int* Get_Normalized_Accel( int* raw_accel ) { // Returns the normalized acceleration Values from the MPU
+float* Get_Normalized_Accel( int* raw_accel ) { // Returns the normalized acceleration Values from the MPU
 
-    static int normalized_accel[ 3 ];
+    static float normalized_accel[ 3 ];
 
-    for ( int i = 0; i < 3; i++ ) normalized_accel[ i ] = raw_accel[ i ] / ALSB_Sensitivity ;
+    for ( int i = 0; i < 3; i++ ) normalized_accel[ i ] = raw_accel[ i ] / ( ALSB_Sensitivity / 1.0f );
 
     return normalized_accel;
 
@@ -37,17 +39,17 @@ int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyrospocic Val
 
     static int raw_gyro[ 3 ];
 
-    for ( int i = 0; i < 3; i++ ) raw_gyro[ i ] = ( Wire.read() << 8 | Wire.read() ) * MULT;
+    for ( int i = 0; i < 3; i++ ) raw_gyro[ i ] = ( Wire.read() << 8 | Wire.read() );
 
     return raw_gyro;
 
 }
 
-int* Get_Normalized_Gyro( int* raw_gyro ) { // Returns an int vector containing the normalized gyrospocic Values from the MPU
+float* Get_Normalized_Gyro( int* raw_gyro ) { // Returns an int vector containing the normalized gyrospocic Values from the MPU
 
-    static int normalized_gyro[ 3 ];
+    static float normalized_gyro[ 3 ];
 
-    for ( int i = 0; i < 3; i++ ) normalized_gyro[ i ] = raw_gyro[ 0 ] / GLSB_Sensitivity;
+    for ( int i = 0; i < 3; i++ ) normalized_gyro[ i ] = raw_gyro[ 0 ] / ( GLSB_Sensitivity / 1.0f );
 
     return normalized_gyro;
 
@@ -55,16 +57,16 @@ int* Get_Normalized_Gyro( int* raw_gyro ) { // Returns an int vector containing 
 
 // -----------------------Struct Functions------------------------------------------
 
-INTData Get_All_Values_INT() {
+Data Get_All_Values() {
 
-    INTData data;
+    Data data;
 
     int i = 0;
     // Get Values from Accelorometer
     int *raw_a_ptr = Get_Raw_Accel();
     int *raw_g_ptr = Get_Raw_Gyro();
-    int *norm_a_ptr = Get_Normalized_Accel( raw_a_ptr );
-    int *norm_g_ptr = Get_Normalized_Gyro( raw_g_ptr );
+    float *norm_a_ptr = Get_Normalized_Accel( raw_a_ptr );
+    float *norm_g_ptr = Get_Normalized_Gyro( raw_g_ptr );
 
     for ( i = 0; i < 3; i++ ) {
 
@@ -84,9 +86,9 @@ INTData Get_All_Values_INT() {
 
         );
 
-    data.temperature = static_cast<int>( bmp.temperature * MULT );
-    data.pressure = static_cast<int>( bmp.pressure * MULT );
-    data.altitude = static_cast<int>( bmp.readAltitude( SEALEVELPRESSURE_HPA ) * MULT );
+    data.temperature = ( bmp.temperature  );
+    data.pressure = ( bmp.pressure  );
+    data.altitude = ( bmp.readAltitude( SEALEVELPRESSURE_HPA )  );
 
     return data;
 
@@ -94,54 +96,55 @@ INTData Get_All_Values_INT() {
 
 // -----------------------Data Handling Functions-----------------------------------
 
-void Print_All_Values( INTData& Values ) { // Print the Values on the serial monitor
+void Print_All_Values( SampleData *Values ) { // Print the Values on the serial monitor
 
     Serial.begin( 115200 ); // Open Serial Port
 
     String output = ""; // init output string
 
-    output.append( "Time ( S ): " + Values.time + '\n' );
+    output.append( "Time ( S ): " + Values->time + '\n' );
+    output.append( "Time End ( S ) " + Values->timeEnd + '\n');
 
     output.append(
 
         "Raw Acceleration ( X, Y, Z ): " +
-        String( Values.raw_accel[ 0 ] / ( MULT * 1.0f ), 2 ) + ',' +
-        String( Values.raw_accel[ 1 ] / ( MULT * 1.0f ), 2 ) + ',' +
-        String( Values.raw_accel[ 2 ]    / ( MULT * 1.0f ), 2 ) + '\n'
+        String( Values->raw_accel[ 0 ] / 1.0f, 2 ) + ',' +
+        String( Values->raw_accel[ 1 ] / 1.0f, 2 ) + ',' +
+        String( Values->raw_accel[ 2 ] / 1.0f, 2 ) + '\n'
 
         );
 
     output.append(
 
         "Normalized Acceleration ( X, Y, Z ): " +
-        String( Values.normalized_accel[ 0 ] / ( MULT * 1.0f ), 2 ) + ',' +
-        String( Values.normalized_accel[ 1 ] / ( MULT * 1.0f ), 2 ) + ',' +
-        String( Values.normalized_accel[ 2 ] / ( MULT * 1.0f ), 2 ) + '\n'
+        String( Values->normalized_accel[ 0 ] / 1.0f, 2 ) + ',' +
+        String( Values->normalized_accel[ 1 ] / 1.0f, 2 ) + ',' +
+        String( Values->normalized_accel[ 2 ] / 1.0f, 2 ) + '\n'
 
         );
 
     output.append(
 
         "Raw GyroRange ( X, Y, Z ): " +
-        String( Values.raw_gyro[ 0 ] / ( MULT * 1.0f ), 2 ) + ',' +
-        String( Values.raw_gyro[ 1 ] / ( MULT * 1.0f ), 2 ) + ',' +
-        String( Values.raw_gyro[ 2 ] / ( MULT * 1.0f ), 2 ) + '\n'
+        String( Values->raw_gyro[ 0 ] / 1.0f, 2 ) + ',' +
+        String( Values->raw_gyro[ 1 ] / 1.0f, 2 ) + ',' +
+        String( Values->raw_gyro[ 2 ] / 1.0f, 2 ) + '\n'
 
         );
 
     output.append(
 
         "Normalized Gyro Range ( X, Y, Z ): " +
-        String( Values.normalized_gyro[ 0 ] / ( MULT * 1.0f ), 2 ) + ',' +
-        String( Values.normalized_gyro[ 1 ] / ( MULT * 1.0f ), 2 ) + ',' +
-        String( Values.normalized_gyro[ 2 ] / ( MULT * 1.0f ), 2 ) + '\n'
+        String( Values->normalized_gyro[ 0 ] / 1.0f, 2 ) + ',' +
+        String( Values->normalized_gyro[ 1 ] / 1.0f, 2 ) + ',' +
+        String( Values->normalized_gyro[ 2 ] / 1.0f, 2 ) + '\n'
 
         );
 
     output.append( "\n\nNow reading BMP390...\n" );
-    output.append( "Tempurature ( C ): " + String( Values.temperature / ( MULT * 1.0f ) ) + '\n' );
-    output.append( "Pressure ( kPa ): " + String( Values.pressure / ( MULT * 1.0f ) ) + '\n' );
-    output.append( "Altitude ( m ): " + String( Values.altitude / ( MULT * 1.0f ) ) + '\n' );
+    output.append( "Tempurature ( C ): " + String( Values->temperature / 1.0f ) + '\n' );
+    output.append( "Pressure ( kPa ): " + String( Values->pressure / 1.0f ) + '\n' );
+    output.append( "Altitude ( m ): " + String( Values->altitude / 1.0f ) + '\n' );
 
     Serial.println( output ); // Print output to screen
 
@@ -149,12 +152,13 @@ void Print_All_Values( INTData& Values ) { // Print the Values on the serial mon
 
 }
 
-void Write_All_Values_To_SD( INTData& Values ) { // Records values to Sd card
+void Write_All_Values_To_SD( SampleData* Values ) { // Records values to Sd card
 
     String file_string = String( month() + '-' + day() + '-' + year() ) + ".csv";
     File myFile = SD.open( file_string.c_str(), FILE_WRITE );
 
-    //* Time ( seconds ),
+    //* Time ( RTC ),
+    //* TimeEnd ( RTC ),
     //* Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),
     //* Ax ( g ),Ay ( g ),Az ( g ),
     //* Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),
@@ -164,25 +168,25 @@ void Write_All_Values_To_SD( INTData& Values ) { // Records values to Sd card
 
     String output = "";
 
-    output += ( Values.time + ',' );
+    output += ( Values->time + ',' );
 
-    int i;
+    output += ( Values->timeEnd );
 
-    for ( i = 0; i < 3; i++ ) output += ( String( Values.raw_accel[ i ] / ( MULT * 1.0f ) ) + ',' );
+    for ( int i = 0; i < 3; i++ ) output += ( String( Values->raw_accel[ i ] / 1.0f ) + ',' );
 
-    for ( i = 0; i < 3; i++ ) output += ( String( Values.normalized_accel[ i ] / ( MULT * 1.0f ) ) + ',' );
+    for ( int i = 0; i < 3; i++ ) output += ( String( Values->normalized_accel[ i ] / 1.0f ) + ',' );
 
-    for ( i = 0; i < 3; i++ ) output += ( String( Values.raw_gyro[ i ] / ( MULT * 1.0f ) ) + ',' );
+    for ( int i = 0; i < 3; i++ ) output += ( String( Values->raw_gyro[ i ] / 1.0f ) + ',' );
 
-    for ( i = 0; i < 3; i++ ) output += ( String( Values.normalized_gyro[ i ] / ( MULT * 1.0f ) ) + ',' );
+    for ( int i = 0; i < 3; i++ ) output += ( String( Values->normalized_gyro[ i ] / 1.0f ) + ',' );
 
-    output += ( String( Values.temperature / ( MULT * 1.0f ) ) + ',' );
+    output += ( String( Values->temperature / 1.0f ) + ',' );
 
-    output += ( String( Values.pressure / ( MULT * 1.0f ) ) + ',' );
+    output += ( String( Values->pressure / 1.0f ) + ',' );
 
-    output += ( String( Values.altitude / ( MULT * 1.0f ) ) + ',' );
+    output += ( String( Values->altitude / 1.0f ) + ',' );
 
-    output += ( Values.message );
+    output += ( Values->message );
 
     myFile.println( output );
 
@@ -190,7 +194,7 @@ void Write_All_Values_To_SD( INTData& Values ) { // Records values to Sd card
 
 }
 
-void Record_Data( INTData& Values ) { // Prints data to screen and saves it to file
+void Record_Data( SampleData *Values ) { // Prints data to screen and saves it to file
 
     Print_All_Values( Values );
     Write_All_Values_To_SD( Values );
@@ -214,9 +218,10 @@ Result Launch_Parachute( int schute ) { // Launches Parachute
             if ( Paras_Armed[ schute ] ) {
 
                 digitalWrite( PinMain, HIGH );
+                Paras_Armed[ schute ] = 0;
                 return { 0, "!!MAIN SCHUTE LAUNCHED!!" };
 
-                }
+            }
 
             else return { 1, "MAIN Schute Not Deployed!" };
 
@@ -240,20 +245,26 @@ Result Launch_Parachute( int schute ) { // Launches Parachute
 
 // -----------------------Internal Trigger Functions--------------------------------
 
-Result Check_Altitude( int altitude, int prev_altitude, int apogee ) { // Checks if altitude is safe/at apogee
+Result Check_Main_Para( int altitude ) {
 
-    if ( altitude > SafeAltitude * MULT ) {
+    if ( altitude <= MainParaAlt ) return { 1, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
+    return { -1, "Not At Main Para Alt" };
 
-        if ( altitude <= prev_altitude ) {
+}
 
-            if ( altitude >= static_cast<int>( prev_altitude * ( 1 - ATolerance ) ) ) return { 1, "!!AT APOGEE!!" }; // Around Apogee
+Result Check_Altitude( int altitude, int prev_altitude=0, int apogee=0 ) { // Checks if altitude is safe/at apogee
 
-            if ( ( altitude <= apogee - MainParaADelta ) &&
-                 ( altitude >= apogee - static_cast<int>( MainParaADelta * ( 1 + ATolerance ) ) * MULT ) ) return { 2, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
+    if ( altitude > SafeAltitude  ) {
 
-        }
+        // if ( altitude <= prev_altitude ) {
 
-        else return { 0, "Safe Altitude" }; // Safe
+        //     if ( altitude >= ( prev_altitude * ( 1 - AlTolerance ) ) ) return { 1, "!!AT APOGEE!!" }; // Around Apogee
+        //     if ( altitude <= MainParaAlt ) return { 2, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
+
+        // }
+
+        // else
+        return { 0, "Safe Altitude" }; // Safe
 
     }
 
@@ -261,7 +272,7 @@ Result Check_Altitude( int altitude, int prev_altitude, int apogee ) { // Checks
 
 }
 
-Result Check_Pressure_Delta( int pressure, int prev_pressure ) { // Checks pressure delta
+Result Check_Pressure_Delta( float pressure, float prev_pressure ) { // Checks pressure delta
 
     int H = prev_pressure * ( 1 + PTolerance ); // Upperbound
     int L = prev_pressure * ( 1 - PTolerance ); // Lowerbound
@@ -274,8 +285,8 @@ Result Check_Pressure_Delta( int pressure, int prev_pressure ) { // Checks press
 
 }
 
-Result Check_Pressure( int pressure, bool surface = 0 ) {
- 
+Result Check_Pressure( float pressure, bool surface = 0 ) {
+
     if ( surface ) {
 
         int H = SurfacePressure * ( 1 + SurfPTolerance ); // Upperbound
@@ -291,41 +302,41 @@ Result Check_Pressure( int pressure, bool surface = 0 ) {
 
 }
 
-Result Check_Tilt( int* gyro, int* prev_gyro, bool surface = false ) { // Checks if tilt is safe
+Result Check_Tilt( float* gyro, float* prev_gyro, bool surface = false ) { // Checks if tilt is safe
 
-    int H[ 3 ] = { // Upperbounds (X,Y,Z)
+    float H[ 3 ] = { // Upperbounds (X,Y,Z)
 
-        static_cast<int>( prev_gyro[ 0 ] * ( 1 + TTolerance ) ),
-        static_cast<int>( prev_gyro[ 1 ] * ( 1 + TTolerance ) ),
-        static_cast<int>( prev_gyro[ 2 ] * ( 1 + TTolerance ) )
+        ( prev_gyro[ 0 ] * ( 1 + TTolerance ) ),
+        ( prev_gyro[ 1 ] * ( 1 + TTolerance ) ),
+        ( prev_gyro[ 2 ] * ( 1 + TTolerance ) )
 
         };
 
-    int L[ 3 ] = { // Lowerbounds (X,Y,Z)
+    float L[ 3 ] = { // Lowerbounds (X,Y,Z)
 
-        static_cast<int>( prev_gyro[ 0 ] * ( 1 - TTolerance ) ),
-        static_cast<int>( prev_gyro[ 1 ] * ( 1 - TTolerance ) ),
-        static_cast<int>( prev_gyro[ 2 ] * ( 1 - TTolerance ) )
+        ( prev_gyro[ 0 ] * ( 1 - TTolerance ) ),
+        ( prev_gyro[ 1 ] * ( 1 - TTolerance ) ),
+        ( prev_gyro[ 2 ] * ( 1 - TTolerance ) )
 
         };
 
     if ( surface ) {
 
-        if ( abs( gyro[ 0 ] ) > SurfaceTiltX * MULT ) return { -10, "!!DANGEROUS X-AXIS SURFACE TILT!!" };
+        if ( abs( gyro[ 0 ] ) > SafeSurfaceTiltX ) return { -10, "!!DANGEROUS X-AXIS SURFACE TILT!!" };
 
-        if ( abs( gyro[ 1 ] ) > SurfaceTiltY * MULT ) return { -20, "!!DANGEROUS Y-AXIS SURFACE TILT!!" };
+        if ( abs( gyro[ 1 ] ) > SafeSurfaceTiltY ) return { -20, "!!DANGEROUS Y-AXIS SURFACE TILT!!" };
 
-        if ( abs( gyro[ 2 ] ) > SurfaceTiltZ * MULT ) return { -30, "!!DANGEROUS Z-AXIS SURFACE TILT!!" };
+        if ( abs( gyro[ 2 ] ) > SafeSurfaceTiltZ ) return { -30, "!!DANGEROUS Z-AXIS SURFACE TILT!!" };
 
         return { 0, "Safe Surface Tilt" };
 
     }
 
-    if ( abs( gyro[ 0 ] ) > SafeTiltX * MULT ) return { -1, "!!DANGEROUS X-AXIS TILT!!" };
+    if ( abs( gyro[ 0 ] ) > SafeTiltX ) return { -1, "!!DANGEROUS X-AXIS TILT!!" };
 
-    if ( abs( gyro[ 1 ] ) > SafeTiltY * MULT ) return { -2, "!!DANGEROUS Y-AXIS TILT!!" };
+    if ( abs( gyro[ 1 ] ) > SafeTiltY ) return { -2, "!!DANGEROUS Y-AXIS TILT!!" };
 
-    if ( abs( gyro[ 2 ] ) > SafeTiltZ * MULT ) return { -3, "!!DANGEROUS Z-AXIS TILT!!" };
+    if ( abs( gyro[ 2 ] ) > SafeTiltZ ) return { -3, "!!DANGEROUS Z-AXIS TILT!!" };
 
     if ( gyro[ 0 ] < L[ 0 ] || gyro[ 0 ] > H[ 0 ] ) return { 1, "X-AXIS TILT DETECTED" };
 
@@ -337,23 +348,23 @@ Result Check_Tilt( int* gyro, int* prev_gyro, bool surface = false ) { // Checks
 
 }
 
-Result Check_Accel( int* accel, int* prev_accel, bool surface = false ) { // Checks if accel is correct
+Result Check_Accel( float* accel, float* prev_accel, bool surface = false ) { // Checks if accel is correct
 
     if ( surface ) {
 
-        int Hs[ 3 ] = { // Surface Upperbounds (X,Y,Z)
+        float Hs[ 3 ] = { // Surface Upperbounds (X,Y,Z)
 
-            static_cast<int>( SurfaceAccelX * ( 1 + ATolerance ) ) == 0 ? ATolerance : ( SurfaceAccelX * ( 1 + ATolerance ) ),
-            static_cast<int>( SurfaceAccelY * ( 1 + ATolerance ) ) == 0 ? ATolerance : ( SurfaceAccelY * ( 1 + ATolerance ) ),
-            static_cast<int>( SurfaceAccelZ * ( 1 + ATolerance ) ) == 0 ? ATolerance : ( SurfaceAccelZ * ( 1 + ATolerance ) )
+            SurfaceAccelX * ( 1 + AccTolerance ) == 0 ? AccTolerance : SurfaceAccelX * ( 1 + AccTolerance ),
+            SurfaceAccelY * ( 1 + AccTolerance ) == 0 ? AccTolerance : SurfaceAccelY * ( 1 + AccTolerance ),
+            SurfaceAccelZ * ( 1 + AccTolerance ) == 0 ? AccTolerance : SurfaceAccelZ * ( 1 + AccTolerance )
 
         };
 
-        int Ls[ 3 ] = {
+        float Ls[ 3 ] = {
 
-            static_cast<int>( SurfaceAccelX * ( 1 - ATolerance ) ) == 0 ? -1 * ATolerance : ( SurfaceAccelX * ( 1 - ATolerance ) ),
-            static_cast<int>( SurfaceAccelY * ( 1 - ATolerance ) ) == 0 ? -1 * ATolerance : ( SurfaceAccelY * ( 1 - ATolerance ) ),
-            static_cast<int>( SurfaceAccelZ * ( 1 - ATolerance ) ) == 0 ? -1 * ATolerance : ( SurfaceAccelZ * ( 1 - ATolerance ) )
+            SurfaceAccelX * ( 1 - AccTolerance ) == 0 ? -1 * AccTolerance : SurfaceAccelX * ( 1 - AccTolerance ),
+            SurfaceAccelY * ( 1 - AccTolerance ) == 0 ? -1 * AccTolerance : SurfaceAccelY * ( 1 - AccTolerance ),
+            SurfaceAccelZ * ( 1 - AccTolerance ) == 0 ? -1 * AccTolerance : SurfaceAccelZ * ( 1 - AccTolerance )
 
         };
 
@@ -367,27 +378,27 @@ Result Check_Accel( int* accel, int* prev_accel, bool surface = false ) { // Che
 
     else {
 
-        int H[ 3 ] = { // Upperbounds (X,Y,Z)
+        float H[ 3 ] = { // Upperbounds (X,Y,Z)
 
-            static_cast<int>( prev_accel[ 0 ] * ( 1 + ATolerance ) ),
-            static_cast<int>( prev_accel[ 1 ] * ( 1 + ATolerance ) ),
-            static_cast<int>( prev_accel[ 2 ] * ( 1 + ATolerance ) )
-
-        };
-
-        int L[ 3 ] = { // Lowerbounds (X,Y,Z)
-
-            static_cast<int>( prev_accel[ 0 ] * ( 1 - ATolerance ) ),
-            static_cast<int>( prev_accel[ 1 ] * ( 1 - ATolerance ) ),
-            static_cast<int>( prev_accel[ 2 ] * ( 1 - ATolerance ) )
+            prev_accel[ 0 ] * ( 1 + AccTolerance ) ,
+            prev_accel[ 1 ] * ( 1 + AccTolerance ) ,
+            prev_accel[ 2 ] * ( 1 + AccTolerance )
 
         };
 
-        if ( abs( accel[ 0 ] ) > SafeAccelX * MULT ) return { -1, "!!DANGEROUS X-AXIS ACCELERATION!!" };
+        float L[ 3 ] = { // Lowerbounds (X,Y,Z)
 
-        if ( abs( accel[ 1 ] ) > SafeAccelY * MULT ) return { -2, "!!DANGEROUS Y-AXIS ACCEL!!" };
+            prev_accel[ 0 ] * ( 1 - AccTolerance ),
+            prev_accel[ 1 ] * ( 1 - AccTolerance ),
+            prev_accel[ 2 ] * ( 1 - AccTolerance )
 
-        if ( abs( accel[ 2 ] ) > SafeAccelX * MULT ) return { -3, "!!DANGEROUS Z-AXIS ACCEL!!" };
+        };
+
+        if ( abs( accel[ 0 ] ) > SafeAccelX ) return { -1, "!!DANGEROUS X-AXIS ACCELERATION!!" };
+
+        if ( abs( accel[ 1 ] ) > SafeAccelY ) return { -2, "!!DANGEROUS Y-AXIS ACCEL!!" };
+
+        if ( abs( accel[ 2 ] ) > SafeAccelX ) return { -3, "!!DANGEROUS Z-AXIS ACCEL!!" };
 
         if ( accel[ 0 ] < L[ 0 ] || accel[ 0 ] > H[ 0 ] ) return { 1, "EXTRA X-AXIS ACCEL DETECTED" };
 
@@ -403,10 +414,10 @@ Result Check_Accel( int* accel, int* prev_accel, bool surface = false ) { // Che
 
 // -----------------------External Trigger Functions--------------------------------
 
-Result Check_Systems( INTData Values, INTData Prev_Values ) { // Checks if systems are safe
+Result Check_Systems( Data Values, Data Prev_Values ) { // Checks if systems are safe
 
     //* Will trigger LED based on error code
-    
+
     Result results[ 6 ];
 
     pinMode( PinSystemsGood, OUTPUT );
@@ -416,7 +427,7 @@ Result Check_Systems( INTData Values, INTData Prev_Values ) { // Checks if syste
 
     // Check if connected to sufficient voltage
     results[ 0 ] = Check_Input_Voltage( analogRead( PinInputVoltage ) );
-    
+
     // Check if VBAT is Connected
     results[ 1 ] = Check_VBAT_Connection();
 
@@ -424,9 +435,11 @@ Result Check_Systems( INTData Values, INTData Prev_Values ) { // Checks if syste
 
     results[ 3 ] = Check_Pressure( Values.pressure, true );
 
-    results[ 4 ] = Check_Tilt( Values.normalized_gyro, Prev_Values.normalized_gyro, true );
+    // results[ 4 ] = Check_Tilt( Values.normalized_gyro, Prev_Values.normalized_gyro, true );
+    results[ 4 ] = { 0, "-" }; //! MPU no werk :'(
 
-    results[ 5 ] = Check_Accel( Values.normalized_accel, Prev_Values.normalized_accel, true );
+    // results[ 5 ] = Check_Accel( Values.normalized_accel, Prev_Values.normalized_accel, true );
+    results[ 5 ] = { 0, "-" }; //! MPU no werk :'(
 
     for ( int i = 0; i < 4; i++ ) {
 
@@ -434,7 +447,7 @@ Result Check_Systems( INTData Values, INTData Prev_Values ) { // Checks if syste
 
             digitalWrite( PinSystemsGood, 0 );
             digitalWrite( PinSystemsBad, 1 );
-            
+
             return { -1, ( "!!SYSTEMS BAD!! - " + results[ i ].message ) };
 
         }

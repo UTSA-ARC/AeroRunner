@@ -230,6 +230,7 @@ Result Launch_Parachute( int schute ) { // Launches Parachute
             if ( Paras_Armed[ schute ] ) {
 
                 digitalWrite( PinDrouge, HIGH );
+                Paras_Armed[ schute ] = 0;
                 return { 0, "!!DROUGE SCHUTE LAUNCHED" };
 
             }

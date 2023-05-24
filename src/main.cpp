@@ -13,6 +13,8 @@
 #include "samples.h"
 
 int apogee = 0;
+int SurfaceAlt = 0;
+bool landed = false;
 
 void setup() {
     // Find hexadecimal representation of accelerometer range based on decimal global variable AccelRange defined above //
@@ -103,6 +105,8 @@ void setup() {
 
     Data init_values = Get_All_Values(); // Set Initial Values
     delay( InitValueDelay * 1000 ); // Delay to compare data
+    SurfaceAlt = init_values.altitude; // Get surface altitude (Assuming Setup() will be called on surface ONLY)
+
     Data values = Get_All_Values(); // Get Current Values
     Result Check_Systems_Result = Check_Systems( values, init_values );
     while ( Check_Systems_Result.error != 0 ) {
@@ -125,6 +129,8 @@ void setup() {
 }
 
 void loop() {
+
+    if ( landed ) return; // Do nothing if landed
 
     SampleCollection Samples; // Get all data values
 
@@ -150,7 +156,7 @@ void loop() {
 
     }
 
-    if ( Paras_Armed[1] && apogee == 0 ) {
+    if ( Paras_Armed[ 1 ] && apogee == 0 ) {
 
         int i = 0;
         while ( sample_movement[ i ] > 0 && i < ( sample_size - 2 ) ) i++;
@@ -167,18 +173,35 @@ void loop() {
 
     if ( apogee > 0 ) {
 
-        for ( int i = 0; i < sample_size; i++ ) {
+        if ( Paras_Armed[ 0 ] ) {
+            for ( int i = 0; i < sample_size; i++ ) {
 
-            Result alt_result = Check_Main_Para( sample_arr[i].Get_Avg_Data().altitude );
-            if ( alt_result.error == 1 ) {
+                Result alt_result = Check_Main_Para( sample_arr[i].Get_Avg_Data().altitude );
+                if ( alt_result.error == 1 ) {
 
-                Launch_Parachute( 0 );
-                sample_arr[ i ].Append_Message( ( alt_result.message + ',' ) );
-                break;
+                    Launch_Parachute( 0 );
+                    sample_arr[ i ].Append_Message( ( alt_result.message + ',' ) );
+                    break;
+
+                }
 
             }
 
+        }
 
+        else {
+
+            for ( int i = 0; i < sample_size; i++ ) {
+                
+                if ( sample_arr[i].Get_Avg_Data().altitude <= ( SurfaceAlt + SurfaceAltBias ) ) {
+                    
+                    landed = true;
+                    sample_arr[ i ].Append_Message( "!!LANDED VEHICLE WOOOOOO!!" );
+                    break;
+
+                }
+
+            }
 
         }
 

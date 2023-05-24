@@ -21,4 +21,6 @@
 
 #define ConsoleDelay 1 // In seconds
 
+#define ExitSetup 20 // In seconds
+
 #define SurfaceAltBias 10 //In meters

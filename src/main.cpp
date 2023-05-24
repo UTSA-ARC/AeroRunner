@@ -145,40 +145,42 @@ void loop() {
 
         for ( int i = 0; i < sample_size; i++ ) { // Iterate through all samples
 
-            Result alt_result = Check_Altitude( sample_arr[i].Get_Avg_Data().altitude ); // 
-            sample_arr[ i ].Append_Message( ( alt_result.message + ',' ) );
+            Result alt_result = Check_Altitude( sample_arr[i].Get_Avg_Data().altitude ); // Check if at Safe Arming Altitude
+            sample_arr[ i ].Append_Message( ( alt_result.message + ',' ) ); // Record Result
 
-            if ( alt_result.error == 0 ) { Arm_Parachute( 0 ); Arm_Parachute( 1 ); break; }
+            if ( alt_result.error == 0 ) { Arm_Parachute( 0 ); Arm_Parachute( 1 ); break; } // If safe, arm Paras
 
         }
 
     }
 
-    if ( Paras_Armed[ 1 ] && apogee == 0 ) {
+    if ( Paras_Armed[ 1 ] && apogee == 0 ) { // If Drouge Para is armed and apogee is not set
 
         int i = 0;
-        while ( sample_movement[ i ] > 0 && i < ( sample_size - 2 ) ) i++;
+        while ( sample_movement[ i ] > 0 && i < ( sample_size - 2 ) ) i++; // Iterate through Comparison array until reading 0 or -1
 
-        if ( sample_movement[ i + 1 ] < 0 ) {
+        if ( sample_movement[ i + 1 ] < 0 ) { // If next index is -1
 
-            Result launch_result = Launch_Parachute( 1 ); // Drouge
-            sample_arr[ i + 1 ].Append_Message( ( launch_result.message + ',' ) );
+            Result launch_result = Launch_Parachute( 1 ); // Launch Drouge
+            sample_arr[ i + 1 ].Append_Message( ( launch_result.message + ',' ) ); // Record result
 
         }
-        apogee = sample_arr[ i + 1 ].Get_Avg_Data().altitude;
+
+        apogee = sample_arr[ i + 1 ].Get_Avg_Data().altitude; // Set apogee
 
     }
 
-    if ( apogee > 0 ) {
+    if ( apogee > 0 ) { // If apogee is set
 
-        if ( Paras_Armed[ 0 ] ) {
-            for ( int i = 0; i < sample_size; i++ ) {
+        if ( Paras_Armed[ 0 ] ) { // If Main Para is armed
 
-                Result alt_result = Check_Main_Para( sample_arr[i].Get_Avg_Data().altitude );
-                if ( alt_result.error == 1 ) {
+            for ( int i = 0; i < sample_size; i++ ) { // Iterate through Samples
 
-                    Launch_Parachute( 0 );
-                    sample_arr[ i ].Append_Message( ( alt_result.message + ',' ) );
+                Result alt_result = Check_Main_Para( sample_arr[i].Get_Avg_Data().altitude ); // Check if at Main Para Altitude
+                if ( alt_result.error == 1 ) { // If at Main Para Altitude
+
+                    Launch_Parachute( 0 ); // Launch Main Para
+                    sample_arr[ i ].Append_Message( ( alt_result.message + ',' ) ); // Record Result
                     break;
 
                 }
@@ -187,14 +189,14 @@ void loop() {
 
         }
 
-        else {
+        else { // If Main Para is not armed
 
-            for ( int i = 0; i < sample_size; i++ ) {
+            for ( int i = 0; i < sample_size; i++ ) { // Iterate through all Samples
                 
-                if ( sample_arr[i].Get_Avg_Data().altitude <= ( SurfaceAlt + SurfaceAltBias ) ) {
+                if ( sample_arr[i].Get_Avg_Data().altitude <= ( SurfaceAlt + SurfaceAltBias ) ) { // Check if sample is landed
                     
-                    landed = true;
-                    sample_arr[ i ].Append_Message( "!!LANDED VEHICLE WOOOOOO!!" );
+                    landed = true; // Set as true
+                    sample_arr[ i ].Append_Message( "!!LANDED VEHICLE WOOOOOO!!" ); // Record Landing
                     break;
 
                 }

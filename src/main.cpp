@@ -137,15 +137,15 @@ void loop() {
     Sample* sample_arr = Samples.Get_Sample_Array(); // Get Sample Array
     const int sample_size = Samples.Size(); // Get Sample Array Size
 
-    int sample_movement[sample_size - 1]; // Init Comparison array
+    int sample_movement[ sample_size - 1 ]; // Init Comparison array
 
-    for ( int i = 1; i < sample_size; i++ ) { sample_movement[i - 1] = Samples.Compare_Sample( ( i - 1 ), i ).error; } // Find movement of samples
+    for ( int i = 1; i < sample_size; i++ ) { sample_movement[ i - 1 ] = Samples.Compare_Sample( ( i - 1 ), i ).error; } // Find movement of samples
 
-    if ( !Paras_Armed[0] ) { // If Drogue is not armed
+    if ( !Paras_Armed[ 0 ] ) { // If Drogue is not armed
 
         for ( int i = 0; i < sample_size; i++ ) { // Iterate through all samples
 
-            Result alt_result = Check_Altitude( sample_arr[i].Get_Avg_Data().altitude ); // Check if at Safe Arming Altitude
+            Result alt_result = Check_Altitude( sample_arr[ i ].Get_Avg_Data().altitude ); // Check if at Safe Arming Altitude
             sample_arr[ i ].Append_Message( ( alt_result.message + ',' ) ); // Record Result
 
             if ( alt_result.error == 0 ) { Arm_Parachute( 0 ); Arm_Parachute( 1 ); break; } // If safe, arm Paras
@@ -176,7 +176,7 @@ void loop() {
 
             for ( int i = 0; i < sample_size; i++ ) { // Iterate through Samples
 
-                Result alt_result = Check_Main_Para( sample_arr[i].Get_Avg_Data().altitude ); // Check if at Main Para Altitude
+                Result alt_result = Check_Main_Para( sample_arr[ i ].Get_Avg_Data().altitude ); // Check if at Main Para Altitude
                 if ( alt_result.error == 1 ) { // If at Main Para Altitude
 
                     Launch_Parachute( 0 ); // Launch Main Para
@@ -193,7 +193,7 @@ void loop() {
 
             for ( int i = 0; i < sample_size; i++ ) { // Iterate through all Samples
                 
-                if ( sample_arr[i].Get_Avg_Data().altitude <= ( SurfaceAlt + SurfaceAltBias ) ) { // Check if sample is landed
+                if ( sample_arr[ i ].Get_Avg_Data().altitude <= ( SurfaceAlt + SurfaceAltBias ) ) { // Check if sample is landed
                     
                     landed = true; // Set as true
                     sample_arr[ i ].Append_Message( "!!LANDED VEHICLE WOOOOOO!!" ); // Record Landing

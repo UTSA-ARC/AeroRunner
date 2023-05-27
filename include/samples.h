@@ -2,16 +2,16 @@
 #include "globals.h"
 #include "functions.h"
 
-class Sample {
+class Sample { // An Average of Measurements
 
     private:
 
-        Data measurements[MeasurementAmount];
-        SampleData avg_data;
+        Data measurements[ MeasurementAmount ]; // An array of measurements
+        SampleData avg_data; // Avg of measurements
 
-        void Set_Measurements( const Data* new_measurements ) { *measurements = *new_measurements; }
+        void Set_Measurements( const Data* new_measurements ) { *measurements = *new_measurements; } // Set measurements
 
-        void Find_Avg() {
+        void Find_Avg() { // Find the average
 
             avg_data.message = "";
             avg_data.time = measurements[0].time;
@@ -49,7 +49,7 @@ class Sample {
 
     public:
 
-        Sample() {
+        Sample() { // Initialize Sample object
 
             for ( int i = 0; i < MeasurementAmount; i++ ) {
 
@@ -62,7 +62,7 @@ class Sample {
 
         }
 
-        Sample( Data* new_measurements ) {
+        Sample( Data* new_measurements ) { // Initialize Sample object with provided measurements
 
             Set_Measurements( new_measurements );
 
@@ -70,21 +70,21 @@ class Sample {
 
         }
 
-        Data* Get_Measurements() { return measurements; }
+        Data* Get_Measurements() { return measurements; } // Get measurements array
 
-        SampleData Get_Avg_Data() { return avg_data; }
+        SampleData Get_Avg_Data() { return avg_data; } // Get Avg_data
 
-        void Append_Message( const String message ) { avg_data.message += message;  }
+        void Append_Message( const String message ) { avg_data.message += message;  } // Append to message string of Sample object
 
 };
 
-class SampleCollection {
+class SampleCollection { // A collection of sample objects
 
     private:
-        Sample* Samples;
-        int size;
+        Sample* Samples; // Array of Samples
+        int size; // Size of array
 
-        Result Compare_Altitude( const float altitude_a, const float altitude_b ) {
+        Result Compare_Altitude( const float altitude_a, const float altitude_b ) { // Compare Altitudes of 2 Samples
 
             const float H = altitude_a * ( 1 + SampleAltTolerance );
             const float L = altitude_a * ( 1 - SampleAltTolerance );
@@ -97,7 +97,7 @@ class SampleCollection {
 
         }
 
-        Result Compare_Pressure( const float pressure_a, const float pressure_b ) {
+        Result Compare_Pressure( const float pressure_a, const float pressure_b ) { // Compare Pressures of 2 Samples
 
             const float H = pressure_a * ( 1 + SamplePressureTolerance );
             const float L = pressure_a * ( 1 - SamplePressureTolerance );
@@ -110,7 +110,7 @@ class SampleCollection {
 
         }
 
-        Result Compare_Temperature( const float temperature_a, const float temperature_b ) {
+        Result Compare_Temperature( const float temperature_a, const float temperature_b ) { // Compare Temperatures of 2 Samples
 
             const float H = temperature_a * ( 1 + SampleTemperatureTolerance );
             const float L = temperature_b * ( 1 - SampleTemperatureTolerance );
@@ -123,7 +123,7 @@ class SampleCollection {
 
         }
 
-        Result Compare_Raw_Accel( const int* raw_accel_a, const int* raw_accel_b ) {
+        Result Compare_Raw_Accel( const int* raw_accel_a, const int* raw_accel_b ) { // Compare the Raw Acceleration of 2 Samples
 
             const float H[ 3 ] = {
 
@@ -162,7 +162,7 @@ class SampleCollection {
 
         }
 
-        Result Compare_Normalized_Accel( const float* accel_a, const float* accel_b ) {
+        Result Compare_Normalized_Accel( const float* accel_a, const float* accel_b ) { // Compare the Normalized Acceleration of 2 Samples
 
             const float H[ 3 ] = {
 
@@ -201,7 +201,7 @@ class SampleCollection {
 
         }
 
-        Result Compare_Raw_Tilt( const int* raw_gyro_a, const int* raw_gyro_b ) {
+        Result Compare_Raw_Tilt( const int* raw_gyro_a, const int* raw_gyro_b ) { // Compare the Raw Tilt of 2 Samples
 
             const float H[ 3 ] = {
 
@@ -240,7 +240,7 @@ class SampleCollection {
 
         }
 
-        Result Compare_Normalized_Tilt( const float* gyro_a, const float* gyro_b ) {
+        Result Compare_Normalized_Tilt( const float* gyro_a, const float* gyro_b ) { // Compare the Normalized Tilt of 2 Samples
 
             const float H[ 3 ] = {
 
@@ -281,14 +281,14 @@ class SampleCollection {
 
     public:
 
-        SampleCollection() {
+        SampleCollection() { // Initialize the Collection object
 
             Samples = new Sample[ SampleAmount ];
             size = SampleAmount;
 
         }
 
-        SampleCollection( const int sample_amount ) {
+        SampleCollection( const int sample_amount ) { // Initialize the Collection object with a given amount
 
             Samples = new Sample[ sample_amount ];
             size = sample_amount;
@@ -303,13 +303,13 @@ class SampleCollection {
 
         }
 
-        Sample* Get_Sample_Array() { return Samples; }
+        Sample* Get_Sample_Array() { return Samples; } // Get Sample Array
 
-        int Size() { return size; }
+        int Size() { return size; } // Get the size of the Sample Array
 
-        Sample Get_Sample( const int index ) { return Samples[ index ]; }
+        Sample Get_Sample( const int index ) { return Samples[ index ]; } // Get a specified Sample
 
-        Result Record_Samples() {
+        Result Record_Samples() { // Initialize Samples
 
             for ( int i = 0; i < size; i++ ) Samples[i] = Sample();
 
@@ -317,7 +317,7 @@ class SampleCollection {
 
         }
 
-        Result Compare_Sample( const int sample_a_index, const int sample_b_index ) { // Return 0 if equal, 1 if greater, -1 if lesser
+        Result Compare_Sample( const int sample_a_index, const int sample_b_index ) { // Compare 2 samples //* Return 0 if equal, 1 if greater, -1 if lesser
 
             int eq = 0;
 

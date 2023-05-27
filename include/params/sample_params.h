@@ -1,4 +1,4 @@
-#define SampleAmount 3
+#define SampleAmount 3 // Amount of samples to analyze at a time
 #define MeasurementAmount 20 // Amount of measurements in 1 sample
 #define SampleTimeSpan 1 // In Seconds
 

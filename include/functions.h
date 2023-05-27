@@ -30,7 +30,7 @@ float* Get_Normalized_Accel( const int* raw_accel ) { // Returns the normalized 
 
 }
 
-int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyrospocic Values from the MPU
+int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyroscopic Values from the MPU
 
     Wire.beginTransmission( MPU );
     Wire.write( 0x43 );                     // Gyro data first register address 0x43
@@ -45,7 +45,7 @@ int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyrospocic Val
 
 }
 
-float* Get_Normalized_Gyro( const int* raw_gyro ) { // Returns an int vector containing the normalized gyrospocic Values from the MPU
+float* Get_Normalized_Gyro( const int* raw_gyro ) { // Returns an int vector containing the normalized gyroscopic Values from the MPU
 
     static float normalized_gyro[ 3 ];
 
@@ -57,12 +57,12 @@ float* Get_Normalized_Gyro( const int* raw_gyro ) { // Returns an int vector con
 
 // -----------------------Struct Functions------------------------------------------
 
-Data Get_All_Values() {
+Data Get_All_Values() { // Record all values //! DEPRECATED
 
     Data data;
 
     int i = 0;
-    // Get Values from Accelorometer
+    // Get Values from Accelerometer
     int *raw_a_ptr = Get_Raw_Accel();
     int *raw_g_ptr = Get_Raw_Gyro();
     float *norm_a_ptr = Get_Normalized_Accel( raw_a_ptr );
@@ -142,7 +142,7 @@ void Print_All_Values( SampleData *Values ) { // Print the Values on the serial 
         );
 
     output.append( "\n\nNow reading BMP390...\n" );
-    output.append( "Tempurature ( C ): " + String( Values->temperature / 1.0f ) + '\n' );
+    output.append( "Temperature ( C ): " + String( Values->temperature / 1.0f ) + '\n' );
     output.append( "Pressure ( kPa ): " + String( Values->pressure / 1.0f ) + '\n' );
     output.append( "Altitude ( m ): " + String( Values->altitude / 1.0f ) + '\n' );
 
@@ -203,42 +203,42 @@ void Record_Data( SampleData *Values ) { // Prints data to screen and saves it t
 
 // -----------------------Parachute Functions---------------------------------------
 
-void Arm_Parachute( int schute ) { // Arms Parachute
+void Arm_Parachute( const int shute ) { // Arms Parachute
 
-   Paras_Armed[ schute ] = 1;
+   Paras_Armed[ shute ] = 1;
 
 }
 
-Result Launch_Parachute( int schute ) { // Launches Parachute
+Result Launch_Parachute( const int shute ) { // Launches Parachute
 
-    switch ( schute ) {
+    switch ( shute ) {
 
-        case 0: // Main Schute
+        case 0: // Main shute
 
-            if ( Paras_Armed[ schute ] ) {
+            if ( Paras_Armed[ shute ] ) {
 
                 digitalWrite( PinMain, HIGH );
-                Paras_Armed[ schute ] = 0;
-                return { 0, "!!MAIN SCHUTE LAUNCHED!!" };
+                Paras_Armed[ shute ] = 0;
+                return { 0, "!!MAIN shute LAUNCHED!!" };
 
             }
 
-            else return { 1, "MAIN Schute Not Deployed!" };
+            else return { 1, "MAIN shute Not Deployed!" };
 
-        case 1: // Drouge Schute
+        case 1: // Drogue shute
 
-            if ( Paras_Armed[ schute ] ) {
+            if ( Paras_Armed[ shute ] ) {
 
-                digitalWrite( PinDrouge, HIGH );
-                Paras_Armed[ schute ] = 0;
-                return { 0, "!!DROUGE SCHUTE LAUNCHED" };
+                digitalWrite( PinDrogue, HIGH );
+                Paras_Armed[ shute ] = 0;
+                return { 0, "!!DROGUE shute LAUNCHED" };
 
             }
 
-            else return { 2, "DROUGE Schute Not Deployed!" };
+            else return { 2, "DROGUE shute Not Deployed!" };
 
         default:
-            return { -1, "Not a Valid Schute!" };
+            return { -1, "Not a Valid shute!" };
 
     }
 
@@ -246,14 +246,14 @@ Result Launch_Parachute( int schute ) { // Launches Parachute
 
 // -----------------------Internal Trigger Functions--------------------------------
 
-Result Check_Main_Para( int altitude ) {
+Result Check_Main_Para( const int altitude ) { // Check if altitude is at MainParaAlt
 
     if ( altitude <= MainParaAlt ) return { 1, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
     return { -1, "Not At Main Para Alt" };
 
 }
 
-Result Check_Altitude( int altitude, int prev_altitude=0, int apogee=0 ) { // Checks if altitude is safe/at apogee
+Result Check_Altitude( const int altitude, int prev_altitude=0, int apogee=0 ) { // Checks if altitude is safe/at apogee //* Not being used for immediate compatibility
 
     if ( altitude > SafeAltitude  ) {
 
@@ -273,7 +273,7 @@ Result Check_Altitude( int altitude, int prev_altitude=0, int apogee=0 ) { // Ch
 
 }
 
-Result Check_Pressure_Delta( float pressure, float prev_pressure ) { // Checks pressure delta
+Result Check_Pressure_Delta( const float pressure, const float prev_pressure ) { // Checks pressure delta
 
     int H = prev_pressure * ( 1 + PTolerance ); // Upperbound
     int L = prev_pressure * ( 1 - PTolerance ); // Lowerbound
@@ -286,7 +286,7 @@ Result Check_Pressure_Delta( float pressure, float prev_pressure ) { // Checks p
 
 }
 
-Result Check_Pressure( float pressure, bool surface = 0 ) {
+Result Check_Pressure( const float pressure, bool surface = 0 ) {
 
     if ( surface ) {
 

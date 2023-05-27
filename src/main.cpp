@@ -141,7 +141,7 @@ void loop() {
 
     for ( int i = 1; i < sample_size; i++ ) { sample_movement[i - 1] = Samples.Compare_Sample( ( i - 1 ), i ).error; } // Find movement of samples
 
-    if ( !Paras_Armed[0] ) { // If Drouge is not armed
+    if ( !Paras_Armed[0] ) { // If Drogue is not armed
 
         for ( int i = 0; i < sample_size; i++ ) { // Iterate through all samples
 
@@ -154,14 +154,14 @@ void loop() {
 
     }
 
-    if ( Paras_Armed[ 1 ] && apogee == 0 ) { // If Drouge Para is armed and apogee is not set
+    if ( Paras_Armed[ 1 ] && apogee == 0 ) { // If Drogue Para is armed and apogee is not set
 
         int i = 0;
         while ( sample_movement[ i ] > 0 && i < ( sample_size - 2 ) ) i++; // Iterate through Comparison array until reading 0 or -1
 
         if ( sample_movement[ i + 1 ] < 0 ) { // If next index is -1
 
-            Result launch_result = Launch_Parachute( 1 ); // Launch Drouge
+            Result launch_result = Launch_Parachute( 1 ); // Launch Drogue
             sample_arr[ i + 1 ].Append_Message( ( launch_result.message + ',' ) ); // Record result
 
         }

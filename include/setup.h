@@ -96,13 +96,13 @@ Result Check_VBAT_Connection() {
 void Init_Paras() {
 
     pinMode( PinMain, OUTPUT );
-    pinMode( PinDrouge, OUTPUT );
+    pinMode( PinDrogue, OUTPUT );
 
 }
 
 void Init_MPU() { // Initialize MPU
 
-    Wire.begin();                              // Initialize comunication
+    Wire.begin();                              // Initialize communication
     Wire.beginTransmission( MPU );             // Start communication with MPU6050 // MPU=0x68
     Wire.write( 0x6B );                        // Talk to the register 6B
     Wire.write( 0x00 );                        // Make reset - place a 0 into the 6B register

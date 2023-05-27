@@ -14,7 +14,7 @@
 #define AccelRange 16
 #define GyroRange 2000
 
-#define PinDrouge 39
+#define PinDrogue 39
 #define PinMain 33
 
 #define InitValueDelay 2 // In seconds

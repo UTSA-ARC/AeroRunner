@@ -9,7 +9,7 @@ class Sample {
         Data measurements[MeasurementAmount];
         SampleData avg_data;
 
-        void Set_Measurements( Data* new_measurements ) { *measurements = *new_measurements; }
+        void Set_Measurements( const Data* new_measurements ) { *measurements = *new_measurements; }
 
         void Find_Avg() {
 
@@ -74,7 +74,7 @@ class Sample {
 
         SampleData Get_Avg_Data() { return avg_data; }
 
-        void Append_Message( String message ) { avg_data.message += message;  }
+        void Append_Message( const String message ) { avg_data.message += message;  }
 
 };
 
@@ -84,10 +84,10 @@ class SampleCollection {
         Sample* Samples;
         int size;
 
-        Result Compare_Altitude( float altitude_a, float altitude_b ) {
+        Result Compare_Altitude( const float altitude_a, const float altitude_b ) {
 
-            float H = altitude_a * ( 1 + SampleAltTolerance );
-            float L = altitude_a * ( 1 - SampleAltTolerance );
+            const float H = altitude_a * ( 1 + SampleAltTolerance );
+            const float L = altitude_a * ( 1 - SampleAltTolerance );
 
             if ( altitude_b > H ) return { 1, "Altitude A Is Less Than Altitude B" };
 
@@ -97,10 +97,10 @@ class SampleCollection {
 
         }
 
-        Result Compare_Pressure( float pressure_a, float pressure_b ) {
+        Result Compare_Pressure( const float pressure_a, const float pressure_b ) {
 
-            float H = pressure_a * ( 1 + SamplePressureTolerance );
-            float L = pressure_a * ( 1 - SamplePressureTolerance );
+            const float H = pressure_a * ( 1 + SamplePressureTolerance );
+            const float L = pressure_a * ( 1 - SamplePressureTolerance );
 
             if ( pressure_b > H ) return { -1, "Pressure A is Less than Pressure B" };
 
@@ -110,10 +110,10 @@ class SampleCollection {
 
         }
 
-        Result Compare_Temperature( float temperature_a, float temperature_b ) {
+        Result Compare_Temperature( const float temperature_a, const float temperature_b ) {
 
-            float H = temperature_a * ( 1 + SampleTemperatureTolerance );
-            float L = temperature_b * ( 1 - SampleTemperatureTolerance );
+            const float H = temperature_a * ( 1 + SampleTemperatureTolerance );
+            const float L = temperature_b * ( 1 - SampleTemperatureTolerance );
 
             if ( temperature_b > H ) return { -1, "Temperature A is Less than Temperature B" };
 
@@ -123,9 +123,9 @@ class SampleCollection {
 
         }
 
-        Result Compare_Raw_Accel( int* raw_accel_a, int* raw_accel_b ) {
+        Result Compare_Raw_Accel( const int* raw_accel_a, const int* raw_accel_b ) {
 
-            float H[ 3 ] = {
+            const float H[ 3 ] = {
 
                 abs( raw_accel_a[0] * ( 1 + SampleAccelTolerance ) ),
                 abs( raw_accel_a[1] * ( 1 + SampleAccelTolerance ) ),
@@ -133,7 +133,7 @@ class SampleCollection {
 
             };
 
-            float L[ 3 ] = {
+            const float L[ 3 ] = {
 
                 abs( raw_accel_a[0] * ( 1 - SampleAccelTolerance ) ),
                 abs( raw_accel_a[1] * ( 1 - SampleAccelTolerance ) ),
@@ -162,9 +162,9 @@ class SampleCollection {
 
         }
 
-        Result Compare_Normalized_Accel( float* accel_a, float* accel_b ) {
+        Result Compare_Normalized_Accel( const float* accel_a, const float* accel_b ) {
 
-            float H[ 3 ] = {
+            const float H[ 3 ] = {
 
                 abs( accel_a[0] * ( 1 + SampleAccelTolerance ) ),
                 abs( accel_a[1] * ( 1 + SampleAccelTolerance ) ),
@@ -172,7 +172,7 @@ class SampleCollection {
 
             };
 
-            float L[ 3 ] = {
+            const float L[ 3 ] = {
 
                 abs( accel_a[0] * ( 1 - SampleAccelTolerance ) ),
                 abs( accel_a[1] * ( 1 - SampleAccelTolerance ) ),
@@ -201,9 +201,9 @@ class SampleCollection {
 
         }
 
-        Result Compare_Raw_Tilt( int* raw_gyro_a, int* raw_gyro_b ) {
+        Result Compare_Raw_Tilt( const int* raw_gyro_a, const int* raw_gyro_b ) {
 
-            float H[ 3 ] = {
+            const float H[ 3 ] = {
 
                 ( raw_gyro_a[0] * ( 1 + SampleTiltTolerance ) ),
                 ( raw_gyro_a[1] * ( 1 + SampleTiltTolerance ) ),
@@ -211,7 +211,7 @@ class SampleCollection {
 
             };
 
-            float L[ 3 ] = {
+            const float L[ 3 ] = {
 
                 ( raw_gyro_a[0] * ( 1 - SampleTiltTolerance ) ),
                 ( raw_gyro_a[1] * ( 1 - SampleTiltTolerance ) ),
@@ -240,9 +240,9 @@ class SampleCollection {
 
         }
 
-        Result Compare_Normalized_Tilt( float* gyro_a, float* gyro_b ) {
+        Result Compare_Normalized_Tilt( const float* gyro_a, const float* gyro_b ) {
 
-            float H[ 3 ] = {
+            const float H[ 3 ] = {
 
                 abs( gyro_a[0] * ( 1 + SampleTiltTolerance ) ),
                 abs( gyro_a[1] * ( 1 + SampleTiltTolerance ) ),
@@ -250,7 +250,7 @@ class SampleCollection {
 
             };
 
-            float L[ 3 ] = {
+            const float L[ 3 ] = {
 
                 abs( gyro_a[0] * ( 1 - SampleTiltTolerance ) ),
                 abs( gyro_a[1] * ( 1 - SampleTiltTolerance ) ),
@@ -288,14 +288,14 @@ class SampleCollection {
 
         }
 
-        SampleCollection( int sample_amount ) {
+        SampleCollection( const int sample_amount ) {
 
             Samples = new Sample[ sample_amount ];
             size = sample_amount;
 
         }
 
-        SampleCollection( SampleCollection &sc ) { // Copy Constructor
+        SampleCollection( const SampleCollection &sc ) { // Copy Constructor
 
             Samples = new Sample[ SampleAmount ];
             *Samples = *sc.Samples;
@@ -307,7 +307,7 @@ class SampleCollection {
 
         int Size() { return size; }
 
-        Sample Get_Sample( int index ) { return Samples[ index ]; }
+        Sample Get_Sample( const int index ) { return Samples[ index ]; }
 
         Result Record_Samples() {
 
@@ -317,7 +317,7 @@ class SampleCollection {
 
         }
 
-        Result Compare_Sample( int sample_a_index, int sample_b_index ) { // Return 0 if equal, 1 if greater, -1 if lesser
+        Result Compare_Sample( const int sample_a_index, const int sample_b_index ) { // Return 0 if equal, 1 if greater, -1 if lesser
 
             int eq = 0;
 

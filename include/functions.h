@@ -20,7 +20,7 @@ int* Get_Raw_Accel() { // Returns an int vector of the raw acceleration Values f
 
 }
 
-float* Get_Normalized_Accel( int* raw_accel ) { // Returns the normalized acceleration Values from the MPU
+float* Get_Normalized_Accel( const int* raw_accel ) { // Returns the normalized acceleration Values from the MPU
 
     static float normalized_accel[ 3 ];
 
@@ -45,7 +45,7 @@ int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyrospocic Val
 
 }
 
-float* Get_Normalized_Gyro( int* raw_gyro ) { // Returns an int vector containing the normalized gyrospocic Values from the MPU
+float* Get_Normalized_Gyro( const int* raw_gyro ) { // Returns an int vector containing the normalized gyrospocic Values from the MPU
 
     static float normalized_gyro[ 3 ];
 
@@ -303,9 +303,9 @@ Result Check_Pressure( float pressure, bool surface = 0 ) {
 
 }
 
-Result Check_Tilt( float* gyro, float* prev_gyro, bool surface = false ) { // Checks if tilt is safe
+Result Check_Tilt( const float* gyro, const float* prev_gyro, bool surface = false ) { // Checks if tilt is safe
 
-    float H[ 3 ] = { // Upperbounds (X,Y,Z)
+    const float H[ 3 ] = { // Upperbounds (X,Y,Z)
 
         ( prev_gyro[ 0 ] * ( 1 + TTolerance ) ),
         ( prev_gyro[ 1 ] * ( 1 + TTolerance ) ),
@@ -313,7 +313,7 @@ Result Check_Tilt( float* gyro, float* prev_gyro, bool surface = false ) { // Ch
 
         };
 
-    float L[ 3 ] = { // Lowerbounds (X,Y,Z)
+    const float L[ 3 ] = { // Lowerbounds (X,Y,Z)
 
         ( prev_gyro[ 0 ] * ( 1 - TTolerance ) ),
         ( prev_gyro[ 1 ] * ( 1 - TTolerance ) ),
@@ -349,11 +349,11 @@ Result Check_Tilt( float* gyro, float* prev_gyro, bool surface = false ) { // Ch
 
 }
 
-Result Check_Accel( float* accel, float* prev_accel, bool surface = false ) { // Checks if accel is correct
+Result Check_Accel( const float* accel, const float* prev_accel, bool surface = false ) { // Checks if accel is correct
 
     if ( surface ) {
 
-        float Hs[ 3 ] = { // Surface Upperbounds (X,Y,Z)
+       const float Hs[ 3 ] = { // Surface Upperbounds (X,Y,Z)
 
             SurfaceAccelX * ( 1 + AccTolerance ) == 0 ? AccTolerance : SurfaceAccelX * ( 1 + AccTolerance ),
             SurfaceAccelY * ( 1 + AccTolerance ) == 0 ? AccTolerance : SurfaceAccelY * ( 1 + AccTolerance ),
@@ -361,7 +361,7 @@ Result Check_Accel( float* accel, float* prev_accel, bool surface = false ) { //
 
         };
 
-        float Ls[ 3 ] = {
+       const float Ls[ 3 ] = {
 
             SurfaceAccelX * ( 1 - AccTolerance ) == 0 ? -1 * AccTolerance : SurfaceAccelX * ( 1 - AccTolerance ),
             SurfaceAccelY * ( 1 - AccTolerance ) == 0 ? -1 * AccTolerance : SurfaceAccelY * ( 1 - AccTolerance ),
@@ -379,7 +379,7 @@ Result Check_Accel( float* accel, float* prev_accel, bool surface = false ) { //
 
     else {
 
-        float H[ 3 ] = { // Upperbounds (X,Y,Z)
+        const float H[ 3 ] = { // Upperbounds (X,Y,Z)
 
             prev_accel[ 0 ] * ( 1 + AccTolerance ) ,
             prev_accel[ 1 ] * ( 1 + AccTolerance ) ,
@@ -387,7 +387,7 @@ Result Check_Accel( float* accel, float* prev_accel, bool surface = false ) { //
 
         };
 
-        float L[ 3 ] = { // Lowerbounds (X,Y,Z)
+        const float L[ 3 ] = { // Lowerbounds (X,Y,Z)
 
             prev_accel[ 0 ] * ( 1 - AccTolerance ),
             prev_accel[ 1 ] * ( 1 - AccTolerance ),

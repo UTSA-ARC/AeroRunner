@@ -74,7 +74,7 @@ int Set_Gyro_Range( unsigned int range ) { // Range and sensitivity of gyroscope
 
 }
 
-Result Check_Input_Voltage( int input_voltage ) {
+Result Check_Input_Voltage( int input_voltage ) { // Check if Input voltage is valid
 
     float real_input_voltage = input_voltage / 1023.0;
 
@@ -85,7 +85,7 @@ Result Check_Input_Voltage( int input_voltage ) {
 
 }
 
-Result Check_VBAT_Connection() {
+Result Check_VBAT_Connection() { // Check if VBAT is connected
 
     if ( digitalRead( PinVBAT ) ) return { 0, "VBAT Connected"};
 
@@ -93,16 +93,16 @@ Result Check_VBAT_Connection() {
 
 }
 
-void Init_Paras() {
+void Init_Paras() { // Initialize Parachutes
 
     pinMode( PinMain, OUTPUT );
-    pinMode( PinDrouge, OUTPUT );
+    pinMode( PinDrogue, OUTPUT );
 
 }
 
 void Init_MPU() { // Initialize MPU
 
-    Wire.begin();                              // Initialize comunication
+    Wire.begin();                              // Initialize communication
     Wire.beginTransmission( MPU );             // Start communication with MPU6050 // MPU=0x68
     Wire.write( 0x6B );                        // Talk to the register 6B
     Wire.write( 0x00 );                        // Make reset - place a 0 into the 6B register
@@ -110,7 +110,7 @@ void Init_MPU() { // Initialize MPU
 
 }
 
-void Init_CSV() {
+void Init_CSV() { // Initialize CSV format
 
     String file_string = String( month() + '-' + day() + '-' + year() ) + ".csv";
     File myFile = SD.open( file_string.c_str(), FILE_WRITE | O_TRUNC );

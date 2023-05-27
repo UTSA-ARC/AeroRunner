@@ -104,19 +104,19 @@ void setup() {
     // ----------------------------------------------------------------
 
     Data init_values = Get_All_Values(); // Set Initial Values
-    delay( InitValueDelay * 1000 ); // Delay to compare data
-    SurfaceAlt = init_values.altitude; // Get surface altitude (Assuming Setup() will be called on surface ONLY)
+    delay( InitValueDelay * 1000 );      // Delay to compare data
+    SurfaceAlt = init_values.altitude;   // Get surface altitude (Assuming Setup() will be called on surface ONLY)
 
     Data values = Get_All_Values(); // Get Current Values
-    Result Check_Systems_Result = Check_Systems( values, init_values );
-    while ( Check_Systems_Result.error != 0 ) {
+    Result Check_Systems_Result = Check_Systems( values, init_values ); // Check Health of Systems
+    while ( Check_Systems_Result.error != 0 ) { // While Systems Bad
 
-        Serial.println( Check_Systems_Result.message );
+        Serial.println( Check_Systems_Result.message ); // Print result
 
-        init_values = values;
-        values = Get_All_Values();
+        init_values = values;      // Re-initialize values
+        values = Get_All_Values(); // ' '
 
-        Check_Systems_Result = Check_Systems( values, init_values );
+        Check_Systems_Result = Check_Systems( values, init_values ); // Re-Check result
 
     }
 
@@ -124,7 +124,7 @@ void setup() {
 
     Serial.end(); // End Serial Transmission
 
-    delay( 20 ); // Delay for 20 Milliseconds before starting main loop
+    delay( ExitSetup * 1000 ); // Delay for N seconds before starting main loop
 
 }
 
@@ -134,53 +134,53 @@ void loop() {
 
     SampleCollection Samples; // Get all data values
 
-    Sample* sample_arr = Samples.Get_Sample_Array();
-    const int sample_size = Samples.Size();
+    Sample* sample_arr = Samples.Get_Sample_Array(); // Get Sample Array
+    const int sample_size = Samples.Size(); // Get Sample Array Size
 
-    String output;
+    int sample_movement[ sample_size - 1 ]; // Init Comparison array
 
-    int sample_movement[sample_size - 1]; // Comparison array
+    for ( int i = 1; i < sample_size; i++ ) { sample_movement[ i - 1 ] = Samples.Compare_Sample( ( i - 1 ), i ).error; } // Find movement of samples
 
-    for ( int i = 1; i < sample_size; i++ ) { sample_movement[i - 1] = Samples.Compare_Sample( ( i - 1 ), i ).error; } // Find movement of samples
+    if ( !Paras_Armed[ 0 ] ) { // If Drogue is not armed
 
-    if ( !Paras_Armed[0] ) {
+        for ( int i = 0; i < sample_size; i++ ) { // Iterate through all samples
 
-        for ( int i = 0; i < sample_size; i++ ) {
+            Result alt_result = Check_Altitude( sample_arr[ i ].Get_Avg_Data().altitude ); // Check if at Safe Arming Altitude
+            sample_arr[ i ].Append_Message( ( alt_result.message + ',' ) ); // Record Result
 
-            Result alt_result = Check_Altitude( sample_arr[i].Get_Avg_Data().altitude );
-            output += alt_result.message + ',';
-
-            if ( alt_result.error == 0 ) { Arm_Parachute( 0 ); Arm_Parachute( 1 ); break; }
+            if ( alt_result.error == 0 ) { Arm_Parachute( 0 ); Arm_Parachute( 1 ); break; } // If safe, arm Paras
 
         }
 
     }
 
-    if ( Paras_Armed[ 1 ] && apogee == 0 ) {
+    if ( Paras_Armed[ 1 ] && apogee == 0 ) { // If Drogue Para is armed and apogee is not set
 
         int i = 0;
-        while ( sample_movement[ i ] > 0 && i < ( sample_size - 2 ) ) i++;
+        while ( sample_movement[ i ] > 0 && i < ( sample_size - 2 ) ) i++; // Iterate through Comparison array until reading 0 or -1
 
-        if ( sample_movement[ i + 1 ] < 0 ) {
+        if ( sample_movement[ i + 1 ] < 0 ) { // If next index is -1
 
-            Result launch_result = Launch_Parachute( 1 ); // Drouge
-            sample_arr[ i + 1 ].Append_Message( ( launch_result.message + ',' ) );
+            Result launch_result = Launch_Parachute( 1 ); // Launch Drogue
+            sample_arr[ i + 1 ].Append_Message( ( launch_result.message + ',' ) ); // Record result
 
         }
-        apogee = sample_arr[ i + 1 ].Get_Avg_Data().altitude;
+
+        apogee = sample_arr[ i + 1 ].Get_Avg_Data().altitude; // Set apogee
 
     }
 
-    if ( apogee > 0 ) {
+    if ( apogee > 0 ) { // If apogee is set
 
-        if ( Paras_Armed[ 0 ] ) {
-            for ( int i = 0; i < sample_size; i++ ) {
+        if ( Paras_Armed[ 0 ] ) { // If Main Para is armed
 
-                Result alt_result = Check_Main_Para( sample_arr[i].Get_Avg_Data().altitude );
-                if ( alt_result.error == 1 ) {
+            for ( int i = 0; i < sample_size; i++ ) { // Iterate through Samples
 
-                    Launch_Parachute( 0 );
-                    sample_arr[ i ].Append_Message( ( alt_result.message + ',' ) );
+                Result alt_result = Check_Main_Para( sample_arr[ i ].Get_Avg_Data().altitude ); // Check if at Main Para Altitude
+                if ( alt_result.error == 1 ) { // If at Main Para Altitude
+
+                    Launch_Parachute( 0 ); // Launch Main Para
+                    sample_arr[ i ].Append_Message( ( alt_result.message + ',' ) ); // Record Result
                     break;
 
                 }
@@ -189,14 +189,14 @@ void loop() {
 
         }
 
-        else {
+        else { // If Main Para is not armed
 
-            for ( int i = 0; i < sample_size; i++ ) {
+            for ( int i = 0; i < sample_size; i++ ) { // Iterate through all Samples
                 
-                if ( sample_arr[i].Get_Avg_Data().altitude <= ( SurfaceAlt + SurfaceAltBias ) ) {
+                if ( sample_arr[ i ].Get_Avg_Data().altitude <= ( SurfaceAlt + SurfaceAltBias ) ) { // Check if sample is landed
                     
-                    landed = true;
-                    sample_arr[ i ].Append_Message( "!!LANDED VEHICLE WOOOOOO!!" );
+                    landed = true; // Set as true
+                    sample_arr[ i ].Append_Message( "!!LANDED VEHICLE WOOOOOO!!" ); // Record Landing
                     break;
 
                 }

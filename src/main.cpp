@@ -52,17 +52,17 @@ void setup() {
 
     // ----------------------------------------------------------------
 
-    // Serial.println( "Initializing MPU6050..." );
+     Serial.println( "Initializing MPU6050..." );
 
-    // Wire.beginTransmission( MPU );
-    // while ( ( Wire.endTransmission() != 0 ) ) {
+     Wire.beginTransmission( MPU );
+     while ( ( Wire.endTransmission() != 0 ) ) {
 
-    //     Serial.println( "Could not find MPU\n" );
-    //     delay( 2000 );
+        Serial.println( "Could not find MPU\n" );
+        delay( 2000 );
 
-    // }
+    }
 
-    // Serial.println( "Initialized MPU6050! ");
+    Serial.println( "Initialized MPU6050! ");
 
     // ----------------------------------------------------------------
 
@@ -74,28 +74,28 @@ void setup() {
 
     // ----------------------------------------------------------------
 
-    // Set Ranges
-    // while ( Set_Accel_Range( AccelRange ) != 0 ) {
+    //Set Ranges
+    while ( Set_Accel_Range( AccelRange ) != 0 ) {
 
-    //     Serial.println( "Please Fix Accel Range" );
-    //     delay( 2000 );
+        Serial.println( "Please Fix Accel Range" );
+        delay( 2000 );
 
-    //     }
+        }
 
-    // while ( Set_Gyro_Range( GyroRange ) != 0 ) {
+    while ( Set_Gyro_Range( GyroRange ) != 0 ) {
 
-    //     Serial.println( "Please Fix Gyro Range" );
-    //     delay( 2000 );
+        Serial.println( "Please Fix Gyro Range" );
+        delay( 2000 );
 
-    // }
+    }
 
     // ----------------------------------------------------------------
 
-    // Init_MPU();            // Initialize MPU
+    Init_MPU();            // Initialize MPU
 
-    // Configure_MPU( 0x1C ); // Config Register
+    Configure_MPU( 0x1C ); // Config Register
 
-    // Configure_Gyro( 0x1B ); // Config Register
+    Configure_Gyro( 0x1B ); // Config Register
 
     // ----------------------------------------------------------------
 

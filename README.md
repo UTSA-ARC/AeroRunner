@@ -1,2 +1,2 @@
-# Linda-Avionics-Code
-The Avionics code for 2023 Spaceport "Linda" vehicle
+# Rowdy Flight Computer
+This is a flight computer program written for Arduino-based processors

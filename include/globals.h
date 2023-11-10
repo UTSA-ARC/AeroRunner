@@ -12,15 +12,15 @@ typedef struct Data { //* All data in integer form 0.0X accuracy (Divide by MULT
 
     String time;
 
-    int raw_accel[3];
-    float normalized_accel[3];
+    int raw_accel[3] = {0,0,0};
+    float normalized_accel[3] = {0,0,0};
 
-    int raw_gyro[3];
-    float normalized_gyro[3];
+    int raw_gyro[3] = {0,0,0};
+    float normalized_gyro[3] = {0,0,0};
 
-    float temperature;
-    float pressure;
-    float altitude;
+    float temperature = 0;
+    float pressure = 0;
+    float altitude = 0;
 
     String message = "-";
 

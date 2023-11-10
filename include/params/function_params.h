@@ -8,8 +8,8 @@
 #define SurfPTolerance 0.05f // % in decimal form
 #define SurfaceTTolerance 0.05f // % in decimal form
 
-#define PinSystemsGood 2 // Pin for "Systems Good"
-#define PinSystemsBad 12 // Pin for "Systems Bad"
+#define PinSystemsGood 12 // Pin for "Systems Good"
+#define PinSystemsBad 2 // Pin for "Systems Bad"
 
 #define SafeAltitude 16 // In meters
 #define MainParaAlt 152 // In meters

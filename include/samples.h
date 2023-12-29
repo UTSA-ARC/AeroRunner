@@ -6,72 +6,59 @@ class Sample { // An Average of Measurements
 
     private:
 
-        Data measurements[ MeasurementAmount ]; // An array of measurements
         SampleData avg_data; // Avg of measurements
+        int measurementCount; // Number of measurements taken in this sample
+        
+        void updateAverages( Data measurement ){
+     
+            avg_data.raw_accel[0] = ( avg_data.raw_accel[0]*(measurementCount- 1) + measurement.raw_accel[0] ) / measurementCount;
+            avg_data.raw_accel[1] = ( avg_data.raw_accel[1]*(measurementCount- 1) + measurement.raw_accel[1] ) / measurementCount;
+            avg_data.raw_accel[2] = ( avg_data.raw_accel[2]*(measurementCount- 1) + measurement.raw_accel[2] ) / measurementCount;
 
-        void Set_Measurements( const Data* new_measurements ) { *measurements = *new_measurements; } // Set measurements
+            avg_data.raw_gyro[0] = (  avg_data.raw_gyro[0]*(measurementCount- 1) + measurement.raw_gyro[0] ) / measurementCount;
+            avg_data.raw_gyro[1] = (  avg_data.raw_gyro[1]*(measurementCount- 1) + measurement.raw_gyro[1] ) / measurementCount;
+            avg_data.raw_gyro[2] = (  avg_data.raw_gyro[2]*(measurementCount- 1) + measurement.raw_gyro[2] ) / measurementCount;
 
-        void Find_Avg() { // Find the average
+            avg_data.normalized_accel[0] = (  avg_data.normalized_accel[0]*(measurementCount- 1) + measurement.normalized_accel[0] ) / measurementCount;
+            avg_data.normalized_accel[1] = (  avg_data.normalized_accel[1]*(measurementCount- 1) + measurement.normalized_accel[1] ) / measurementCount;
+            avg_data.normalized_accel[2] = (  avg_data.normalized_accel[2]*(measurementCount- 1) + measurement.normalized_accel[2] ) / measurementCount;
 
-            avg_data.message = "";
-            avg_data.time = measurements[0].time;
-            avg_data.timeEnd = measurements[MeasurementAmount -  1].time;
+            avg_data.normalized_gyro[0] = (  avg_data.normalized_gyro[0]*(measurementCount- 1) + measurement.normalized_gyro[0] ) / measurementCount;
+            avg_data.normalized_gyro[1] = (  avg_data.normalized_gyro[1]*(measurementCount- 1) + measurement.normalized_gyro[1] ) / measurementCount;
+            avg_data.normalized_gyro[2] = (  avg_data.normalized_gyro[2]*(measurementCount- 1) + measurement.normalized_gyro[2] ) / measurementCount;
 
-            for ( int i = 0; i < MeasurementAmount; i++ ) {
+            avg_data.altitude = ( avg_data.altitude*(measurementCount- 1) + measurement.altitude ) / measurementCount;
 
-                avg_data.raw_accel[0] += ( measurements[i].raw_accel[0] * ( 1.0f / MeasurementAmount ) );
-                avg_data.raw_accel[1] += ( measurements[i].raw_accel[1] * ( 1.0f / MeasurementAmount ) );
-                avg_data.raw_accel[2] += ( measurements[i].raw_accel[2] * ( 1.0f / MeasurementAmount ) );
+            avg_data.pressure = ( avg_data.pressure*(measurementCount- 1) + measurement.pressure ) / measurementCount;
 
-                avg_data.raw_gyro[0] += ( measurements[i].raw_gyro[0] * ( 1.0f / MeasurementAmount ) );
-                avg_data.raw_gyro[1] += ( measurements[i].raw_gyro[1] * ( 1.0f / MeasurementAmount ) );
-                avg_data.raw_gyro[2] += ( measurements[i].raw_gyro[2] * ( 1.0f / MeasurementAmount ) );
+            avg_data.temperature = ( avg_data.temperature*(measurementCount- 1) + measurement.temperature ) / measurementCount;
 
-                avg_data.normalized_accel[0] += ( measurements[i].normalized_accel[0] * ( 1.0f / MeasurementAmount ) );
-                avg_data.normalized_accel[1] += ( measurements[i].normalized_accel[1] * ( 1.0f / MeasurementAmount ) );
-                avg_data.normalized_accel[2] += ( measurements[i].normalized_accel[2] * ( 1.0f / MeasurementAmount ) );
-
-                avg_data.normalized_gyro[0] += ( measurements[i].normalized_gyro[0] * ( 1.0f / MeasurementAmount ) );
-                avg_data.normalized_gyro[1] += ( measurements[i].normalized_gyro[1] * ( 1.0f / MeasurementAmount ) );
-                avg_data.normalized_gyro[2] += ( measurements[i].normalized_gyro[2] * ( 1.0f / MeasurementAmount ) );
-
-                avg_data.altitude += ( measurements[i].altitude * ( 1.0f / MeasurementAmount ) );
-
-                avg_data.pressure += ( measurements[i].pressure * ( 1.0f / MeasurementAmount ) );
-
-                avg_data.temperature += ( measurements[i].temperature * ( 1.0f / MeasurementAmount ) );
-
-                avg_data.message += measurements[i].message;
-
-            }
-
+            avg_data.message += measurement.message;
         }
+
 
     public:
 
         Sample() { // Initialize Sample object
+            
+            elapsedMillis sampleTimer; //start sample timer
 
-            for ( int i = 0; i < MeasurementAmount; i++ ) {
+            measurementCount = 0;
+            elapsedMillis measurementTimer; //instanciate measurement time, keeps track of time passed since declaration (in milliseconds)
+           
+            while ( sampleTimer < SampleTimeSpan ) {
 
-                measurements[i] = Get_All_Values();
-                delay( ( SampleTimeSpan * 1000 ) / MeasurementAmount );
+                measurementTimer = 0; //reset measurement timer
+                
+                Data measurement = Get_All_Values(); //get measurement
+                measurementCount++; //update number of measurements collected
+                updateAverages( measurement ); //update averages
 
+                while ( !MaxSampleRate && measurementTimer < SampleDelay ); //loops until the time period allocated for one measurement has passed
             }
-
-            Find_Avg();
-
         }
 
-        Sample( Data* new_measurements ) { // Initialize Sample object with provided measurements
-
-            Set_Measurements( new_measurements );
-
-            Find_Avg();
-
-        }
-
-        Data* Get_Measurements() { return measurements; } // Get measurements array
-
+        
         SampleData Get_Avg_Data() { return avg_data; } // Get Avg_data
 
         void Append_Message( const String message ) { avg_data.message += message;  } // Append to message string of Sample object
@@ -115,7 +102,7 @@ class SampleCollection { // A collection of sample objects
             }    
 
             return result;
-            
+
         }
 
         ResultPDiff Compare_Pressure( const float pressure_a, const float pressure_b ) { // Compare Pressures of 2 Samples

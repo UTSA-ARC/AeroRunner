@@ -419,7 +419,7 @@ Result Check_Systems( Data Values, Data Prev_Values ) { // Checks if systems are
 
     //* Will trigger LED based on error code
 
-    Result results[ 6 ];
+    Result results[ 7 ];
 
     pinMode( PinSystemsGood, OUTPUT );
     pinMode( PinSystemsBad, OUTPUT );
@@ -441,8 +441,10 @@ Result Check_Systems( Data Values, Data Prev_Values ) { // Checks if systems are
 
     // results[ 5 ] = Check_Accel( Values.normalized_accel, Prev_Values.normalized_accel, true );
     results[ 5 ] = { 0, "-" }; //! MPU no werk :'(
+    
+    results[ 6 ] = Check_Continuity( PinSrc, PinGnd );
 
-    for ( int i = 0; i < 4; i++ ) {
+    for ( int i = 0; i < 7; i++ ) {
 
         if ( results[ i ].error < 0 ) {
 

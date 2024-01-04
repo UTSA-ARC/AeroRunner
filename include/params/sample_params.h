@@ -1,6 +1,8 @@
 #define SampleAmount 3 // Amount of samples to analyze at a time
 #define MeasurementAmount 20 // Amount of measurements in 1 sample
 #define SampleTimeSpan 1 // In Seconds
+#define SampleDelay ( SampleTimeSpan * 1000 ) / MeasurementAmount // In Milliseconds
+#define MaxSampleRate false
 
 #define SampleAltTolerance 0.05f // % in decimal form
 #define SamplePressureTolerance 0.05f // % in decimal form
@@ -18,3 +20,5 @@
 
 #define EqualitySumMin -2 // What the weights should sum to, to be considered equal
 #define EqualitySumMax 2 // What the weights should sum under, to be considered equal
+
+#define Filter_Weight 0.2f // Smoothing factor of filter, lower weight means higher filtering, but decreased responsiveness

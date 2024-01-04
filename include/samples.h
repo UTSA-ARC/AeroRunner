@@ -38,39 +38,31 @@ class Sample { // An Average of Measurements
             avg_data.message += measurement.message;
         }
 
-        void Find_Filtered_Data() { // Runs data through an exponential smoothing filter
+        void updateFilteredData(Data measurement) { // updates data through an exponential smoothing filter
 
-            filtered_data.message = "";
-            filtered_data.time = measurements[0].time;
-            filtered_data.timeEnd = measurements[MeasurementAmount -  1].time;
+            filtered_data.raw_accel[0] = Filter_Weight * measurement.raw_accel[0] + (1 - Filter_Weight) * filtered_data.raw_accel[0];
+            filtered_data.raw_accel[1] = Filter_Weight * measurement.raw_accel[1] + (1 - Filter_Weight) * filtered_data.raw_accel[1];
+            filtered_data.raw_accel[2] = Filter_Weight * measurement.raw_accel[2] + (1 - Filter_Weight) * filtered_data.raw_accel[2];
 
-            for ( int i = 0; i < MeasurementAmount; i++ ) {
+            filtered_data.raw_gyro[0] = Filter_Weight * measurement.raw_gyro[0] + (1 - Filter_Weight) * filtered_data.raw_gyro[0];
+            filtered_data.raw_gyro[1] = Filter_Weight * measurement.raw_gyro[1] + (1 - Filter_Weight) * filtered_data.raw_gyro[1];
+            filtered_data.raw_gyro[2] = Filter_Weight * measurement.raw_gyro[2] + (1 - Filter_Weight) * filtered_data.raw_gyro[2];
 
-                filtered_data.raw_accel[0] = Filter_Weight * measurements[i].raw_accel[0] + (1 - Filter_Weight) * filtered_data.raw_accel[0];
-                filtered_data.raw_accel[1] = Filter_Weight * measurements[i].raw_accel[1] + (1 - Filter_Weight) * filtered_data.raw_accel[1];
-                filtered_data.raw_accel[2] = Filter_Weight * measurements[i].raw_accel[2] + (1 - Filter_Weight) * filtered_data.raw_accel[2];
+            filtered_data.normalized_accel[0] = Filter_Weight * measurement.normalized_accel[0] + (1 - Filter_Weight) * filtered_data.normalized_accel[0];
+            filtered_data.normalized_accel[1] = Filter_Weight * measurement.normalized_accel[1] + (1 - Filter_Weight) * filtered_data.normalized_accel[1];
+            filtered_data.normalized_accel[2] = Filter_Weight * measurement.normalized_accel[2] + (1 - Filter_Weight) * filtered_data.normalized_accel[2];
 
-                filtered_data.raw_gyro[0] = Filter_Weight * measurements[i].raw_gyro[0] + (1 - Filter_Weight) * filtered_data.raw_gyro[0];
-                filtered_data.raw_gyro[1] = Filter_Weight * measurements[i].raw_gyro[1] + (1 - Filter_Weight) * filtered_data.raw_gyro[1];
-                filtered_data.raw_gyro[2] = Filter_Weight * measurements[i].raw_gyro[2] + (1 - Filter_Weight) * filtered_data.raw_gyro[2];
+            filtered_data.normalized_gyro[0] = Filter_Weight * measurement.normalized_gyro[0] + (1 - Filter_Weight) * filtered_data.normalized_gyro[0];
+            filtered_data.normalized_gyro[1] = Filter_Weight * measurement.normalized_gyro[1] + (1 - Filter_Weight) * filtered_data.normalized_gyro[1];
+            filtered_data.normalized_gyro[2] = Filter_Weight * measurement.normalized_gyro[2] + (1 - Filter_Weight) * filtered_data.normalized_gyro[2];
 
-                filtered_data.normalized_accel[0] = Filter_Weight * measurements[i].normalized_accel[0] + (1 - Filter_Weight) * filtered_data.normalized_accel[0];
-                filtered_data.normalized_accel[1] = Filter_Weight * measurements[i].normalized_accel[1] + (1 - Filter_Weight) * filtered_data.normalized_accel[1];
-                filtered_data.normalized_accel[2] = Filter_Weight * measurements[i].normalized_accel[2] + (1 - Filter_Weight) * filtered_data.normalized_accel[2];
+            filtered_data.altitude = Filter_Weight * measurement.altitude + (1 - Filter_Weight) * filtered_data.altitude;
 
-                filtered_data.normalized_gyro[0] = Filter_Weight * measurements[i].normalized_gyro[0] + (1 - Filter_Weight) * filtered_data.normalized_gyro[0];
-                filtered_data.normalized_gyro[1] = Filter_Weight * measurements[i].normalized_gyro[1] + (1 - Filter_Weight) * filtered_data.normalized_gyro[1];
-                filtered_data.normalized_gyro[2] = Filter_Weight * measurements[i].normalized_gyro[2] + (1 - Filter_Weight) * filtered_data.normalized_gyro[2];
+            filtered_data.pressure = Filter_Weight * measurement.pressure + (1 - Filter_Weight) * filtered_data.pressure;
 
-                filtered_data.altitude = Filter_Weight * measurements[i].altitude + (1 - Filter_Weight) * filtered_data.altitude;
+            filtered_data.temperature = Filter_Weight * measurement.temperature + (1 - Filter_Weight) * filtered_data.temperature;
 
-                filtered_data.pressure = Filter_Weight * measurements[i].pressure + (1 - Filter_Weight) * filtered_data.pressure;
-
-                filtered_data.temperature = Filter_Weight * measurements[i].temperature + (1 - Filter_Weight) * filtered_data.temperature;
-
-                filtered_data.message += measurements[i].message;
-
-            }
+            filtered_data.message += measurement.message;
 
         }
 

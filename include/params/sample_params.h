@@ -20,3 +20,5 @@
 
 #define EqualitySumMin -2 // What the weights should sum to, to be considered equal
 #define EqualitySumMax 2 // What the weights should sum under, to be considered equal
+
+#define Filter_Weight 0.2f // Smoothing factor of filter, lower weight means higher filtering, but decreased responsiveness

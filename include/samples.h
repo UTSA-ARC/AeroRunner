@@ -7,6 +7,8 @@ class Sample { // An Average of Measurements
     private:
 
         SampleData avg_data; // Avg of measurements
+
+        SampleData filtered_data; // Exponential smoothing of measurements
         int measurementCount; // Number of measurements taken in this sample
         
         void updateAverages( Data measurement ){
@@ -36,6 +38,33 @@ class Sample { // An Average of Measurements
             avg_data.message += measurement.message;
         }
 
+        void updateFilteredData(Data measurement) { // updates data through an exponential smoothing filter
+
+            filtered_data.raw_accel[0] = Filter_Weight * measurement.raw_accel[0] + (1 - Filter_Weight) * filtered_data.raw_accel[0];
+            filtered_data.raw_accel[1] = Filter_Weight * measurement.raw_accel[1] + (1 - Filter_Weight) * filtered_data.raw_accel[1];
+            filtered_data.raw_accel[2] = Filter_Weight * measurement.raw_accel[2] + (1 - Filter_Weight) * filtered_data.raw_accel[2];
+
+            filtered_data.raw_gyro[0] = Filter_Weight * measurement.raw_gyro[0] + (1 - Filter_Weight) * filtered_data.raw_gyro[0];
+            filtered_data.raw_gyro[1] = Filter_Weight * measurement.raw_gyro[1] + (1 - Filter_Weight) * filtered_data.raw_gyro[1];
+            filtered_data.raw_gyro[2] = Filter_Weight * measurement.raw_gyro[2] + (1 - Filter_Weight) * filtered_data.raw_gyro[2];
+
+            filtered_data.normalized_accel[0] = Filter_Weight * measurement.normalized_accel[0] + (1 - Filter_Weight) * filtered_data.normalized_accel[0];
+            filtered_data.normalized_accel[1] = Filter_Weight * measurement.normalized_accel[1] + (1 - Filter_Weight) * filtered_data.normalized_accel[1];
+            filtered_data.normalized_accel[2] = Filter_Weight * measurement.normalized_accel[2] + (1 - Filter_Weight) * filtered_data.normalized_accel[2];
+
+            filtered_data.normalized_gyro[0] = Filter_Weight * measurement.normalized_gyro[0] + (1 - Filter_Weight) * filtered_data.normalized_gyro[0];
+            filtered_data.normalized_gyro[1] = Filter_Weight * measurement.normalized_gyro[1] + (1 - Filter_Weight) * filtered_data.normalized_gyro[1];
+            filtered_data.normalized_gyro[2] = Filter_Weight * measurement.normalized_gyro[2] + (1 - Filter_Weight) * filtered_data.normalized_gyro[2];
+
+            filtered_data.altitude = Filter_Weight * measurement.altitude + (1 - Filter_Weight) * filtered_data.altitude;
+
+            filtered_data.pressure = Filter_Weight * measurement.pressure + (1 - Filter_Weight) * filtered_data.pressure;
+
+            filtered_data.temperature = Filter_Weight * measurement.temperature + (1 - Filter_Weight) * filtered_data.temperature;
+
+            filtered_data.message += measurement.message;
+
+        }
 
     public:
 
@@ -60,6 +89,8 @@ class Sample { // An Average of Measurements
 
         
         SampleData Get_Avg_Data() { return avg_data; } // Get Avg_data
+
+        SampleData Get_Filtered_Data() {return filtered_data; } // Get filtered data
 
         void Append_Message( const String message ) { avg_data.message += message;  } // Append to message string of Sample object
 

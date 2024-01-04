@@ -24,3 +24,6 @@
 #define ExitSetup 20 // In seconds
 
 #define SurfaceAltBias 10 //In meters
+
+#define PinSrc 1 // FIX, continuity check pin, input
+#define PinGnd 1 // FIX, continuity check pin, output

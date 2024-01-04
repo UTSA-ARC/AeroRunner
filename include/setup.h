@@ -93,6 +93,20 @@ Result Check_VBAT_Connection() { // Check if VBAT is connected
 
 }
 
+Result Check_Continuity(uint8_t continuity_src, uint8_t continuity_gnd ) { 
+    pinMode(continuity_src, INPUT);
+    pinMode(continuity_gnd, OUTPUT);
+    
+    digitalWrite(continuity_src, HIGH);
+
+    if ( digitalRead(continuity_gnd) == HIGH ) {
+        return { 0, "Continuity Confirmed"};
+    } else {
+        return { -1, "Continuity Not Confirmed"};
+    }
+
+}
+
 void Init_Paras() { // Initialize Parachutes
 
     pinMode( PinMain, OUTPUT );

@@ -34,3 +34,9 @@ typedef struct Result {
     String message;
 
 } Result;
+
+typedef struct TimeData {
+    unsigned long timeNow = 0UL;
+    unsigned long timePrev = 0UL;
+    unsigned long dt = 0UL; // loop time used to update integral 
+} TimeData;

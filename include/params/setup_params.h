@@ -27,3 +27,9 @@
 
 #define PinSrc 1 // FIX, continuity check pin, input
 #define PinGnd 1 // FIX, continuity check pin, output
+
+#define MICROS_TO_SECONDS 0.000001f // 1 us = 10^(-6) s
+#define G_TO_SI_UNITS 9.80665f // 1 g-unit = 9.80665 m/s^2
+
+#define Y_ACCEL_INDEX 1 // Index of y-axis acceleration in acceleration vector
+#define SUBSONIC_SPEED 205.8f // Units: m/s (343 m/s = Mach 1)

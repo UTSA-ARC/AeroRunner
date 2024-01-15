@@ -16,6 +16,14 @@ int apogee = 0;
 int SurfaceAlt = 0;
 bool landed = false;
 
+// Used to keep track of main loop time
+TimeData loopTime;
+elapsedMicros loopTimer = 0;
+
+// MPU-based variables
+float mpuVelY = 0.0f; // Vertical velocity based on accelerometer data
+float avg_y_accel = 0.0f; // Accelerometer data based on most recent Samples
+
 void setup() {
     // Find hexadecimal representation of accelerometer range based on decimal global variable AccelRange defined above //
     // Find decimal representation of LSB Sensitivity based on decimal global variable AccelRange defined above //
@@ -132,10 +140,24 @@ void loop() {
 
     if ( landed ) return; // Do nothing if landed
 
+    loopTime.dt = loopTimer; // get loop time interval
+    loopTimer = 0; // reset timer
     SampleCollection Samples; // Get all data values
 
     Sample* sample_arr = Samples.Get_Sample_Array(); // Get Sample Array
     const int sample_size = Samples.Size(); // Get Sample Array Size
+
+    /*-------------------------------------------------
+      calculate average MPU y-axis acceleration over all Samples*/
+    avg_y_accel = 0.0f;
+    for( int i = 0; i < SampleAmount; i++) {
+        avg_y_accel += sample_arr[i].Get_Avg_Data().normalized_accel[Y_ACCEL_INDEX];
+    }
+    avg_y_accel /= SampleAmount;
+
+    // Calculate MPU-based y-axis velocity
+    mpuVelY = ( avg_y_accel * G_TO_SI_UNITS ) * ( loopTime.dt * MICROS_TO_SECONDS );
+    //-------------------------------------------------
 
     int sample_movement[ sample_size - 1 ]; // Init Comparison array
 
@@ -159,7 +181,8 @@ void loop() {
         int i = 0;
         while ( sample_movement[ i ] > 0 && i < ( sample_size - 2 ) ) i++; // Iterate through Comparison array until reading 0 or -1
 
-        if ( sample_movement[ i + 1 ] < 0 ) { // If next index is -1
+        // mpuVelY < SUBSONIC_SPEED adds immunity to Mach-related disturbances
+        if ( sample_movement[ i + 1 ] < 0 && mpuVelY < SUBSONIC_SPEED) { // If next index is -1
 
             Result launch_result = Launch_Parachute( 1 ); // Launch Drogue
             sample_arr[ i + 1 ].Append_Message( ( launch_result.message + ',' ) ); // Record result

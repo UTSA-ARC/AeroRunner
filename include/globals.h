@@ -36,7 +36,7 @@ typedef struct Result {
 } Result;
 
 typedef struct TimeData {
-    unsigned long timeNow = 0UL;
-    unsigned long timePrev = 0UL;
-    unsigned long dt = 0UL; // loop time used to update integral 
+    unsigned int timeNow = 0UL;
+    unsigned int timePrev = 0UL;
+    unsigned int dt = 0UL; // loop time used to update integral
 } TimeData;

@@ -391,27 +391,13 @@ class SampleCollection { // A collection of sample objects
 
             String msg = C_Alt.message + C_Pres.message + C_Temp.message + C_R_Accel.message + C_N_Accel.message + C_R_Tilt.message + C_N_Tilt.message;
 
-
-            if ( C_Alt.error > 0 ) eq += AltEqualityWeight;
-            else if ( C_Alt.error < 0 ) eq -= AltEqualityWeight;
-
-            if ( C_Pres.error > 0 ) eq += PressureEqualityWeight;
-            else if ( C_Pres.error < 0 ) eq -= PressureEqualityWeight;
-
-            if ( C_Temp.error > 0 ) eq += TemperatureEqualityWeight;
-            else if ( C_Temp.error < 0 ) eq -= TemperatureEqualityWeight;
-
-            if ( C_R_Accel.error > 0 ) eq +=  RawAccelEqualityWeight;
-            else if ( C_R_Accel.error < 0 ) eq -= RawAccelEqualityWeight;
-
-            if ( C_N_Accel.error > 0 ) eq += NormalizedAccelEqualityWeight;
-            else if ( C_N_Accel.error < 0 ) eq -= NormalizedAccelEqualityWeight;
-
-            if ( C_R_Tilt.error > 0 ) eq += RawGyroEqualityWeight;
-            else if ( C_R_Tilt.error < 0 ) eq -= RawGyroEqualityWeight;
-
-            if ( C_N_Tilt.error > 0 ) eq += NormalizedGyroEqualityWeight;
-            else if ( C_N_Tilt.error < 0 ) eq -= NormalizedGyroEqualityWeight;
+            eq += C_Alt.pDiff * AltEqualityWeight
+            eq += C_Pres.pDiff * PressureEqualityWeight
+            eq += C_Temp.pDiff * TemperatureEqualityWeight
+            eq += C_R_Accel.pDiff * RawAccelEqualityWeight
+            eq += C_N_Accel.pDiff * NormalizedAccelEqualityWeight
+            eq += C_R_Tilt.pDiff * RawGyroEqualityWeight
+            eq += C_N_Tilt * NormalizedGyroEqualityWeight
 
             if ( eq > EqualitySumMax ) return { 1, msg };
             if ( eq < EqualitySumMin ) return { -1, msg };

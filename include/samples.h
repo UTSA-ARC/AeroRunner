@@ -391,13 +391,13 @@ class SampleCollection { // A collection of sample objects
 
             String msg = C_Alt.message + C_Pres.message + C_Temp.message + C_R_Accel.message + C_N_Accel.message + C_R_Tilt.message + C_N_Tilt.message;
 
-            eq += C_Alt.pDiff * AltEqualityWeight
-            eq += C_Pres.pDiff * PressureEqualityWeight
-            eq += C_Temp.pDiff * TemperatureEqualityWeight
-            eq += C_R_Accel.pDiff * RawAccelEqualityWeight
-            eq += C_N_Accel.pDiff * NormalizedAccelEqualityWeight
-            eq += C_R_Tilt.pDiff * RawGyroEqualityWeight
-            eq += C_N_Tilt * NormalizedGyroEqualityWeight
+            eq += C_Alt.pDiff * AltEqualityWeight;
+            eq += C_Pres.pDiff * PressureEqualityWeight;
+            eq += C_Temp.pDiff * TemperatureEqualityWeight;
+            eq += C_R_Accel.pDiff * RawAccelEqualityWeight;
+            eq += C_N_Accel.pDiff * NormalizedAccelEqualityWeight;
+            eq += C_R_Tilt.pDiff * RawGyroEqualityWeight;
+            eq += C_N_Tilt * NormalizedGyroEqualityWeight;
 
             if ( eq > EqualitySumMax ) return { 1, msg };
             if ( eq < EqualitySumMin ) return { -1, msg };

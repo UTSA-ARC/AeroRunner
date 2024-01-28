@@ -397,7 +397,7 @@ class SampleCollection { // A collection of sample objects
             eq += C_R_Accel.pDiff * RawAccelEqualityWeight;
             eq += C_N_Accel.pDiff * NormalizedAccelEqualityWeight;
             eq += C_R_Tilt.pDiff * RawGyroEqualityWeight;
-            eq += C_N_Tilt * NormalizedGyroEqualityWeight;
+            eq += C_N_Tilt.pDiff * NormalizedGyroEqualityWeight;
 
             if ( eq > EqualitySumMax ) return { 1, msg };
             if ( eq < EqualitySumMin ) return { -1, msg };

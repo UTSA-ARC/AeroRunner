@@ -41,15 +41,80 @@ int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyroscopic Val
 
     for ( int i = 0; i < 3; i++ ) raw_gyro[ i ] = ( Wire.read() << 8 | Wire.read() );
 
+    if ( toUpperCase( HorizontalAxis ) != 'X' ) { // Swap X value
+
+        int temp = raw_gyro[ 0 ];
+
+        if ( toUpperCase( HorizontalAxis ) == 'Y' ) { // Swap X and Y
+
+            raw_gyro[ 0 ] = raw_gyro[ 1 ];
+            raw_gyro[ 1 ] = temp;
+
+        }
+
+        else { // Swap X and Z
+
+            raw_gyro[ 0 ] = raw_gyro[ 2 ];
+            raw_gyro[ 2 ] = temp;
+
+        }
+
+    }
+
+    if ( toUpperCase( VerticalAxis ) != 'Y' ) { // Swap Y value
+
+        int temp = raw_gyro[ 1 ];
+
+        if ( toUpperCase( VerticalAxis ) == 'X' ) { // Swap Y and X
+
+            raw_gyro[ 1 ] = raw_gyro[ 0 ];
+            raw_gyro[ 0 ] = temp;
+            
+        }
+
+        else { // Swap Y and Z
+
+            raw_gyro[ 1 ] = raw_gyro[ 2 ];
+            raw_gyro[ 2 ] = temp;
+
+        }
+
+    }
+
+    if ( toUpperCase( DepthAxis ) != 'Z' ) { // Swap Z value
+
+        int temp = raw_gyro[ 2 ];
+
+        if ( toUpperCase( DepthAxis ) == 'X' ) { // Swap Z and X
+
+        raw_gyro[ 2 ] = raw_gyro[ 0 ];
+        raw_gyro[ 0 ] = temp;
+            
+        }
+            
+        else { // Swap Z and Y
+
+            raw_gyro[ 2 ] = raw_gyro[ 1 ];
+            raw_gyro[ 1 ] = temp;
+
+        }
+
+    }
+
     return raw_gyro;
 
 }
 
-float* Get_Normalized_Gyro( const int* raw_gyro ) { // Returns an int vector containing the normalized gyroscopic Values from the MPU
+float* Get_Normalized_Gyro( const int* raw_gyro ) { // Returns a float vector containing the normalized gyroscopic Values from the MPU
 
     static float normalized_gyro[ 3 ];
 
     for ( int i = 0; i < 3; i++ ) normalized_gyro[ i ] = raw_gyro[ 0 ] / ( GLSB_Sensitivity / 1.0f );
+
+    if ( FlipHAxis ) normalized_gyro[ 0 ] = -normalized_gyro[ 0 ]; // Flip the X axis
+    if ( FlipVAxis ) normalized_gyro[ 1 ] = -normalized_gyro[ 1 ]; // Flip the Y axis
+    if ( FlipDAxis ) normalized_gyro[ 2 ] = -normalized_gyro[ 2 ]; // Flip the Z axis
+
 
     return normalized_gyro;
 
@@ -152,7 +217,7 @@ void Print_All_Values( SampleData *Values ) { // Print the Values on the serial 
 
 }
 
-void Write_All_Values_To_SD( SampleData* Values ) { // Records values to Sd card
+void Write_All_Values_To_SD( SampleData* Values ) { // Records values to SD card
 
     String file_string = String( month() + '-' + day() + '-' + year() ) + ".csv";
     File myFile = SD.open( file_string.c_str(), FILE_WRITE );

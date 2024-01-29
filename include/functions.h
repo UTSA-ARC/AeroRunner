@@ -87,8 +87,8 @@ int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyroscopic Val
 
         if ( toUpperCase( DepthAxis ) == 'X' ) { // Swap Z and X
 
-        raw_gyro[ 2 ] = raw_gyro[ 0 ];
-        raw_gyro[ 0 ] = temp;
+            raw_gyro[ 2 ] = raw_gyro[ 0 ];
+            raw_gyro[ 0 ] = temp;
             
         }
             

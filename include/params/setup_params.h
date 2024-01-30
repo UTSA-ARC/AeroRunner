@@ -14,6 +14,13 @@
 #define AccelRange 16
 #define GyroRange 2000
 
+#define HorizontalAxis 'X' // Define the horizontal axis ( Will be set as 'X' Axis in program )
+#define FlipHAxis false // Define if the horizontal axis should be flipped
+#define VerticalAxis 'Y' // Define the vertical axis ( Will be set as 'Y' Axis in program )
+#define FlipVAxis false // Define if the vertical axis should be flipped
+#define DepthAxis 'Z' // Define the depth axis ( Will be set as 'Z' Axis in program )
+#define FlipDAxis false  // Define if the depth axis should be flipped
+
 #define PinDrogue 39
 #define PinMain 33
 

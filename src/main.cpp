@@ -20,10 +20,6 @@ bool landed = false;
 TimeData loopTime;
 elapsedMicros loopTimer = 0;
 
-// MPU-based variables
-float mpuVelY = 0.0f; // Vertical velocity based on accelerometer data
-float avg_y_accel = 0.0f; // Accelerometer data based on most recent Samples
-
 void setup() {
     // Find hexadecimal representation of accelerometer range based on decimal global variable AccelRange defined above //
     // Find decimal representation of LSB Sensitivity based on decimal global variable AccelRange defined above //
@@ -147,16 +143,20 @@ void loop() {
     Sample* sample_arr = Samples.Get_Sample_Array(); // Get Sample Array
     const int sample_size = Samples.Size(); // Get Sample Array Size
 
-    /*-------------------------------------------------
-      calculate average MPU y-axis acceleration over all Samples*/
-    avg_y_accel = 0.0f;
-    for( int i = 0; i < SampleAmount; i++) {
-        avg_y_accel += sample_arr[i].Get_Avg_Data().normalized_accel[Y_ACCEL_INDEX];
+    // -------------------------------------------------
+    
+    float mpuVelY = 0.0f; // Vertical velocity based on accelerometer data
+    float avg_y_accel = 0.0f; // Accelerometer data based on most recent Samples
+    
+    for ( int i = 0; i < SampleAmount; i++ ) { // Calculate average MPU y-axis acceleration over all Samples
+
+        avg_y_accel += sample_arr[ i ].Get_Avg_Data().normalized_accel[ Y_ACCEL_INDEX ] / SampleAmount;
+        
     }
-    avg_y_accel /= SampleAmount;
 
     // Calculate MPU-based y-axis velocity
     mpuVelY = ( avg_y_accel * G_TO_SI_UNITS ) * ( loopTime.dt * MICROS_TO_SECONDS );
+
     //-------------------------------------------------
 
     int sample_movement[ sample_size - 1 ]; // Init Comparison array

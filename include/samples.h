@@ -11,7 +11,7 @@ class Sample { // An Average of Measurements
         SampleData filtered_data; // Exponential smoothing of measurements
         int measurementCount; // Number of measurements taken in this sample
         
-        void updateAverages( const Data* measurement ){
+        void updateAverages( const Data* measurement ) {
      
             avg_data.raw_accel[0] = ( avg_data.raw_accel[0]*(measurementCount- 1) + measurement->raw_accel[0] ) / measurementCount;
             avg_data.raw_accel[1] = ( avg_data.raw_accel[1]*(measurementCount- 1) + measurement->raw_accel[1] ) / measurementCount;
@@ -38,7 +38,7 @@ class Sample { // An Average of Measurements
             avg_data.message += measurement->message;
         }
 
-        void updateFilteredData( const Data* measurement, const float_t filter_weight = Filter_Weight) { // updates data through an exponential smoothing filter
+        void updateFilteredData( const Data* measurement, const float_t filter_weight = Filter_Weight) { // updates data through an exponential smoothing filter // TODO: UNIT TEST
 
             filtered_data.raw_accel[0] = filter_weight * measurement->raw_accel[0] + (1 - filter_weight) * filtered_data.raw_accel[0];
             filtered_data.raw_accel[1] = filter_weight * measurement->raw_accel[1] + (1 - filter_weight) * filtered_data.raw_accel[1];
@@ -208,12 +208,12 @@ class SampleCollection { // A collection of sample objects
             float_t diff[3];
             for ( int i = 0; i < 3; i++ ){
                 if ( raw_accel_a[i] == 0.0 ){
-                    diff[i] = 0; //do something
+                    diff[i] = 0; // Do something
                     break;
                 }
                 diff[i] = ( raw_accel_b[i] - raw_accel_a[i] )/raw_accel_a[i];
             }
-            result.pDiff = diff[1]; //the percent change of the y axis
+            result.pDiff = diff[1]; // The percent change of the y axis
          
             char axis[3] = {'X', 'Y', 'Z'};
 
@@ -244,12 +244,12 @@ class SampleCollection { // A collection of sample objects
             float_t diff[3];
             for ( int i = 0; i < 3; i++ ){
                 if ( accel_a[i] == 0.0 ){
-                    diff[i] = 0; //do something
+                    diff[i] = 0; // Do something
                     break;
                 }
                 diff[i] = ( accel_b[i] - accel_a[i] )/accel_a[i];
             }
-            result.pDiff = diff[1]; //the percent change of the y axis
+            result.pDiff = diff[1]; // The percent change of the y axis
             
             char axis[3] = {'X', 'Y', 'Z'};
 
@@ -279,12 +279,12 @@ class SampleCollection { // A collection of sample objects
             float_t diff[3];
             for ( int i = 0; i < 3; i++ ){
                 if ( raw_gyro_a[i] == 0.0 ){
-                    diff[i] = 0; //do something
+                    diff[i] = 0; // Do something
                     break;
                 }
                 diff[i] = ( raw_gyro_b[i] - raw_gyro_a[i] )/raw_gyro_a[i];
             }
-            result.pDiff = diff[1]; //the percent change of the y axis
+            result.pDiff = diff[1]; // The percent change of the y axis
     
             char axis[3] = {'X', 'Y', 'Z'};
 
@@ -314,12 +314,12 @@ class SampleCollection { // A collection of sample objects
             float_t diff[3];
             for ( int i = 0; i < 3; i++ ){
                 if ( gyro_a[i] == 0.0 ){
-                    diff[i] = 0; //do something
+                    diff[i] = 0; // Do something
                     break;
                 }
                 diff[i] = ( gyro_b[i] - gyro_a[i] )/gyro_a[i];
             }
-            result.pDiff = diff[1]; //the percent change of the y axis
+            result.pDiff = diff[1]; // The percent change of the y axis
     
             char axis[3] = {'X', 'Y', 'Z'};
 
@@ -378,7 +378,7 @@ class SampleCollection { // A collection of sample objects
 
         }
 
-        Result Compare_Sample( const int sample_a_index, const int sample_b_index ) { // Compare 2 samples //* Return 0 if equal, 1 if greater, -1 if lesser
+        Result Compare_Sample( const int sample_a_index, const int sample_b_index ) { // Compare 2 samples //* Return 0 if equal, 1 if greater, -1 if lesser // TODO: UNIT TEST
 
             int eq = 0;
 

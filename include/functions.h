@@ -122,7 +122,7 @@ float_t* Get_Normalized_Gyro( const int* raw_gyro ) { // Returns a float_t vecto
 
 // -----------------------Struct Functions------------------------------------------
 
-Data Get_All_Values() { // Record all values //! DEPRECATED
+Data Get_All_Values() { // Record all values
 
     Data data;
 
@@ -161,7 +161,7 @@ Data Get_All_Values() { // Record all values //! DEPRECATED
 
 // -----------------------Data Handling Functions-----------------------------------
 
-void Print_All_Values( SampleData *Values ) { // Print the Values on the serial monitor
+void Print_All_Values( SampleData* Values ) { // Print the Values on the serial monitor
 
     Serial.begin( 115200 ); // Open Serial Port
 

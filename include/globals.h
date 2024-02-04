@@ -12,10 +12,10 @@ typedef struct Data { //* All measurements
 
     String time;
 
-    int raw_accel[3];
+    int16_t raw_accel[3];
     float_t normalized_accel[3];
 
-    int raw_gyro[3];
+    int16_t raw_gyro[3];
     float_t normalized_gyro[3];
 
     float_t temperature;
@@ -36,7 +36,9 @@ typedef struct Result {
 } Result;
 
 typedef struct TimeData {
-    unsigned int timeNow = 0UL;
-    unsigned int timePrev = 0UL;
-    unsigned int dt = 0UL; // loop time used to update integral
+
+    uint16_t timeNow = 0;
+    uint16_t timePrev = 0;
+    uint16_t dt = 0; // loop time used to update integral
+    
 } TimeData;

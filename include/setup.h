@@ -167,7 +167,7 @@ Result Check_Continuity( const uint8_t continuity_src, const uint8_t continuity_
     
     digitalWrite( continuity_src, HIGH );
 
-    if ( digitalRead( continuity_gnd ) != HIGH ) return { -1, "Continuity Not Confirmed"};
+    if ( digitalRead( continuity_gnd ) != HIGH ) return { -1, "Continuity Not Confirmed" };
     
     return { 0, "Continuity Not Confirmed"};
 
@@ -272,7 +272,9 @@ Result Check_Systems( // Checks if systems are safe
 
     //* Will trigger LED based on error code
 
-    Result* results;
+    uint8_t results_size = 5 + continuity_arrs_size;
+
+    Result results[ results_size ];
 
     // Check if connected to sufficient voltage
     results[ 0 ] = Check_Input_Voltage( analogRead( input_pin ), min_voltage, max_voltage );
@@ -295,8 +297,6 @@ Result Check_Systems( // Checks if systems are safe
     // results[ 5 ] = { 0, "-" }; //! MPU no werk :'(
     
     // Check Ejection Charge continuities
-    uint8_t results_size = 5 + continuity_arrs_size;
-
     for ( int i = 0; i < continuity_arrs_size; i++ ) results[ 5 + i ] = Check_Continuity( src_pins[ i ], gnd_pins[ i ] );
 
     for ( int i = 0; i < results_size; i++ ) {

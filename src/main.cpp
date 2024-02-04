@@ -16,7 +16,7 @@ int apogee = 0;
 int SurfaceAlt = 0;
 bool landed = false;
 
-String csv_file_name = CSV_FILE_NAME; 
+String csv_file_name = CSV_FILE_NAME;
 
 // Used to keep track of main loop time
 TimeData loopTime;
@@ -46,15 +46,15 @@ void setup() {
 
     // ----------------------------------------------------------------
 
-    Serial.println( "Initializing BMP3..." );
+    Serial.println( "Initializing BMP390..." );
     while ( !bmp.begin_I2C() ) { // hardware I2C mode, can pass in address & alt Wire
 
-        Serial.println( "Could not find a valid BMP3 sensor, check wiring!\n" );
+        Serial.println( "Could not find a valid BMP390 sensor, check wiring!\n" );
         delay( 2000 );
 
     }
 
-    Serial.println( "Found and initialized a valid BMP3 I2C sensor!" );
+    Serial.println( "Found and initialized a valid BMP390 I2C sensor!" );
 
     // ----------------------------------------------------------------
 

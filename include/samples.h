@@ -104,11 +104,11 @@ class SampleCollection { // A collection of sample objects
         Sample* Samples; // Array of Samples
         int size; // Size of array
         typedef struct ResultPDiff : Result { 
-            float pDiff; 
+            float_t pDiff; 
         } ResultPDiff;
         
 
-        ResultPDiff Compare_Altitude( const float altitude_a, const float altitude_b ) { // Compare Altitudes of 2 Samples
+        ResultPDiff Compare_Altitude( const float_t altitude_a, const float_t altitude_b ) { // Compare Altitudes of 2 Samples
 
             ResultPDiff result;
             
@@ -118,7 +118,7 @@ class SampleCollection { // A collection of sample objects
                 result.pDiff = 0; 
             }
 
-            float diff = (altitude_b - altitude_a)/altitude_a;
+            float_t diff = (altitude_b - altitude_a)/altitude_a;
             result.pDiff = diff;
 
             if ( diff < 0 && fabs(diff) > SampleAltTolerance ){
@@ -136,7 +136,7 @@ class SampleCollection { // A collection of sample objects
 
         }
 
-        ResultPDiff Compare_Pressure( const float pressure_a, const float pressure_b ) { // Compare Pressures of 2 Samples
+        ResultPDiff Compare_Pressure( const float_t pressure_a, const float_t pressure_b ) { // Compare Pressures of 2 Samples
 
             ResultPDiff result;
             
@@ -146,7 +146,7 @@ class SampleCollection { // A collection of sample objects
                 result.pDiff = 0; 
             }
 
-            float diff = (pressure_b - pressure_a)/pressure_a;
+            float_t diff = (pressure_b - pressure_a)/pressure_a;
             result.pDiff = diff;
 
             if ( diff < 0 && fabs(diff) > SamplePressureTolerance ){
@@ -164,7 +164,7 @@ class SampleCollection { // A collection of sample objects
 
         }
 
-        ResultPDiff Compare_Temperature( const float temperature_a, const float temperature_b ) { // Compare Temperatures of 2 Samples
+        ResultPDiff Compare_Temperature( const float_t temperature_a, const float_t temperature_b ) { // Compare Temperatures of 2 Samples
 
             ResultPDiff result;
             
@@ -174,7 +174,7 @@ class SampleCollection { // A collection of sample objects
                 result.pDiff = 0; 
             }
 
-            float diff = ( temperature_b - temperature_a )/temperature_a;
+            float_t diff = ( temperature_b - temperature_a )/temperature_a;
             result.pDiff = diff;
 
             if ( diff < 0 && fabs(diff) > SampleTemperatureTolerance ){
@@ -198,7 +198,7 @@ class SampleCollection { // A collection of sample objects
             result.error = 0;
             result.message = "";
 
-            float diff[3];
+            float_t diff[3];
             for ( int i = 0; i < 3; i++ ){
                 if ( raw_accel_a[i] == 0.0 ){
                     diff[i] = 0; //do something
@@ -228,13 +228,13 @@ class SampleCollection { // A collection of sample objects
 
         }
 
-        ResultPDiff Compare_Normalized_Accel( const float* accel_a, const float* accel_b ) { // Compare the Normalized Acceleration of 2 Samples
+        ResultPDiff Compare_Normalized_Accel( const float_t* accel_a, const float_t* accel_b ) { // Compare the Normalized Acceleration of 2 Samples
 
             ResultPDiff result;
             result.error = 0;
             result.message = "";
 
-            float diff[3];
+            float_t diff[3];
             for ( int i = 0; i < 3; i++ ){
                 if ( accel_a[i] == 0.0 ){
                     diff[i] = 0; //do something
@@ -269,7 +269,7 @@ class SampleCollection { // A collection of sample objects
             result.error = 0;
             result.message = "";
 
-            float diff[3];
+            float_t diff[3];
             for ( int i = 0; i < 3; i++ ){
                 if ( raw_gyro_a[i] == 0.0 ){
                     diff[i] = 0; //do something
@@ -298,13 +298,13 @@ class SampleCollection { // A collection of sample objects
 
         }
 
-        ResultPDiff Compare_Normalized_Tilt( const float* gyro_a, const float* gyro_b ) { // Compare the Normalized Tilt of 2 Samples
+        ResultPDiff Compare_Normalized_Tilt( const float_t* gyro_a, const float_t* gyro_b ) { // Compare the Normalized Tilt of 2 Samples
 
             ResultPDiff result;
             result.error = 0;
             result.message = "";
 
-            float diff[3];
+            float_t diff[3];
             for ( int i = 0; i < 3; i++ ){
                 if ( gyro_a[i] == 0.0 ){
                     diff[i] = 0; //do something

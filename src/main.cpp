@@ -12,8 +12,8 @@
 #include "functions.h"
 #include "samples.h"
 
-int apogee = 0;
-int SurfaceAlt = 0;
+float_t apogee = 0;
+float_t SurfaceAlt = 0;
 bool landed = false;
 
 String csv_file_name = CSV_FILE_NAME;
@@ -109,16 +109,15 @@ void setup() {
 
     // ----------------------------------------------------------------
 
-
-
-    // ----------------------------------------------------------------
+    uint8_t src_pins[] = { PinSrcDrogue, PinSrcMain }; // Set source pins for continuity check
+    uint8_t gnd_pins[] = { PinGnd, PinGnd };           // Set ground pins for continuity check
 
     Data init_values = Get_All_Values(); // Set Initial Values
     delay( InitValueDelay * 1000 );      // Delay to compare data
     SurfaceAlt = init_values.altitude;   // Get surface altitude (Assuming Setup() will be called on surface ONLY)
 
     Data values = Get_All_Values(); // Get Current Values
-    Result Check_Systems_Result = Check_Systems( &values, &init_values ); // Check Health of Systems
+    Result Check_Systems_Result = Check_Systems( &values, &init_values, src_pins, gnd_pins, 2 ); // Check Health of Systems
     while ( Check_Systems_Result.error != 0 ) { // While Systems Bad
 
         Serial.println( Check_Systems_Result.message ); // Print result
@@ -126,7 +125,7 @@ void setup() {
         init_values = values;      // Re-initialize values
         values = Get_All_Values(); // ' '
 
-        Check_Systems_Result = Check_Systems( &values, &init_values ); // Re-Check result
+        Check_Systems_Result = Check_Systems( &values, &init_values, src_pins, gnd_pins, 2 ); // Re-Check result
 
     }
 
@@ -205,7 +204,7 @@ void loop() {
 
             for ( int i = 0; i < sample_size; i++ ) { // Iterate through Samples
 
-                Result alt_result = Check_Main_Para( sample_arr[ i ].Get_Avg_Data().altitude ); // Check if at Main Para Altitude
+                Result alt_result = Check_Altitude( sample_arr[ i ].Get_Avg_Data().altitude, apogee ); // Check if at Main Para Altitude
                 if ( alt_result.error == 1 ) { // If at Main Para Altitude
 
                     Launch_Parachute( 0 ); // Launch Main Para
@@ -236,7 +235,7 @@ void loop() {
 
     }
 
-    for ( int i = 0; i < sample_size; i++ ) Record_Data( &sample_arr->Get_Avg_Data(), csv_file_name ); // Print & Save All Values
+    for ( int i = 0; i < sample_size; i++ ) Record_Data( &( sample_arr->Get_Avg_Data() ), csv_file_name ); // Print & Save All Values
 
     delay( ConsoleDelay * 1000 ); //! FOR JUST EASY READING
 

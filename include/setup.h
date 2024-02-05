@@ -116,9 +116,9 @@ void Init_Paras( const uint8_t* pins, const uint8_t size ) { // Initialize Parac
 
 }
 
-String Init_CSV( String file_name = NULL ) { // Initialize CSV format
+String Init_CSV( String file_name = "" ) { // Initialize CSV format
      
-    if ( file_name == NULL ) file_name = String( month() + '-' + day() + '-' + year() );
+    if ( file_name == "" ) file_name = String( month() + '-' + day() + '-' + year() );
 
     int i = 1;
     while ( SD.exists( ( file_name + ".csv" ).c_str() ) ) { 
@@ -259,15 +259,15 @@ Result Check_Surface_Accel( const float_t* surface_accel, const float_t safe_x_a
 Result Check_Systems( // Checks if systems are safe
 
     const Data* Values, const Data* Prev_Values,
+    const uint8_t* src_pins, const uint8_t* gnd_pins, const uint8_t continuity_arrs_size,
     const uint8_t input_pin = PinInputVoltage, const uint8_t min_voltage = MINIMUM_INPUT_VOLTAGE, const uint8_t max_voltage = MAXIMUM_INPUT_VOLTAGE,
     const uint8_t vbat_pin = PinVBAT,
     const float_t press_tol = PMTolerance,
     const float_t surf_press = SurfacePressure, const float_t surf_press_tol = SurfPTolerance,
     const uint8_t systems_good_pin = PinSystemsGood, const uint8_t systems_bad_pin = PinSystemsBad,
     const float_t safe_x_tilt = SafeSurfaceTiltX, const float_t safe_y_tilt = SafeSurfaceTiltY, const float_t safe_z_tilt = SafeSurfaceTiltZ, const float_t tilt_tol = SurfaceTTolerance,
-    const float_t safe_x_accel = SafeSurfaceAccelX,const float_t safe_y_accel = SafeSurfaceAccelY, const float_t safe_z_accel = SafeSurfaceAccelZ, const float_t accel_tol = AccTolerance,
-    const uint8_t* src_pins, const uint8_t* gnd_pins, const uint8_t continuity_arrs_size
-                      
+    const float_t safe_x_accel = SafeSurfaceAccelX, const float_t safe_y_accel = SafeSurfaceAccelY, const float_t safe_z_accel = SafeSurfaceAccelZ, const float_t accel_tol = AccTolerance
+    
     ) {
 
     //* Will trigger LED based on error code

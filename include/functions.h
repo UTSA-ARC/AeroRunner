@@ -311,25 +311,12 @@ Result Launch_Parachute( const int shute ) { // Launches Parachute
 
 // -----------------------Internal Trigger Functions--------------------------------
 
-Result Check_Main_Para( const int altitude ) { // Check if altitude is at MainParaAlt
+Result Check_Altitude( const float_t altitude, const float_t prev_altitude = 0, const float_t apogee = 0, const float_t safe_altitude = SafeAltitude, const float_t main_para_alt = MainParaAlt ) { // Checks if altitude is safe/at apogee //* Not being used for immediate compatibility
 
-    if ( altitude <= MainParaAlt ) return { 1, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
-    return { -1, "Not At Main Para Alt" };
+    if ( apogee > 0 && altitude <= main_para_alt ) return { 1, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
 
-}
+    if ( altitude > safe_altitude ) {
 
-Result Check_Altitude( const int altitude, int prev_altitude=0, int apogee=0 ) { // Checks if altitude is safe/at apogee //* Not being used for immediate compatibility
-
-    if ( altitude > SafeAltitude  ) {
-
-        // if ( altitude <= prev_altitude ) {
-
-        //     if ( altitude >= ( prev_altitude * ( 1 - AlTolerance ) ) ) return { 1, "!!AT APOGEE!!" }; // Around Apogee
-        //     if ( altitude <= MainParaAlt ) return { 2, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
-
-        // }
-
-        // else
         return { 0, "Safe Altitude" }; // Safe
 
     }

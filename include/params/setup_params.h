@@ -1,6 +1,6 @@
 #pragma once
 
-#define CSV_FILE_NAME NULL // By Default the file will be set to "MM-DD-YY(-num).csv" 
+#define CSV_FILE_NAME "" // By Default the file will be set to "MM-DD-YY(-num).csv" 
 
 #define PinInputVoltage A9
 #define MINIMUM_INPUT_VOLTAGE 3.4f
@@ -36,8 +36,9 @@
 
 #define SurfaceAltBias 10 //In meters
 
-#define PinSrc 1 // FIX, continuity check pin, input
-#define PinGnd 1 // FIX, continuity check pin, output
+#define PinSrcDrogue 1 //! FIX, continuity check pin, input
+#define PinSrcMain 1 //! FIX, continuity check pin, input
+#define PinGnd 1 //! FIX, continuity check pin, output
 
 #define MICROS_TO_SECONDS 0.000001f // 1 us = 10^(-6) s
 #define G_TO_SI_UNITS 9.80665f // 1 g-unit = 9.80665 m/s^2

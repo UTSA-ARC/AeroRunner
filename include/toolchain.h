@@ -5,6 +5,13 @@
     #include <EEPROMFake.h>
     #include <SPIFake.h>
 
+    #ifndef A9
+
+        #define PIN_A9 (23)
+        static const uint8_t A9 = PIN_A9;
+
+    #endif
+
 #endif
 
 #ifdef ARDUINO_TC

@@ -6,150 +6,152 @@
 
 #ifdef ARDUINO_TC
 
-uint8_t AFS_SEL, GFS_SEL;
+    uint8_t AFS_SEL, GFS_SEL;
 
-int Set_Accel_Range( uint8_t range ) { // Range and sensitivity of accelerometer
+    int Set_Accel_Range( uint8_t range ) { // Range and sensitivity of accelerometer
 
-    switch ( range ) {
+        switch ( range ) {
 
-        case 2:                                     // 2Gs of range
-            AFS_SEL = 0x00;
-            ALSB_Sensitivity = 16384;
-        break;
-
-        case 4:                                    // 4Gs of range
-            AFS_SEL = 0x08;
-            ALSB_Sensitivity = 8192;
-        break;
-
-        case 8:                                   // 8Gs of range
-            AFS_SEL = 0x10;
-            ALSB_Sensitivity = 4096;
-        break;
-
-        case 16:                                  // 16Gs of range
-            AFS_SEL = 0x18;
-            ALSB_Sensitivity = 2048;
-        break;
-
-        default:
-            Serial.println( "Must input 2, 4, 8, or 16Gs for MPU6050 accelerometer range! Exiting..." );
-            return 1;
-    }
-
-    return 0;
-
-}
-
-int Set_Gyro_Range( uint16_t range ) { // Range and sensitivity of gyroscope
-
-    switch ( range ) {
-
-        case 250:                                    // 250 deg/s of range
-            GFS_SEL = 0x00;
-            GLSB_Sensitivity = 131;
+            case 2:                                     // 2Gs of range
+                AFS_SEL = 0x00;
+                ALSB_Sensitivity = 16384;
             break;
 
-        case 500:                                // 500 deg/s of range
-            GFS_SEL = 0x08;
-            GLSB_Sensitivity = 65.5;
+            case 4:                                    // 4Gs of range
+                AFS_SEL = 0x08;
+                ALSB_Sensitivity = 8192;
             break;
 
-        case 1000:                               // 1000 deg/s of range
-            GFS_SEL = 0x10;
-            GLSB_Sensitivity = 32.8;
+            case 8:                                   // 8Gs of range
+                AFS_SEL = 0x10;
+                ALSB_Sensitivity = 4096;
             break;
 
-        case 2000:                               // 2000 deg/s of range
-            GFS_SEL = 0x18;
-            GLSB_Sensitivity = 16.4;
+            case 16:                                  // 16Gs of range
+                AFS_SEL = 0x18;
+                ALSB_Sensitivity = 2048;
             break;
 
-        default:
-            Serial.println( "Must input 250, 500, 1000, or 2000 deg/s for MPU6050 gyroscope range! Exiting..." );
-            return 1;
-    }
+            default:
+                Serial.println( "Must input 2, 4, 8, or 16Gs for MPU6050 accelerometer range! Exiting..." );
+                return 1;
+        }
 
-    return 0;
-
-}
-
-void Init_MPU( const uint8_t mpu_address ) { // Initialize MPU
-
-    Wire.begin();                              // Initialize communication
-    Wire.beginTransmission( mpu_address );     // Start communication with MPU6050 // MPU=0x68
-    Wire.write( 0x6B );                        // Talk to the register 6B
-    Wire.write( 0x00 );                        // Make reset - place a 0 into the 6B register
-    Wire.endTransmission( true );              // End the transmission
-
-}
-
-void Configure_MPU( const uint8_t accel_config_reg ) { // Configure Accelerometer Sensitivity - Full Scale Range ( default +/- 2g )
-
-    Wire.beginTransmission( MPU_ADDRESS );
-    Wire.write( accel_config_reg );                //Talk to the ACCEL_CONFIG register ( 1C hex )
-    Wire.write( AFS_SEL );                     //Set the register bits as 00010000 ( +/- 8g full scale range )
-    Wire.endTransmission( true );
-
-}
-
-void Configure_Gyro( const uint8_t gyro_config_reg ) { // Configure Gyro Sensitivity - Full Scale Range ( default +/- 250deg/s )
-
-    Wire.beginTransmission( MPU_ADDRESS );
-    Wire.write( gyro_config_reg );                 // Talk to the GYRO_CONFIG register ( 1B hex )
-    Wire.write( GFS_SEL );                     // Set the register bits as 00010000 ( 1000deg/s full scale )
-    Wire.endTransmission( true );
-
-}
-
-void Configure_BMP( const uint8_t temp_oversampling = BMP3_OVERSAMPLING_8X, const uint8_t press_oversampling = BMP3_OVERSAMPLING_4X, const uint8_t iir_filter_coeff = BMP3_IIR_FILTER_COEFF_3, const uint8_t output_data_rate = BMP3_ODR_50_HZ ) {
-
-    bmp.setTemperatureOversampling( temp_oversampling);
-    bmp.setPressureOversampling( press_oversampling );
-    bmp.setIIRFilterCoeff( iir_filter_coeff );
-    bmp.setOutputDataRate( output_data_rate );
-
-}
-
-void Init_Supplimentary_Pins( uint8_t systems_good_pin, uint8_t systems_bad_pin, uint8_t input_voltage_pin, uint8_t vbat_pin ) { // Configure
-
-    pinMode( systems_good_pin, OUTPUT );
-    pinMode( systems_bad_pin, OUTPUT );
-    pinMode( input_voltage_pin, INPUT );
-    pinMode( vbat_pin, INPUT );
-
-}
-
-void Init_Paras( const uint8_t* pins, const uint8_t size ) { // Initialize Parachutes
-
-    for (int i = 0; i < size; i++) pinMode( pins[i], OUTPUT );
-
-}
-
-String Init_CSV( String file_name = "" ) { // Initialize CSV format
-     
-    if ( file_name == "" ) file_name = String( month() + '-' + day() + '-' + year() );
-
-    int i = 1;
-    while ( SD.exists( ( file_name + ".csv" ).c_str() ) ) { 
-    
-        file_name += "-" + String( i );
-        i++;
+        return 0;
 
     }
 
-    String file_string = file_name + ".csv";
+    int Set_Gyro_Range( uint16_t range ) { // Range and sensitivity of gyroscope
 
-    File myFile = SD.open( file_string.c_str(), FILE_WRITE );
-    myFile.println(
+        switch ( range ) {
 
-        "Time ( RTC ),TimeEnd ( RTC ),Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),Ax ( g ),Ay ( g ),Az ( g ),Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),Gx ( deg/s ),Gy ( deg/s ),Gz ( deg/s ),Temperature ( *C ),Pressure ( kpA ),Altitude ( m ),Message"
+            case 250:                                    // 250 deg/s of range
+                GFS_SEL = 0x00;
+                GLSB_Sensitivity = 131;
+                break;
 
-    );
+            case 500:                                // 500 deg/s of range
+                GFS_SEL = 0x08;
+                GLSB_Sensitivity = 65.5;
+                break;
 
-    myFile.close();
+            case 1000:                               // 1000 deg/s of range
+                GFS_SEL = 0x10;
+                GLSB_Sensitivity = 32.8;
+                break;
 
-}
+            case 2000:                               // 2000 deg/s of range
+                GFS_SEL = 0x18;
+                GLSB_Sensitivity = 16.4;
+                break;
+
+            default:
+                Serial.println( "Must input 250, 500, 1000, or 2000 deg/s for MPU6050 gyroscope range! Exiting..." );
+                return 1;
+        }
+
+        return 0;
+
+    }
+
+    void Init_MPU( const uint8_t mpu_address ) { // Initialize MPU
+
+        Wire.begin();                              // Initialize communication
+        Wire.beginTransmission( mpu_address );     // Start communication with MPU6050 // MPU=0x68
+        Wire.write( 0x6B );                        // Talk to the register 6B
+        Wire.write( 0x00 );                        // Make reset - place a 0 into the 6B register
+        Wire.endTransmission( true );              // End the transmission
+
+    }
+
+    void Configure_MPU( const uint8_t accel_config_reg ) { // Configure Accelerometer Sensitivity - Full Scale Range ( default +/- 2g )
+
+        Wire.beginTransmission( MPU_ADDRESS );
+        Wire.write( accel_config_reg );                //Talk to the ACCEL_CONFIG register ( 1C hex )
+        Wire.write( AFS_SEL );                     //Set the register bits as 00010000 ( +/- 8g full scale range )
+        Wire.endTransmission( true );
+
+    }
+
+    void Configure_Gyro( const uint8_t gyro_config_reg ) { // Configure Gyro Sensitivity - Full Scale Range ( default +/- 250deg/s )
+
+        Wire.beginTransmission( MPU_ADDRESS );
+        Wire.write( gyro_config_reg );                 // Talk to the GYRO_CONFIG register ( 1B hex )
+        Wire.write( GFS_SEL );                     // Set the register bits as 00010000 ( 1000deg/s full scale )
+        Wire.endTransmission( true );
+
+    }
+
+    void Configure_BMP( const uint8_t temp_oversampling = BMP3_OVERSAMPLING_8X, const uint8_t press_oversampling = BMP3_OVERSAMPLING_4X, const uint8_t iir_filter_coeff = BMP3_IIR_FILTER_COEFF_3, const uint8_t output_data_rate = BMP3_ODR_50_HZ ) {
+
+        bmp.setTemperatureOversampling( temp_oversampling);
+        bmp.setPressureOversampling( press_oversampling );
+        bmp.setIIRFilterCoeff( iir_filter_coeff );
+        bmp.setOutputDataRate( output_data_rate );
+
+    }
+
+    void Init_Supplimentary_Pins( uint8_t systems_good_pin, uint8_t systems_bad_pin, uint8_t input_voltage_pin, uint8_t vbat_pin ) { // Configure
+
+        pinMode( systems_good_pin, OUTPUT );
+        pinMode( systems_bad_pin, OUTPUT );
+        pinMode( input_voltage_pin, INPUT );
+        pinMode( vbat_pin, INPUT );
+
+    }
+
+    void Init_Paras( const uint8_t* pins, const uint8_t size ) { // Initialize Parachutes
+
+        for (int i = 0; i < size; i++) pinMode( pins[i], OUTPUT );
+
+    }
+
+    String Init_CSV( String file_name = "" ) { // Initialize CSV format
+        
+        if ( file_name == "" ) file_name = String( month() + '-' + day() + '-' + year() );
+
+        int i = 1;
+        while ( SD.exists( ( file_name + ".csv" ).c_str() ) ) { 
+        
+            file_name += "-" + String( i );
+            i++;
+
+        }
+
+        String file_string = file_name + ".csv";
+
+        File myFile = SD.open( file_string.c_str(), FILE_WRITE );
+        myFile.println(
+
+            "Time ( RTC ),TimeEnd ( RTC ),Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),Ax ( g ),Ay ( g ),Az ( g ),Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),Gx ( deg/s ),Gy ( deg/s ),Gz ( deg/s ),Temperature ( *C ),Pressure ( kpA ),Altitude ( m ),Message"
+
+        );
+
+        myFile.close();
+
+        return file_name;
+
+    }
 
 #endif
 

@@ -5,14 +5,14 @@
 
 // -------------------------Vector Functions-----------------------
 
-int* Get_Raw_Accel() { // Returns an int vector of the raw acceleration Values from the MPU
+int16_t* Get_Raw_Accel() { // Returns an int vector of the raw acceleration Values from the MPU
 
     Wire.beginTransmission( MPU_ADDRESS );
     Wire.write( 0x3B );                       // Start with register 0x3B ( ACCEL_XOUT_H )
     Wire.endTransmission( false );
     Wire.requestFrom( MPU_ADDRESS, 6, true );         // Read 6 registers total, each axis value is stored in 2 registers
 
-    static int result[ 3 ];
+    static int16_t result[ 3 ];
 
     for ( int i = 0; i < 3; i++ ) result[ i ] = ( Wire.read() << 8 | Wire.read() ); // Raw values
 
@@ -20,7 +20,7 @@ int* Get_Raw_Accel() { // Returns an int vector of the raw acceleration Values f
 
 }
 
-float_t* Get_Normalized_Accel( const int* raw_accel ) { // Returns the normalized acceleration Values from the MPU
+float_t* Get_Normalized_Accel( const int16_t* raw_accel ) { // Returns the normalized acceleration Values from the MPU
 
     static float_t normalized_accel[ 3 ];
 
@@ -30,14 +30,14 @@ float_t* Get_Normalized_Accel( const int* raw_accel ) { // Returns the normalize
 
 }
 
-int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyroscopic Values from the MPU
+int16_t* Get_Raw_Gyro() { // Returns an int vector containing the raw gyroscopic Values from the MPU
 
     Wire.beginTransmission( MPU_ADDRESS );
     Wire.write( 0x43 );                     // Gyro data first register address 0x43
     Wire.endTransmission( false );
     Wire.requestFrom( MPU_ADDRESS, 6, true );       // Read 4 registers total, each axis value is stored in 2 registers
 
-    static int raw_gyro[ 3 ];
+    static int16_t raw_gyro[ 3 ];
 
     for ( int i = 0; i < 3; i++ ) raw_gyro[ i ] = ( Wire.read() << 8 | Wire.read() );
 
@@ -63,7 +63,7 @@ int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyroscopic Val
 
     if ( toUpperCase( VerticalAxis ) != 'Y' ) { // Swap Y value
 
-        int temp = raw_gyro[ 1 ];
+        int16_t temp = raw_gyro[ 1 ];
 
         if ( toUpperCase( VerticalAxis ) == 'X' ) { // Swap Y and X
 
@@ -105,7 +105,7 @@ int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyroscopic Val
 
 }
 
-float_t* Get_Normalized_Gyro( const int* raw_gyro ) { // Returns a float_t vector containing the normalized gyroscopic Values from the MPU
+float_t* Get_Normalized_Gyro( const int16_t* raw_gyro ) { // Returns a float_t vector containing the normalized gyroscopic Values from the MPU
 
     static float_t normalized_gyro[ 3 ];
 
@@ -126,22 +126,11 @@ Data Get_All_Values() { // Record all values
 
     Data data;
 
-    int i = 0;
     // Get Values from Accelerometer
-    int *raw_a_ptr = Get_Raw_Accel();
-    int *raw_g_ptr = Get_Raw_Gyro();
-    float_t *norm_a_ptr = Get_Normalized_Accel( raw_a_ptr );
-    float_t *norm_g_ptr = Get_Normalized_Gyro( raw_g_ptr );
-
-    for ( i = 0; i < 3; i++ ) {
-
-        data.raw_accel[ i ] = raw_a_ptr[ i ];
-        data.raw_gyro[ i ] = raw_g_ptr[ i ];
-        data.normalized_accel[ i ] = norm_a_ptr[ i ];
-        data.normalized_gyro[ i ] = norm_g_ptr[ i ];
-
-    }
-
+    data.raw_accel = Get_Raw_Accel();
+    data.raw_gyro = Get_Raw_Gyro();
+    data.normalized_accel = Get_Normalized_Accel( data.raw_accel );
+    data.normalized_gyro = Get_Normalized_Gyro( data.raw_gyro );
     time_t time_now = now();
     data.time = (
 

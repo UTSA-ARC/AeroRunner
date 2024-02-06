@@ -6,29 +6,31 @@
 Data Values;
 Data Prev_Values;
 
-void setUp(void) {
+void setUp( void ) {
   // Default values for structs
 
-  Values = {
-      
-    .time = "0",
+  Values = Data();
 
-    .raw_accel = { 0, -1024, 0 },
-    .normalized_accel = { 0, -9.8, 0 },
+  int16_t r_accel[] = { 0, 1024, 0 };
+  float_t n_accel[] = { 0, -9.8, 0 };
 
-    .temperature = 20.5,
-    .pressure = 1013.25,
-    .altitude = 300,
+  int16_t r_gyro[] = { 0, 0, 0 };
+  float_t n_gyro[] = { 0, 0, 0 };
 
-    .message = "Default Testing Values"
-
-  };
+  Values.time = "";
+  Values.raw_accel = r_accel;
+  Values.normalized_accel = n_accel;
+  Values.raw_gyro = r_gyro;
+  Values.normalized_gyro = n_gyro;
+  Values.temperature = 20.0f;
+  Values.pressure = 1013.0f;
+  Values.altitude = 300.0f;
 
   Prev_Values = Values; // Default value for previous measurement
 
 }
 
-void tearDown(void) {
+void tearDown( void ) {
   // clean stuff up here
 }
 

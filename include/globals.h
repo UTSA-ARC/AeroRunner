@@ -1,11 +1,8 @@
 #pragma once
 
-#include <Adafruit_BMP3XX.h>
-#include <Wire.h>
-#include <TimeLib.h>
-#include <Arduino.h>
+#include "toolchain.h"
 
-Adafruit_BMP3XX bmp;
+bool Paras_Armed[2];
 uint16_t ALSB_Sensitivity, GLSB_Sensitivity;
 // Structs
 typedef struct Data { //* All measurements
@@ -34,6 +31,8 @@ typedef struct Result {
     String message;
 
 } Result;
+
+Result::Result( int8_t err, String msg ): error( err ), message( msg ) {}
 
 typedef struct TimeData {
 

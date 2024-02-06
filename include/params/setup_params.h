@@ -2,7 +2,7 @@
 
 #define CSV_FILE_NAME "" // By Default the file will be set to "MM-DD-YY(-num).csv" 
 
-#define PinInputVoltage A9
+#define InputVoltagePin A9
 #define MINIMUM_INPUT_VOLTAGE 3.4f
 #define MAXIMUM_INPUT_VOLTAGE 5.0f
 

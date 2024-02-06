@@ -3,7 +3,6 @@
 #define MainParaAlt 152 // In meters
 #define AlTolerance 0.05f // Altitude Tolerance, % in decimal form
 
-
 #define SafeTiltX 10 // Safe X tilt
 #define SafeTiltY 10 // Safe Y tilt
 #define SafeTiltZ 10 // Safe Z tilt

@@ -1,10 +1,11 @@
-#include <SD.h>
-#include <SPI.h>
 
 #include "params/setup_params.h"
+
 #include "globals.h"
 
-bool Paras_Armed[2];
+
+#ifdef ARDUINO_TC
+
 uint8_t AFS_SEL, GFS_SEL;
 
 int Set_Accel_Range( uint8_t range ) { // Range and sensitivity of accelerometer
@@ -101,6 +102,15 @@ void Configure_Gyro( const uint8_t gyro_config_reg ) { // Configure Gyro Sensiti
 
 }
 
+void Configure_BMP( const uint8_t temp_oversampling = BMP3_OVERSAMPLING_8X, const uint8_t press_oversampling = BMP3_OVERSAMPLING_4X, const uint8_t iir_filter_coeff = BMP3_IIR_FILTER_COEFF_3, const uint8_t output_data_rate = BMP3_ODR_50_HZ ) {
+
+    bmp.setTemperatureOversampling( temp_oversampling);
+    bmp.setPressureOversampling( press_oversampling );
+    bmp.setIIRFilterCoeff( iir_filter_coeff );
+    bmp.setOutputDataRate( output_data_rate );
+
+}
+
 void Init_Supplimentary_Pins( uint8_t systems_good_pin, uint8_t systems_bad_pin, uint8_t input_voltage_pin, uint8_t vbat_pin ) { // Configure
 
     pinMode( systems_good_pin, OUTPUT );
@@ -130,7 +140,7 @@ String Init_CSV( String file_name = "" ) { // Initialize CSV format
 
     String file_string = file_name + ".csv";
 
-    File myFile = SD.open( file_string.c_str(), FILE_WRITE | O_TRUNC );
+    File myFile = SD.open( file_string.c_str(), FILE_WRITE );
     myFile.println(
 
         "Time ( RTC ),TimeEnd ( RTC ),Raw Ax ( g ),Raw Ay ( g ),Raw Az ( g ),Ax ( g ),Ay ( g ),Az ( g ),Raw Gx ( deg/s ),Raw Gy ( deg/s ),Raw Gz ( deg/s ),Gx ( deg/s ),Gy ( deg/s ),Gz ( deg/s ),Temperature ( *C ),Pressure ( kpA ),Altitude ( m ),Message"
@@ -140,6 +150,10 @@ String Init_CSV( String file_name = "" ) { // Initialize CSV format
     myFile.close();
 
 }
+
+#endif
+
+// --------------------------------------------------------------------------------------------------------------------
 
 Result Check_Input_Voltage( const uint8_t input_voltage, const uint8_t min_voltage, const uint8_t max_voltage ) { // Check if Input voltage is valid
 
@@ -259,8 +273,8 @@ Result Check_Surface_Accel( const float_t* surface_accel, const float_t safe_x_a
 Result Check_Systems( // Checks if systems are safe
 
     const Data* Values, const Data* Prev_Values,
-    const uint8_t* src_pins, const uint8_t* gnd_pins, const uint8_t continuity_arrs_size,
-    const uint8_t input_pin = PinInputVoltage, const uint8_t min_voltage = MINIMUM_INPUT_VOLTAGE, const uint8_t max_voltage = MAXIMUM_INPUT_VOLTAGE,
+    const uint8_t* src_pins = {}, const uint8_t* gnd_pins = {}, const uint8_t continuity_arrs_size = 0,
+    const uint8_t input_pin = InputVoltagePin, const uint8_t min_voltage = MINIMUM_INPUT_VOLTAGE, const uint8_t max_voltage = MAXIMUM_INPUT_VOLTAGE,
     const uint8_t vbat_pin = PinVBAT,
     const float_t press_tol = PMTolerance,
     const float_t surf_press = SurfacePressure, const float_t surf_press_tol = SurfPTolerance,
@@ -277,27 +291,46 @@ Result Check_Systems( // Checks if systems are safe
     Result results[ results_size ];
 
     // Check if connected to sufficient voltage
-    results[ 0 ] = Check_Input_Voltage( analogRead( input_pin ), min_voltage, max_voltage );
+    
+    Result res = Check_Input_Voltage( analogRead( input_pin ), min_voltage, max_voltage );
+
+    results[ 0 ].error = res.error;
+    results[ 0 ].message = res.message;
 
     // Check if VBAT is Connected
-    results[ 1 ] = Check_VBAT_Connection( vbat_pin );
+    res = Check_VBAT_Connection( vbat_pin );
+    results[ 1 ].error = res.error;
+    results[ 1 ].message = res.message;
 
     // Check if pressure is changing
-    results[ 2 ] = Check_Pressure_Movement( Values->pressure, Prev_Values->pressure, press_tol );
+    res = Check_Pressure_Movement( Values->pressure, Prev_Values->pressure, press_tol );
+    results[ 2 ].error = res.error;
+    results[ 2 ].message = res.message;
 
     // Check current pressure
-    results[ 3 ] = Check_Surface_Pressure( Values->pressure, surf_press, surf_press_tol );
+    res = Check_Surface_Pressure( Values->pressure, surf_press, surf_press_tol );
+    results[ 3 ].error = res.error;
+    results[ 3 ].message = res.message;
 
     // Check current tilt
-    results[ 4 ] = Check_Surface_Tilt( Values->normalized_gyro, safe_x_tilt, safe_y_tilt, safe_z_tilt, tilt_tol );
+    res = Check_Surface_Tilt( Values->normalized_gyro, safe_x_tilt, safe_y_tilt, safe_z_tilt, tilt_tol );
+    results[ 4 ].error = res.error;
+    results[ 4 ].message = res.message;
     // results[ 4 ] = { 0, "-" }; //! MPU no werk :'(
 
     // Check current accel
-    results[ 5 ] = Check_Surface_Accel( Values->normalized_accel, safe_x_accel, safe_y_accel, safe_z_accel, accel_tol );
+    res = Check_Surface_Accel( Values->normalized_accel, safe_x_accel, safe_y_accel, safe_z_accel, accel_tol );
+    results[ 5 ].error = res.error;
+    results[ 5 ].message = res.message;
+
     // results[ 5 ] = { 0, "-" }; //! MPU no werk :'(
     
-    // Check Ejection Charge continuities
-    for ( int i = 0; i < continuity_arrs_size; i++ ) results[ 5 + i ] = Check_Continuity( src_pins[ i ], gnd_pins[ i ] );
+    // Check Ejection Charge continuities, if present
+    if ( continuity_arrs_size != 0 ) {
+
+        for ( int i = 0; i < continuity_arrs_size; i++ ) results[ 5 + i ] = Check_Continuity( src_pins[ i ], gnd_pins[ i ] );
+    
+    }
 
     for ( int i = 0; i < results_size; i++ ) {
 

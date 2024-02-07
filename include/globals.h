@@ -22,7 +22,7 @@ typedef struct Data { //* All measurements
     String message;
 
     Data(): message( "-" ) {}
-    Data( 
+    Data(
         
         String _time, 
 

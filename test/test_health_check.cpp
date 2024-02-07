@@ -1,10 +1,13 @@
 #include <unity.h>
-#include <Arduino.h>
+#include <ArduinoFake.h>
 
 #include "setup.h"
 
+using namespace fakeit;
+
 Data Values;
 Data Prev_Values;
+Result result;
 
 void setUp( void ) {
   // Default values for structs
@@ -32,13 +35,25 @@ void setUp( void ) {
 
 void tearDown( void ) {
   // clean stuff up here
+
+  printf( "Result array: " );
+
+}
+
+void mock_arduino() {
+
+  When(Method(ArduinoFake(), digitalWrite)).AlwaysReturn();
+  When(Method(ArduinoFake(), digitalRead)).AlwaysReturn( true );
+
 }
 
 // --------------------------------
 
 void test_check_good_1( void ) {
 
-  Result result = Check_Systems( &Values, &Prev_Values );
+  mock_arduino();
+
+  result = Check_Systems( &Values, &Prev_Values, {}, {}, 0, 700 );
 
   TEST_ASSERT_EQUAL( 0, result.error ); // 0 means no error
 

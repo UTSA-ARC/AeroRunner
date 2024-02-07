@@ -157,7 +157,7 @@
 
 // --------------------------------------------------------------------------------------------------------------------
 
-Result Check_Input_Voltage( const uint8_t input_voltage, const uint8_t min_voltage, const uint8_t max_voltage ) { // Check if Input voltage is valid
+Result Check_Input_Voltage( const uint16_t input_voltage, const uint8_t min_voltage, const uint8_t max_voltage ) { // Check if Input voltage is valid
 
     float_t real_input_voltage = input_voltage / 1023.0;
 
@@ -276,7 +276,7 @@ Result Check_Systems( // Checks if systems are safe
 
     const Data* Values, const Data* Prev_Values,
     const uint8_t* src_pins = {}, const uint8_t* gnd_pins = {}, const uint8_t continuity_arrs_size = 0,
-    const uint8_t input_pin = InputVoltagePin, const uint8_t min_voltage = MINIMUM_INPUT_VOLTAGE, const uint8_t max_voltage = MAXIMUM_INPUT_VOLTAGE,
+    const uint16_t raw_input_voltage = analogRead( InputVoltagePin ), const uint8_t min_voltage = MINIMUM_INPUT_VOLTAGE, const uint8_t max_voltage = MAXIMUM_INPUT_VOLTAGE,
     const uint8_t vbat_pin = PinVBAT,
     const float_t press_tol = PMTolerance,
     const float_t surf_press = SurfacePressure, const float_t surf_press_tol = SurfPTolerance,
@@ -288,13 +288,13 @@ Result Check_Systems( // Checks if systems are safe
 
     //* Will trigger LED based on error code
 
-    uint8_t results_size = 5 + continuity_arrs_size;
+    uint8_t results_size = 6 + continuity_arrs_size;
 
     Result results[ results_size ];
 
     // Check if connected to sufficient voltage
     
-    Result res = Check_Input_Voltage( analogRead( input_pin ), min_voltage, max_voltage );
+    Result res = Check_Input_Voltage( raw_input_voltage, min_voltage, max_voltage );
 
     results[ 0 ].error = res.error;
     results[ 0 ].message = res.message;
@@ -319,14 +319,14 @@ Result Check_Systems( // Checks if systems are safe
     results[ 4 ].error = res.error;
     results[ 4 ].message = res.message;
     // results[ 4 ] = { 0, "-" }; //! MPU no werk :'(
-
+    
     // Check current accel
     res = Check_Surface_Accel( Values->normalized_accel, safe_x_accel, safe_y_accel, safe_z_accel, accel_tol );
     results[ 5 ].error = res.error;
     results[ 5 ].message = res.message;
 
     // results[ 5 ] = { 0, "-" }; //! MPU no werk :'(
-    
+
     // Check Ejection Charge continuities, if present
     if ( continuity_arrs_size != 0 ) {
 

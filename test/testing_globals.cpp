@@ -1,8 +1,5 @@
 #include "testing_globals.h"
 
-extern void(*TESTS[])();
-extern uint8_t TEST_NUM;
-
 int runUnityTests( UnityTestFunction* tests, uint8_t numTests ) {
 
   UNITY_BEGIN();

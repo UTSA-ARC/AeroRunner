@@ -33,10 +33,19 @@ void tearDown( void ) {
 
 // --------------------------------
 
-void test_check_good_1( void ) {
+void mocks() {
 
   mock_arduino(analogRead, 1024);
   mock_arduino(digitalRead, 1);
+  mock_arduino(digitalWrite,);
+
+}
+
+// --------------------------------
+
+void test_check_good_1( void ) {
+
+  mocks();
 
   Result result = Check_Systems( &Values, &Prev_Values, {}, {}, 0, 700 );
 
@@ -47,9 +56,8 @@ void test_check_good_1( void ) {
 }
 
 void test_check_good_2( void ) {
-
-  mock_arduino(analogRead, 1024);
-  mock_arduino(digitalRead, 1);
+  
+  mocks();
 
   Result result = Check_Systems( &Values, &Prev_Values, {}, {}, 0, 700 );
 
@@ -61,8 +69,7 @@ void test_check_good_2( void ) {
 
 void test_check_good_3( void ) {
 
-  mock_arduino(analogRead, 1024);
-  mock_arduino(digitalRead, 1);
+  mocks();
 
   Result result = Check_Systems( &Values, &Prev_Values, {}, {}, 0, 700 );
 
@@ -74,8 +81,7 @@ void test_check_good_3( void ) {
 
 void test_check_bad_1( void ) {
 
-  mock_arduino(analogRead, 1024);
-  mock_arduino(digitalRead, 1);
+  mocks();
 
   Result result = Check_Systems( &Values, &Prev_Values, {}, {}, 0, 700 );
 
@@ -87,8 +93,7 @@ void test_check_bad_1( void ) {
 
 void test_check_bad_2( void ) {
 
-  mock_arduino(analogRead, 1024);
-  mock_arduino(digitalRead, 1);
+  mocks();
 
   Result result = Check_Systems( &Values, &Prev_Values, {}, {}, 0, 700 );
 
@@ -100,9 +105,7 @@ void test_check_bad_2( void ) {
 
 void test_check_bad_3( void ) {
 
-  mock_arduino(analogRead, 1024);
-  mock_arduino(digitalRead, 1);
-  mock_arduino(digitalWrite,);
+  mocks();
 
   Result result = Check_Systems( &Values, &Prev_Values, {}, {}, 0, 700 );
 
@@ -111,3 +114,17 @@ void test_check_bad_3( void ) {
   TEST_ASSERT_EQUAL( 0, result.error ); // 0 means no error
 
 }
+
+
+#ifdef NATIVE_TC
+
+  int main( void );
+
+#endif
+
+#ifdef ARDUINO_TC
+  
+  void setup();
+  void loop();
+
+#endif

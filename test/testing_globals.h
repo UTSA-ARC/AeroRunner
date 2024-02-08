@@ -17,22 +17,11 @@
 
 #endif
 
+extern void(*TESTS[])();
+extern uint8_t TEST_NUM;
 
 void print_result( Result res );
 
 void setUp( void );
 void tearDown( void );
 int runUnityTests( const void* tests, const uint8_t numTests );
-
-#ifdef NATIVE_TC
-
-  int main( void );
-
-#endif
-
-#ifdef ARDUINO_TC
-  
-  void setup();
-  void loop();
-
-#endif

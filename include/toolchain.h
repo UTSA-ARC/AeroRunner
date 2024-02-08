@@ -4,6 +4,7 @@
     #include <WireFake.h>
     #include <EEPROMFake.h>
     #include <SPIFake.h>
+    #include <iostream>
 
     #ifndef A9
 

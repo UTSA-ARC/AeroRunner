@@ -24,6 +24,8 @@
     #include <SD.h>
 
     Adafruit_BMP3XX bmp;
+    bool Paras_Armed[2];
+    uint16_t ALSB_Sensitivity, GLSB_Sensitivity;
 
 
     #ifdef TEENSY41_TC

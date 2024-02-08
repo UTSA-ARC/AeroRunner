@@ -1,4 +1,4 @@
-#include "example.h"
+#include "test_example.h" //* Look in here for definitions
 
 void setUp( void ) {
   // Default values for structs
@@ -38,6 +38,18 @@ void test_check_good_1( void ) {
   mock_arduino(analogRead, 1024);
   mock_arduino(digitalRead, 1);
 
+  Result result = Check_Systems( &Values, &Prev_Values, {}, {}, 0, 700 );
+
+  print_result( result );
+
+  TEST_ASSERT_EQUAL( 0, result.error ); // 0 means no error
+
+}
+
+void test_check_good_2( void ) {
+
+  mock_arduino(analogRead, 1024);
+  mock_arduino(digitalRead, 1);
 
   Result result = Check_Systems( &Values, &Prev_Values, {}, {}, 0, 700 );
 
@@ -47,5 +59,55 @@ void test_check_good_1( void ) {
 
 }
 
+void test_check_good_3( void ) {
 
+  mock_arduino(analogRead, 1024);
+  mock_arduino(digitalRead, 1);
 
+  Result result = Check_Systems( &Values, &Prev_Values, {}, {}, 0, 700 );
+
+  print_result( result );
+
+  TEST_ASSERT_EQUAL( 0, result.error ); // 0 means no error
+
+}
+
+void test_check_bad_1( void ) {
+
+  mock_arduino(analogRead, 1024);
+  mock_arduino(digitalRead, 1);
+
+  Result result = Check_Systems( &Values, &Prev_Values, {}, {}, 0, 700 );
+
+  print_result( result );
+
+  TEST_ASSERT_EQUAL( 0, result.error ); // 0 means no error
+
+}
+
+void test_check_bad_2( void ) {
+
+  mock_arduino(analogRead, 1024);
+  mock_arduino(digitalRead, 1);
+
+  Result result = Check_Systems( &Values, &Prev_Values, {}, {}, 0, 700 );
+
+  print_result( result );
+
+  TEST_ASSERT_EQUAL( 0, result.error ); // 0 means no error
+
+}
+
+void test_check_bad_3( void ) {
+
+  mock_arduino(analogRead, 1024);
+  mock_arduino(digitalRead, 1);
+  mock_arduino(digitalWrite,);
+
+  Result result = Check_Systems( &Values, &Prev_Values, {}, {}, 0, 700 );
+
+  print_result( result );
+
+  TEST_ASSERT_EQUAL( 0, result.error ); // 0 means no error
+
+}

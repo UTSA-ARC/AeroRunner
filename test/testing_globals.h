@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unity.h>
+
 #include "globals.h"
 
 #ifndef ARDUINO_TC
@@ -9,8 +10,6 @@
   #define mock_arduino( method, return_value ) When( Method( ArduinoFake(), method ) ).AlwaysReturn( return_value )
   using namespace fakeit;
 
-
-
 #else
 
   #include <Arduino.h>
@@ -18,7 +17,6 @@
 
 #endif
 
-UnityTestFunction TEST; 
 
 void print_result( Result res );
 

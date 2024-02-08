@@ -1,8 +1,7 @@
-
+#pragma once
 #include "params/setup_params.h"
 
 #include "globals.h"
-
 
 #ifdef ARDUINO_TC
 

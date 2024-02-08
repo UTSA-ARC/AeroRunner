@@ -1,7 +1,10 @@
+#pragma once
 #include "params/sample_params.h"
 #include "globals.h"
-#include "functions.h"
 
+#ifdef ARDUINO_TC
+    #include "functions.h"
+#endif
 class Sample { // An Average of Measurements
 
     private:
@@ -68,6 +71,7 @@ class Sample { // An Average of Measurements
 
     public:
 
+        #ifdef ARDUINO_TC
         Sample() { // Initialize Sample object
             
             elapsedMillis sampleTimer; // Start sample timer
@@ -86,7 +90,7 @@ class Sample { // An Average of Measurements
                 while ( !MaxSampleRate && measurementTimer < SampleDelay ); // Loop until the time period allocated for one measurement has passed
             }
         }
-
+        #endif
         Sample( const SampleData &avg_data, const uint8_t measurement_amount ) {
 
             this->avg_data = avg_data;
@@ -109,7 +113,7 @@ class SampleCollection { // A collection of sample objects
 
     private:
         Sample* Samples; // Array of Samples
-        int size; // Size of array
+        uint16_t size; // Size of array
         typedef struct ResultPDiff : Result { 
             float_t pDiff; 
         } ResultPDiff;
@@ -342,6 +346,7 @@ class SampleCollection { // A collection of sample objects
 
     public:
 
+        #ifdef ARDUINO_TC
         SampleCollection() { // Initialize the Collection object
 
             Samples = new Sample[ SampleAmount ];
@@ -356,11 +361,18 @@ class SampleCollection { // A collection of sample objects
 
         }
 
+        #endif
         SampleCollection( const SampleCollection &sc ) { // Copy Constructor
 
-            Samples = new Sample[ SampleAmount ];
             *Samples = *sc.Samples;
             size = sc.size;
+
+        }
+
+        SampleCollection( Sample* samples, const uint16_t samples_size ) { // Copy Constructor
+
+            Samples = samples;
+            size = samples_size;
 
         }
 
@@ -370,6 +382,7 @@ class SampleCollection { // A collection of sample objects
 
         Sample Get_Sample( const int index ) { return Samples[ index ]; } // Get a specified Sample
 
+        #ifdef ARDUINO_TC
         Result Record_Samples() { // Initialize Samples
 
             for ( int i = 0; i < size; i++ ) Samples[i] = Sample();
@@ -377,6 +390,7 @@ class SampleCollection { // A collection of sample objects
             return { 0, "Recorded Samples" };
 
         }
+        #endif
 
         Result Compare_Sample( const int sample_a_index, const int sample_b_index ) { // Compare 2 samples //* Return 0 if equal, 1 if greater, -1 if lesser // TODO: UNIT TEST
 

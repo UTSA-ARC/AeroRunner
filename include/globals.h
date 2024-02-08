@@ -1,9 +1,6 @@
 #pragma once
 
 #include "toolchain.h"
-
-bool Paras_Armed[2];
-uint16_t ALSB_Sensitivity, GLSB_Sensitivity;
 // Structs
 typedef struct Data { //* All measurements
 

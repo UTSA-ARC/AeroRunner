@@ -10,18 +10,37 @@
   #define mock_arduino( method, return_value ) When( Method( ArduinoFake(), method ) ).AlwaysReturn( return_value )
   using namespace fakeit;
 
+  #ifdef NATIVE_TC
+
+    int main( void );
+
+  #endif
+
 #else
 
   #include <Arduino.h>
   #define ARDUINO_TEST_DELAY 2000
 
+  void setup();
+  void loop();
+
 #endif
 
-extern void(*TESTS[])();
-extern uint8_t TEST_NUM;
-
-void print_result( Result res );
-
 void setUp( void );
+
 void tearDown( void );
-int runUnityTests( const void* tests, const uint8_t numTests );
+
+typedef void ( *test_func )();
+
+void print_test_result( Result test_result ) {
+
+    String message = "\n Result array: \n\t error: ";
+    message += String( test_result.error );
+    message += "\n\t message: ";
+    message += String( test_result.message );
+  
+    printf( "\n--------------------------------\n" );
+    printf( "%s", message.c_str() );
+    printf( "\n--------------------------------\n" );
+  
+  }

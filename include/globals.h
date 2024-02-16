@@ -6,11 +6,11 @@ typedef struct Data { //* All measurements
 
     String time;
 
-    int16_t* raw_accel;
-    float_t* normalized_accel;
+    int16_t raw_accel[3];
+    float_t normalized_accel[3];
 
-    int16_t* raw_gyro;
-    float_t* normalized_gyro;
+    int16_t raw_gyro[3];
+    float_t normalized_gyro[3];
 
     float_t temperature;
     float_t pressure;
@@ -19,37 +19,6 @@ typedef struct Data { //* All measurements
     String message;
 
     Data(): message( "-" ) {}
-    Data(
-        
-        String _time, 
-
-        int16_t* _raw_accel, 
-        float_t* _normalized_accel, 
-
-        int16_t* _raw_gyro, 
-        float_t* _normalized_gyro, 
-
-        float_t _temperature, 
-        float_t _pressure, 
-        float_t _altitude, 
-        
-        String _message 
-        
-        ):
-
-        time( _time ),
-
-        raw_accel( _raw_accel ),
-        normalized_accel( _normalized_accel ),
-
-        raw_gyro( _raw_gyro ),
-        normalized_gyro( _normalized_gyro ),
-
-        temperature( _temperature ),
-        pressure( _pressure ),
-        altitude( _altitude ), 
-        
-        message( _message ) {}
 
 } Data;
 

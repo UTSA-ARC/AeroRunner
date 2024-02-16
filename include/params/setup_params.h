@@ -3,6 +3,7 @@
 #define CSV_FILE_NAME "" // By Default the file will be set to "MM-DD-YY(-num).csv" 
 
 #define InputVoltagePin A9
+#define NOMINAL_INPUT_VOLTAGE 5.0f
 #define MINIMUM_INPUT_VOLTAGE 3.4f
 #define MAXIMUM_INPUT_VOLTAGE 5.0f
 
@@ -45,8 +46,8 @@
 
 #define SUBSONIC_SPEED 205.8f // Units: m/s (343 m/s = Mach 1)
 
-#define PMTolerance 0.05f // Pressure Tolerance, % decimal form
-#define SurfacePressure 40 // Surface Pressure
+#define PMvmntTolerance 0.05f // Pressure Tolerance, % decimal form
+#define SafeSurfacePressure 40 // Surface Pressure
 #define SurfPTolerance 0.05f // % in decimal form
 
 #define SafeSurfaceAccelX 0 // Safe Surface X Acceleration

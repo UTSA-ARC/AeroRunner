@@ -156,9 +156,9 @@
 
 // --------------------------------------------------------------------------------------------------------------------
 
-Result Check_Input_Voltage( const uint16_t input_voltage, const uint8_t min_voltage, const uint8_t max_voltage ) { // Check if Input voltage is valid
+Result Check_Input_Voltage( const uint16_t raw_input_voltage, const float_t nominal_voltage, const float_t min_voltage, const float_t max_voltage ) { // Check if Input voltage is valid
 
-    float_t real_input_voltage = input_voltage / 1023.0;
+    float_t real_input_voltage = raw_input_voltage * ( nominal_voltage / 1024.0 ); //* Voltage regulated to 5.0V
 
     if ( real_input_voltage < min_voltage ) return { -1, "!!INPUT VOLTAGE LESS THAN MINIMUM!!" };
     if ( real_input_voltage > max_voltage ) return { -2, "!!INPUT VOLTAGE MORE THAN MAXIMUM!!" };
@@ -206,7 +206,7 @@ Result Check_Surface_Pressure( const float_t pressure, const float_t surface_pre
         int H = surface_pressure * ( 1 + tolerance ); // Upperbound
         int L = surface_pressure * ( 1 - tolerance ); // Lowerbound
 
-        if ( pressure > H || pressure < L ) return { 0, "!!UNSAFE SURFACE PRESSURE!!" };
+        if ( pressure > H || pressure < L ) return { -1, "!!UNSAFE SURFACE PRESSURE!!" };
 
         return { 0, "Safe Surface Pressure" };
 
@@ -215,6 +215,11 @@ Result Check_Surface_Pressure( const float_t pressure, const float_t surface_pre
 }
 
 Result Check_Surface_Tilt( const float_t* surface_gyro, const float_t safe_x_tilt, const float_t safe_y_tilt, const float_t safe_z_tilt, const float_t tolerance ) { // Checks if the surface tilt is safe
+
+    float_t x = surface_gyro[0];
+    float_t y = surface_gyro[1];
+    float_t z = surface_gyro[2];
+
 
     const float_t H[ 3 ] = { // Upperbounds (X,Y,Z)
 
@@ -245,6 +250,10 @@ Result Check_Surface_Tilt( const float_t* surface_gyro, const float_t safe_x_til
 
 Result Check_Surface_Accel( const float_t* surface_accel, const float_t safe_x_accel, const float_t safe_y_accel, const float_t safe_z_accel, const float_t tolerance ) { // Checks if the surface accel is safe
 
+    float_t x = surface_accel[0];
+    float_t y = surface_accel[1];
+    float_t z = surface_accel[2];
+
     const float_t H[ 3 ] = { // Surface Upperbounds (X,Y,Z)
 
         safe_x_accel * ( 1 + tolerance ) == 0 ? tolerance : safe_x_accel * ( 1 + tolerance ),
@@ -261,11 +270,41 @@ Result Check_Surface_Accel( const float_t* surface_accel, const float_t safe_x_a
 
     };
 
-    if ( surface_accel[ 0 ] < L[ 0 ] || surface_accel[ 0 ] > H[ 0 ] ) return { -10, "!!DANGEROUS X-AXIS SURFACE ACCELERATION!!" };
+    if ( 0.0f - surface_accel[ 0 ] <= 0.0f ) { // If X is positive
 
-    if ( surface_accel[ 1 ] < L[ 1 ] || surface_accel[ 1 ] > H[ 1 ] ) return { -20, "!!DANGEROUS Y-AXIS SURFACE ACCELERATION" };
+        if ( surface_accel[ 0 ] < L[ 0 ] || surface_accel[ 0 ] > H[ 0 ] ) return { -10, "!!DANGEROUS X-AXIS SURFACE ACCELERATION!!" };
 
-    if ( surface_accel[ 2 ] < L[ 2 ] || surface_accel[ 2 ] > H[ 2 ] ) return { -30, "!!DANGEROUS Z-AXIS SURFACE ACCELERATION" };
+    }
+
+    else {
+
+        if ( surface_accel[ 0 ] > L[ 0 ] || surface_accel[ 0 ] < H[ 0 ] ) return { -10, "!!DANGEROUS X-AXIS SURFACE ACCELERATION!!" };
+  
+    }
+
+    if ( 0.0f - surface_accel[ 1 ] <= 0.0f ) { // If Y is positive
+
+        if ( surface_accel[ 1 ] < L[ 1 ] || surface_accel[ 1 ] > H[ 1 ] ) return { -20, "!!DANGEROUS Y-AXIS SURFACE ACCELERATION" };
+
+    }
+
+    else {
+
+        if ( surface_accel[ 1 ] > L[ 1 ] || surface_accel[ 1 ] < H[ 1 ] ) return { -20, "!!DANGEROUS Y-AXIS SURFACE ACCELERATION" };
+
+    }
+
+    if ( 0.0f - surface_accel[ 2 ] <= 0.0f ) { // If Z is positive
+
+        if ( surface_accel[ 2 ] < L[ 2 ] || surface_accel[ 2 ] > H[ 2 ] ) return { -30, "!!DANGEROUS Z-AXIS SURFACE ACCELERATION" };
+
+    }
+
+    else {
+
+        if ( surface_accel[ 2 ] > L[ 2 ] || surface_accel[ 2 ] < H[ 2 ] ) return { -30, "!!DANGEROUS Z-AXIS SURFACE ACCELERATION" };
+
+    }
 
     return { 0, "Safe Accel" }; // Safe
 
@@ -275,10 +314,10 @@ Result Check_Systems( // Checks if systems are safe
 
     const Data* Values, const Data* Prev_Values,
     const uint8_t* src_pins = {}, const uint8_t* gnd_pins = {}, const uint8_t continuity_arrs_size = 0,
-    const uint16_t raw_input_voltage = analogRead( InputVoltagePin ), const uint8_t min_voltage = MINIMUM_INPUT_VOLTAGE, const uint8_t max_voltage = MAXIMUM_INPUT_VOLTAGE,
+    const uint16_t raw_input_voltage = analogRead( InputVoltagePin ), const float_t nominal_voltage = NOMINAL_INPUT_VOLTAGE, const float_t min_voltage = MINIMUM_INPUT_VOLTAGE, const float_t max_voltage = MAXIMUM_INPUT_VOLTAGE,
     const uint8_t vbat_pin = PinVBAT,
-    const float_t press_tol = PMTolerance,
-    const float_t surf_press = SurfacePressure, const float_t surf_press_tol = SurfPTolerance,
+    const float_t mvmt_press_tol = PMvmntTolerance,
+    const float_t surf_press = SafeSurfacePressure, const float_t surf_press_tol = SurfPTolerance,
     const uint8_t systems_good_pin = PinSystemsGood, const uint8_t systems_bad_pin = PinSystemsBad,
     const float_t safe_x_tilt = SafeSurfaceTiltX, const float_t safe_y_tilt = SafeSurfaceTiltY, const float_t safe_z_tilt = SafeSurfaceTiltZ, const float_t tilt_tol = SurfaceTTolerance,
     const float_t safe_x_accel = SafeSurfaceAccelX, const float_t safe_y_accel = SafeSurfaceAccelY, const float_t safe_z_accel = SafeSurfaceAccelZ, const float_t accel_tol = AccTolerance
@@ -293,7 +332,7 @@ Result Check_Systems( // Checks if systems are safe
 
     // Check if connected to sufficient voltage
     
-    Result res = Check_Input_Voltage( raw_input_voltage, min_voltage, max_voltage );
+    Result res = Check_Input_Voltage( raw_input_voltage, nominal_voltage, min_voltage, max_voltage );
 
     results[ 0 ].error = res.error;
     results[ 0 ].message = res.message;
@@ -304,7 +343,7 @@ Result Check_Systems( // Checks if systems are safe
     results[ 1 ].message = res.message;
 
     // Check if pressure is changing
-    res = Check_Pressure_Movement( Values->pressure, Prev_Values->pressure, press_tol );
+    res = Check_Pressure_Movement( Values->pressure, Prev_Values->pressure, mvmt_press_tol );
     results[ 2 ].error = res.error;
     results[ 2 ].message = res.message;
 
@@ -333,16 +372,27 @@ Result Check_Systems( // Checks if systems are safe
     
     }
 
+    bool system_good = 1;
+    String check_messages = "";
+
     for ( int i = 0; i < results_size; i++ ) {
 
+        check_messages += results[ i ].message;
+
         if ( results[ i ].error < 0 ) {
-
-            digitalWrite( systems_good_pin, 0 );
-            digitalWrite( systems_bad_pin, 1 );
-
-            return { -1, ( "!!SYSTEMS BAD!! - " + results[ i ].message ) };
-
+        
+            system_good = 0;
+    
         }
+
+    }
+
+    if ( !system_good ) {
+
+        digitalWrite( systems_good_pin, 0 );
+        digitalWrite( systems_bad_pin, 1 );
+
+        return { -1, ( "!!Systems Bad!! - " + check_messages ) };
 
     }
 

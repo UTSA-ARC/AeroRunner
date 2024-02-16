@@ -216,27 +216,22 @@ Result Check_Surface_Pressure( const float_t pressure, const float_t surface_pre
 
 Result Check_Surface_Tilt( const float_t* surface_gyro, const float_t safe_x_tilt, const float_t safe_y_tilt, const float_t safe_z_tilt, const float_t tolerance ) { // Checks if the surface tilt is safe
 
-    float_t x = surface_gyro[0];
-    float_t y = surface_gyro[1];
-    float_t z = surface_gyro[2];
-
 
     const float_t H[ 3 ] = { // Upperbounds (X,Y,Z)
 
-        ( safe_x_tilt * ( 1 + tolerance ) ),
-        ( safe_y_tilt * ( 1 + tolerance ) ),
-        ( safe_z_tilt * ( 1 + tolerance ) )
+        ( fabs( safe_x_tilt ) * ( 1 + tolerance ) ),
+        ( fabs( safe_y_tilt ) * ( 1 + tolerance ) ),
+        ( fabs( safe_z_tilt ) * ( 1 + tolerance ) )
 
         };
 
     const float_t L[ 3 ] = { // Lowerbounds (X,Y,Z)
 
-        ( safe_x_tilt * ( 1 - tolerance ) ),
-        ( safe_y_tilt * ( 1 - tolerance ) ),
-        ( safe_z_tilt * ( 1 - tolerance ) )
+        ( fabs( safe_x_tilt ) * ( 1 - tolerance ) ),
+        ( fabs( safe_y_tilt ) * ( 1 - tolerance ) ),
+        ( fabs( safe_z_tilt ) * ( 1 - tolerance ) )
 
         };
-
 
     if ( fabs( surface_gyro[ 0 ] ) > H[ 0 ] || fabs( surface_gyro[ 0 ] ) < L[ 0 ] ) return { -10, "!!DANGEROUS X-AXIS SURFACE TILT!!" };
 
@@ -250,61 +245,27 @@ Result Check_Surface_Tilt( const float_t* surface_gyro, const float_t safe_x_til
 
 Result Check_Surface_Accel( const float_t* surface_accel, const float_t safe_x_accel, const float_t safe_y_accel, const float_t safe_z_accel, const float_t tolerance ) { // Checks if the surface accel is safe
 
-    float_t x = surface_accel[0];
-    float_t y = surface_accel[1];
-    float_t z = surface_accel[2];
-
     const float_t H[ 3 ] = { // Surface Upperbounds (X,Y,Z)
 
-        safe_x_accel * ( 1 + tolerance ) == 0 ? tolerance : safe_x_accel * ( 1 + tolerance ),
-        safe_y_accel * ( 1 + tolerance ) == 0 ? tolerance : safe_y_accel * ( 1 + tolerance ),
-        safe_z_accel * ( 1 + tolerance ) == 0 ? tolerance : safe_z_accel * ( 1 + tolerance )
+        fabs( safe_x_accel ) * ( 1 + tolerance ) == 0 ? tolerance : fabs( safe_x_accel ) * ( 1 + tolerance ),
+        fabs( safe_y_accel ) * ( 1 + tolerance ) == 0 ? tolerance : fabs( safe_y_accel ) * ( 1 + tolerance ),
+        fabs( safe_z_accel ) * ( 1 + tolerance ) == 0 ? tolerance : fabs( safe_z_accel ) * ( 1 + tolerance )
 
     };
 
     const float_t L[ 3 ] = {
 
-        safe_x_accel * ( 1 - tolerance ) == 0 ? -1 * tolerance : safe_x_accel * ( 1 - tolerance ),
-        safe_y_accel * ( 1 - tolerance ) == 0 ? -1 * tolerance : safe_y_accel * ( 1 - tolerance ),
-        safe_z_accel * ( 1 - tolerance ) == 0 ? -1 * tolerance : safe_z_accel * ( 1 - tolerance )
+        fabs( safe_x_accel ) * ( 1 - tolerance ) == 0 ? -1 * tolerance : fabs( safe_x_accel ) * ( 1 - tolerance ),
+        fabs( safe_y_accel ) * ( 1 - tolerance ) == 0 ? -1 * tolerance : fabs( safe_y_accel ) * ( 1 - tolerance ),
+        fabs( safe_z_accel ) * ( 1 - tolerance ) == 0 ? -1 * tolerance : fabs( safe_z_accel ) * ( 1 - tolerance )
 
     };
 
-    if ( 0.0f - surface_accel[ 0 ] <= 0.0f ) { // If X is positive
+    if ( fabs( surface_accel[ 0 ] ) < L[ 0 ] || fabs( surface_accel[ 0 ] ) > H[ 0 ] ) return { -10, "!!DANGEROUS X-AXIS SURFACE ACCELERATION!!" };
 
-        if ( surface_accel[ 0 ] < L[ 0 ] || surface_accel[ 0 ] > H[ 0 ] ) return { -10, "!!DANGEROUS X-AXIS SURFACE ACCELERATION!!" };
+    if ( fabs( surface_accel[ 1 ] ) < L[ 1 ] || fabs( surface_accel[ 1 ] ) > H[ 1 ] ) return { -20, "!!DANGEROUS Y-AXIS SURFACE ACCELERATION" };
 
-    }
-
-    else {
-
-        if ( surface_accel[ 0 ] > L[ 0 ] || surface_accel[ 0 ] < H[ 0 ] ) return { -10, "!!DANGEROUS X-AXIS SURFACE ACCELERATION!!" };
-  
-    }
-
-    if ( 0.0f - surface_accel[ 1 ] <= 0.0f ) { // If Y is positive
-
-        if ( surface_accel[ 1 ] < L[ 1 ] || surface_accel[ 1 ] > H[ 1 ] ) return { -20, "!!DANGEROUS Y-AXIS SURFACE ACCELERATION" };
-
-    }
-
-    else {
-
-        if ( surface_accel[ 1 ] > L[ 1 ] || surface_accel[ 1 ] < H[ 1 ] ) return { -20, "!!DANGEROUS Y-AXIS SURFACE ACCELERATION" };
-
-    }
-
-    if ( 0.0f - surface_accel[ 2 ] <= 0.0f ) { // If Z is positive
-
-        if ( surface_accel[ 2 ] < L[ 2 ] || surface_accel[ 2 ] > H[ 2 ] ) return { -30, "!!DANGEROUS Z-AXIS SURFACE ACCELERATION" };
-
-    }
-
-    else {
-
-        if ( surface_accel[ 2 ] > L[ 2 ] || surface_accel[ 2 ] < H[ 2 ] ) return { -30, "!!DANGEROUS Z-AXIS SURFACE ACCELERATION" };
-
-    }
+    if ( fabs( surface_accel[ 2 ] ) < L[ 2 ] || fabs( surface_accel[ 2 ] ) > H[ 2 ] ) return { -30, "!!DANGEROUS Z-AXIS SURFACE ACCELERATION" };
 
     return { 0, "Safe Accel" }; // Safe
 

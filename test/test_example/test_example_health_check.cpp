@@ -35,9 +35,13 @@ void setUp( void ) { //* Have the default values be the *Ideal Values* for your 
   Test_Values.pressure = SafeSurfacePressure;
   Test_Values.altitude = 0.0f; //* Not needed for `Check_Systems()`
 
-  Prev_Values = Test_Values; // Default value for previous measurement
+  Prev_Test_Values = Test_Values; // Default value for previous measurement
 
   test_result = Result(); // Empty result by default
+
+  src_pins = {};
+  gnd_pins = {};
+  continuity_pins_amount = 0;
 
   raw_input_voltage = 1024;
   nominal_voltage = NOMINAL_INPUT_VOLTAGE;
@@ -65,13 +69,16 @@ void mocks() { //* Ideally no mocking should be necessary, but if needed, you sh
 
 }
 
+//* If you're using the same params a lot you might be better off making a helper function so you dont have to keep typing them out on every test
+Result call_test_function() { return Check_Systems( &Test_Values, &Prev_Test_Values, src_pins, gnd_pins, continuity_pins_amount , raw_input_voltage, nominal_voltage, min_voltage, max_voltage ); }
+
 // --------------Test Cases------------------
 
 void test_check_good_1( void ) { //* First `valid data` test should generally check with your default values
 
   mocks();
 
-  test_result = Check_Systems( &Test_Values, &Prev_Values, {}, {}, 0 , 1024, 5.0f, 3.3f, 5.0f );
+  test_result = call_test_function();
 
   TEST_ASSERT_EQUAL( 0, test_result.error ); // 0 means no error
 
@@ -81,9 +88,7 @@ void test_check_good_2( void ) { //* Re-initialize test-specific globals in the 
   
   mocks();
 
-  
-
-  test_result = Check_Systems( &Test_Values, &Prev_Values, {}, {}, 0 , 1024, 5.0f, 3.3f, 5.0f );
+  test_result = call_test_function();
 
   TEST_ASSERT_EQUAL( 0, test_result.error ); // 0 means no error
 
@@ -93,7 +98,7 @@ void test_check_good_3( void ) {
 
   mocks();
 
-  test_result = Check_Systems( &Test_Values, &Prev_Values, {}, {}, 0 , 1024, 5.0f, 3.3f, 5.0f );
+  test_result = call_test_function();
 
   TEST_ASSERT_EQUAL( 0, test_result.error ); // 0 means no error
 
@@ -101,12 +106,15 @@ void test_check_good_3( void ) {
 
 // ------------
 
-void test_check_bad_1( void ) {
+void test_check_bad_pressure_movement( void ) { //* The `_bad_` tests should return a `-1` ( Systems Bad )
 
   mocks();
 
-    test_result = Check_Systems( &Test_Values, &Prev_Values, {}, {}, 0 , 1024, 5.0f, 3.3f, 5.0f );
+  Test_Values.pressure *=( 1 + PMvmntTolerance ); // Brings `Test_values.pressure` up to the max tolerance
 
+  Test_Values.pressure += 1; // Bump past max tolerance
+
+  test_result = call_test_function();
 
   TEST_ASSERT_EQUAL( -1, test_result.error ); // -1 means error
 
@@ -116,7 +124,7 @@ void test_check_bad_2( void ) {
 
   mocks();
 
-  test_result = Check_Systems( &Test_Values, &Prev_Values, {}, {}, 0 , 1024, 5.0f, 3.3f, 5.0f );
+  test_result = call_test_function();
 
   TEST_ASSERT_EQUAL( -1, test_result.error ); // -1 means error
 
@@ -126,7 +134,7 @@ void test_check_bad_3( void ) {
 
   mocks();
 
-  test_result = Check_Systems( &Test_Values, &Prev_Values, {}, {}, 0 , 1024, 5.0f, 3.3f, 5.0f );
+  test_result = call_test_function();
 
   TEST_ASSERT_EQUAL( -1, test_result.error ); // -1 means error
 

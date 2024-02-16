@@ -10,17 +10,17 @@
 void test_check_good_1( void ); // void inside () explicitly states no params
 void test_check_good_2( void );
 void test_check_good_3( void );
-void test_check_bad_1( void );
+void test_check_bad_pressure_movement( void );
 void test_check_bad_2( void );
 void test_check_bad_3( void );
 
 const uint8_t TEST_NUM = 6; // Number of tests
-test_func TESTS[6] = { test_check_good_1, test_check_good_2, test_check_good_3, test_check_bad_1, test_check_bad_2, test_check_bad_3 }; // Array of Test Function names
+test_func TESTS[6] = { test_check_good_1, test_check_good_2, test_check_good_3, test_check_bad_pressure_movement, test_check_bad_2, test_check_bad_3 }; // Array of Test Function names
 
 // --------------Test Suite Globals Definitions------------------
 
 Data Test_Values;
-Data Prev_Values;
+Data Prev_Test_Values;
 Result test_result;
 
 uint8_t* src_pins;

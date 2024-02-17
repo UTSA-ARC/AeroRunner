@@ -360,6 +360,6 @@ Result Check_Systems( // Checks if systems are safe
     digitalWrite( systems_good_pin, 1 );
     digitalWrite( systems_bad_pin, 0 );
 
-    return { 0, "| Systems Good |" }; // Safe
+    return { 0, ( "| Systems Good |" + check_messages ) }; // Safe
 
 }

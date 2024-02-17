@@ -1,10 +1,11 @@
 #pragma once
 
-#define CSV_FILE_NAME "" // By Default the file will be set to "MM-DD-YY(-num).csv" 
+#define CSV_FILE_NAME "" // By Default the file will be set to "MM-DD-YY(-num).csv"
+#define CSV_NUM_DIGITS 2 // Number of digits
 
 #define InputVoltagePin A9
-#define NOMINAL_INPUT_VOLTAGE 5.0f
-#define MINIMUM_INPUT_VOLTAGE 3.4f
+#define MAX_PIN_INPUT_VOLTAGE 5.0f
+#define MINIMUM_INPUT_VOLTAGE 3.0f
 #define MAXIMUM_INPUT_VOLTAGE 5.0f
 
 #define PinVBAT 49

@@ -1,3 +1,5 @@
+#pragma once
+
 #ifdef NATIVE_TC
 
     #include <ArduinoFake.h>
@@ -5,6 +7,14 @@
     #include <EEPROMFake.h>
     #include <SPIFake.h>
     #include <iostream>
+
+    #ifndef bool
+
+        #define bool int
+        #define true 1
+        #define false 0
+
+    #endif
 
     #ifndef A9
 

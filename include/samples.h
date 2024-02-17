@@ -13,9 +13,9 @@ class Sample { // An Average of Measurements
 
         SampleData filtered_data; // Exponential smoothing of measurements
         int measurementCount; // Number of measurements taken in this sample
-        
+
         void updateAverages( const Data* measurement ) {
-     
+
             avg_data.raw_accel[0] = ( avg_data.raw_accel[0]*(measurementCount- 1) + measurement->raw_accel[0] ) / measurementCount;
             avg_data.raw_accel[1] = ( avg_data.raw_accel[1]*(measurementCount- 1) + measurement->raw_accel[1] ) / measurementCount;
             avg_data.raw_accel[2] = ( avg_data.raw_accel[2]*(measurementCount- 1) + measurement->raw_accel[2] ) / measurementCount;
@@ -73,16 +73,16 @@ class Sample { // An Average of Measurements
 
         #ifdef ARDUINO_TC
         Sample() { // Initialize Sample object
-            
+
             elapsedMillis sampleTimer; // Start sample timer
 
             measurementCount = 0;
             elapsedMillis measurementTimer; // Instanciate measurement time, keeps track of time passed since declaration (in milliseconds)
-           
+
             while ( sampleTimer < SampleTimeSpan ) {
 
                 measurementTimer = 0; // Reset measurement timer
-                
+
                 Data measurement = Get_All_Values(); // Get measurements
                 measurementCount++; // Update number of measurements collected
                 updateAverages( &measurement ); // Update averages
@@ -98,7 +98,7 @@ class Sample { // An Average of Measurements
 
         }
 
-        
+
         SampleData Get_Avg_Data() { return avg_data; } // Get Avg_data
 
         SampleData Get_Filtered_Data() { return filtered_data; } // Get filtered data
@@ -109,39 +109,41 @@ class Sample { // An Average of Measurements
 
 
 class SampleCollection { // A collection of sample objects
-    
+
 
     private:
         Sample* Samples; // Array of Samples
         uint16_t size; // Size of array
-        typedef struct ResultPDiff : Result { 
-            float_t pDiff; 
+        typedef struct ResultPDiff : Result {
+
+            float_t pDiff;
+
         } ResultPDiff;
-        
+
 
         ResultPDiff Compare_Altitude( const float_t altitude_a, const float_t altitude_b ) { // Compare Altitudes of 2 Samples
 
             ResultPDiff result;
-            
-            if ( altitude_a == 0.0 ){
+
+            if ( altitude_a == 0.0 ) {
                 result.error = -2;
-                result.message = "Altitude A is Zero";
-                result.pDiff = 0; 
+                result.message = "| Altitude A is Zero |";
+                result.pDiff = 0;
             }
 
             float_t diff = ( altitude_b - altitude_a )/altitude_a;
             result.pDiff = diff;
 
-            if ( diff < 0 && fabs(diff) > SampleAltTolerance ){
+            if ( diff < 0 && fabs(diff) > SampleAltTolerance ) {
                 result.error = -1;
-                result.message = "Altitude A Is Greater Than Altitude B";
-            } else if ( diff > 0 && fabs(diff) > SampleAltTolerance ){
+                result.message = "| Altitude A Is Greater Than Altitude B |";
+            } else if ( diff > 0 && fabs(diff) > SampleAltTolerance ) {
                 result.error = 1;
-                result.message = "Altitude A Is Less Than Altitude B";
+                result.message = "| Altitude A Is Less Than Altitude B |";
             } else {
                 result.error = 0;
-                result.message = "Altitude A Is Equal to Altitude B";
-            }    
+                result.message = "| Altitude A Is Equal to Altitude B |";
+            }
 
             return result;
 
@@ -150,26 +152,26 @@ class SampleCollection { // A collection of sample objects
         ResultPDiff Compare_Pressure( const float_t pressure_a, const float_t pressure_b ) { // Compare Pressures of 2 Samples
 
             ResultPDiff result;
-            
+
             if ( pressure_a == 0.0 ) {
                 result.error = -2;
-                result.message = "Pressure A is Zero";
-                result.pDiff = 0; 
+                result.message = "| Pressure A is Zero |";
+                result.pDiff = 0;
             }
 
             float_t diff = (pressure_b - pressure_a)/pressure_a;
             result.pDiff = diff;
 
-            if ( diff < 0 && fabs(diff) > SamplePressureTolerance ){
+            if ( diff < 0 && fabs(diff) > SamplePressureTolerance ) {
                 result.error = -1;
-                result.message = "Pressure A Is Greater Than Pressure B";
-            } else if ( diff > 0 && fabs(diff) > SamplePressureTolerance ){
+                result.message = "| Pressure A Is Greater Than Pressure B |";
+            } else if ( diff > 0 && fabs(diff) > SamplePressureTolerance ) {
                 result.error = 1;
-                result.message = "Pressure A Is Less Than Pressure B";
+                result.message = "| Pressure A Is Less Than Pressure B |";
             } else {
                 result.error = 0;
-                result.message = "Pressure A Is Equal to Pressure B";
-            }    
+                result.message = "| Pressure A Is Equal to Pressure B |";
+            }
 
             return result;
 
@@ -178,64 +180,64 @@ class SampleCollection { // A collection of sample objects
         ResultPDiff Compare_Temperature( const float_t temperature_a, const float_t temperature_b ) { // Compare Temperatures of 2 Samples
 
             ResultPDiff result;
-            
+
             if ( temperature_a == 0.0 ) {
                 result.error = -2;
-                result.message = "Temperature A is Zero";
-                result.pDiff = 0; 
+                result.message = "| Temperature A is Zero |";
+                result.pDiff = 0;
             }
 
             float_t diff = ( temperature_b - temperature_a )/temperature_a;
             result.pDiff = diff;
 
-            if ( diff < 0 && fabs(diff) > SampleTemperatureTolerance ){
+            if ( diff < 0 && fabs(diff) > SampleTemperatureTolerance ) {
                 result.error = -1;
-                result.message = "Temperature A Is Greater Than Temperature B";
-            } else if ( diff > 0 && fabs(diff) > SampleTemperatureTolerance ){
+                result.message = "| Temperature A Is Greater Than Temperature B |";
+            } else if ( diff > 0 && fabs(diff) > SampleTemperatureTolerance ) {
                 result.error = 1;
-                result.message = "Temperature A Is Less Than Temperature B";
+                result.message = "| Temperature A Is Less Than Temperature B |";
             } else {
                 result.error = 0;
-                result.message = "Temperature A Is Equal to Temperature B";
-            }    
+                result.message = "| Temperature A Is Equal to Temperature B |";
+            }
 
             return result;
 
         }
 
         ResultPDiff Compare_Raw_Accel( const int16_t* raw_accel_a, const int16_t* raw_accel_b ) { // Compare the Raw Acceleration of 2 Samples
-            
+
             ResultPDiff result;
             result.error = 0;
             result.message = "";
 
             float_t diff[3];
-            for ( int i = 0; i < 3; i++ ){
-                if ( raw_accel_a[i] == 0.0 ){
+            for ( int i = 0; i < 3; i++ ) {
+                if ( raw_accel_a[i] == 0.0 ) {
                     diff[i] = 0; // Do something
                     break;
                 }
                 diff[i] = ( raw_accel_b[i] - raw_accel_a[i] )/raw_accel_a[i];
             }
             result.pDiff = diff[1]; // The percent change of the y axis
-         
+
             char axis[3] = {'X', 'Y', 'Z'};
 
-            for ( int i = 0; i < 3; i++ ){
-                if ( diff[i] < 0 && fabs(diff[i]) > SampleAccelTolerance ){
-                    if ( axis[i] == 'Y' ){ result.error = -1; }
-                    result.message = axis[i] + " Accel is Decreasing, ";
-                } else if ( diff[i] > 0 && fabs(diff[i]) > SampleAccelTolerance ){
-                    if ( axis[i] == 'Y' ){ result.error = 1; }
-                    result.message = axis[i] + " Accel is Increasing, ";
+            for ( int i = 0; i < 3; i++ ) {
+                if ( diff[i] < 0 && fabs(diff[i]) > SampleAccelTolerance ) {
+                    if ( axis[i] == 'Y' ) { result.error = -1; }
+                    result.message = axis[i] + "| Accel is Decreasing |";
+                } else if ( diff[i] > 0 && fabs(diff[i]) > SampleAccelTolerance ) {
+                    if ( axis[i] == 'Y' ) { result.error = 1; }
+                    result.message = axis[i] + "| Accel is Increasing |";
                 } else {
-                    if ( axis[i] == 'Y' ){ result.error = 0; }
-                    result.message = axis[i] + " Accel is Equal, ";
-                }  
+                    if ( axis[i] == 'Y' ) { result.error = 0; }
+                    result.message = axis[i] + "| Accel is Equal |";
+                }
             }
-    
+
             return result;
-           
+
 
         }
 
@@ -246,30 +248,30 @@ class SampleCollection { // A collection of sample objects
             result.message = "";
 
             float_t diff[3];
-            for ( int i = 0; i < 3; i++ ){
-                if ( accel_a[i] == 0.0 ){
+            for ( int i = 0; i < 3; i++ ) {
+                if ( accel_a[i] == 0.0 ) {
                     diff[i] = 0; // Do something
                     break;
                 }
                 diff[i] = ( accel_b[i] - accel_a[i] )/accel_a[i];
             }
             result.pDiff = diff[1]; // The percent change of the y axis
-            
+
             char axis[3] = {'X', 'Y', 'Z'};
 
-            for ( int i = 0; i < 3; i++ ){
-                if ( diff[i] < 0 && fabs(diff[i]) > SampleAccelTolerance ){
-                    if ( axis[i] == 'Y' ){ result.error = -1; }
-                    result.message = axis[i] + " Accel is Decreasing, ";
-                } else if ( diff[i] > 0 && fabs(diff[i]) > SampleAccelTolerance ){
-                    if ( axis[i] == 'Y' ){ result.error = 1; }
-                    result.message = axis[i] + " Accel is Increasing, ";
+            for ( int i = 0; i < 3; i++ ) {
+                if ( diff[i] < 0 && fabs(diff[i]) > SampleAccelTolerance ) {
+                    if ( axis[i] == 'Y' ) { result.error = -1; }
+                    result.message = axis[i] + "| Accel is Decreasing |";
+                } else if ( diff[i] > 0 && fabs(diff[i]) > SampleAccelTolerance ) {
+                    if ( axis[i] == 'Y' ) { result.error = 1; }
+                    result.message = axis[i] + "| Accel is Increasing |";
                 } else {
-                    if ( axis[i] == 'Y' ){ result.error = 0; }
-                    result.message = axis[i] + " Accel is Equal, ";
-                }  
+                    if ( axis[i] == 'Y' ) { result.error = 0; }
+                    result.message = axis[i] + "| Accel is Equal |";
+                }
             }
-    
+
             return result;
 
         }
@@ -281,28 +283,28 @@ class SampleCollection { // A collection of sample objects
             result.message = "";
 
             float_t diff[3];
-            for ( int i = 0; i < 3; i++ ){
-                if ( raw_gyro_a[i] == 0.0 ){
+            for ( int i = 0; i < 3; i++ ) {
+                if ( raw_gyro_a[i] == 0.0 ) {
                     diff[i] = 0; // Do something
                     break;
                 }
                 diff[i] = ( raw_gyro_b[i] - raw_gyro_a[i] )/raw_gyro_a[i];
             }
             result.pDiff = diff[1]; // The percent change of the y axis
-    
+
             char axis[3] = {'X', 'Y', 'Z'};
 
-            for ( int i = 0; i < 3; i++ ){
-                if ( diff[i] < 0 && fabs(diff[i]) > SampleAccelTolerance ){
-                    if ( axis[i] == 'Y' ){ result.error = -1; }
-                    result.message = axis[i] + " Accel is Decreasing, ";
-                } else if ( diff[i] > 0 && fabs(diff[i]) > SampleAccelTolerance ){
-                    if ( axis[i] == 'Y' ){ result.error = 1; }
-                    result.message = axis[i] + " Accel is Increasing, ";
+            for ( int i = 0; i < 3; i++ ) {
+                if ( diff[i] < 0 && fabs(diff[i]) > SampleAccelTolerance ) {
+                    if ( axis[i] == 'Y' ) { result.error = -1; }
+                    result.message = axis[i] + "| Accel is Decreasing |";
+                } else if ( diff[i] > 0 && fabs(diff[i]) > SampleAccelTolerance ) {
+                    if ( axis[i] == 'Y' ) { result.error = 1; }
+                    result.message = axis[i] + "| Accel is Increasing |";
                 } else {
-                    if ( axis[i] == 'Y' ){ result.error = 0; }
-                    result.message = axis[i] + " Accel is Equal, ";
-                }  
+                    if ( axis[i] == 'Y' ) { result.error = 0; }
+                    result.message = axis[i] + "| Accel is Equal |";
+                }
             }
 
             return result;
@@ -316,28 +318,28 @@ class SampleCollection { // A collection of sample objects
             result.message = "";
 
             float_t diff[3];
-            for ( int i = 0; i < 3; i++ ){
-                if ( gyro_a[i] == 0.0 ){
+            for ( int i = 0; i < 3; i++ ) {
+                if ( gyro_a[i] == 0.0 ) {
                     diff[i] = 0; // Do something
                     break;
                 }
                 diff[i] = ( gyro_b[i] - gyro_a[i] )/gyro_a[i];
             }
             result.pDiff = diff[1]; // The percent change of the y axis
-    
+
             char axis[3] = {'X', 'Y', 'Z'};
 
-            for ( int i = 0; i < 3; i++ ){
-                if ( diff[i] < 0 && fabs(diff[i]) > SampleAccelTolerance ){
-                    if ( axis[i] == 'Y' ){ result.error = -1; }
-                    result.message = axis[i] + " Accel is Decreasing, ";
-                } else if ( diff[i] > 0 && fabs(diff[i]) > SampleAccelTolerance ){
-                    if ( axis[i] == 'Y' ){ result.error = 1; }
-                    result.message = axis[i] + " Accel is Increasing, ";
+            for ( int i = 0; i < 3; i++ ) {
+                if ( diff[i] < 0 && fabs(diff[i]) > SampleAccelTolerance ) {
+                    if ( axis[i] == 'Y' ) { result.error = -1; }
+                    result.message = axis[i] + "| Accel is Decreasing |";
+                } else if ( diff[i] > 0 && fabs(diff[i]) > SampleAccelTolerance ) {
+                    if ( axis[i] == 'Y' ) { result.error = 1; }
+                    result.message = axis[i] + "| Accel is Increasing |";
                 } else {
-                    if ( axis[i] == 'Y' ){ result.error = 0; }
-                    result.message = axis[i] + " Accel is Equal, ";
-                }  
+                    if ( axis[i] == 'Y' ) { result.error = 0; }
+                    result.message = axis[i] + "| Accel is Equal |";
+                }
             }
 
             return result;
@@ -387,7 +389,7 @@ class SampleCollection { // A collection of sample objects
 
             for ( int i = 0; i < size; i++ ) Samples[i] = Sample();
 
-            return { 0, "Recorded Samples" };
+            return { 0, "| Recorded Samples |" };
 
         }
         #endif

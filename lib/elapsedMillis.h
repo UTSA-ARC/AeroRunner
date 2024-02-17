@@ -27,11 +27,7 @@
 #define elapsedMillis_h
 #ifdef __cplusplus
 
-#if ARDUINO >= 100
 #include "Arduino.h"
-#else
-#include "WProgram.h"
-#endif
 
 class elapsedMicros
 {

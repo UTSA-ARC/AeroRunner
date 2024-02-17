@@ -15,21 +15,21 @@ void setUp( void ) { //* Have the default values be the *Ideal Values* for your 
 
   Test_Values.time = "";
 
-  Test_Values.raw_accel[0] = r_accel[0]; //* Direct brace expansion does not work with pointer objects in manually constructed structs, you have to copy a reference to another pointer
-  Test_Values.raw_accel[1] = r_accel[1];
-  Test_Values.raw_accel[2] = r_accel[2];
+  Test_Values.raw_accel[ 0 ] = r_accel[ 0 ]; //* Direct brace expansion does not work with pointer objects in manually constructed structs, you have to copy a reference to another pointer
+  Test_Values.raw_accel[ 1 ] = r_accel[ 1 ];
+  Test_Values.raw_accel[ 2 ] = r_accel[ 2 ];
 
-  Test_Values.normalized_accel[0] = n_accel[0];
-  Test_Values.normalized_accel[1] = n_accel[1];
-  Test_Values.normalized_accel[2] = n_accel[2];
+  Test_Values.normalized_accel[ 0 ] = n_accel[ 0 ];
+  Test_Values.normalized_accel[ 1 ] = n_accel[ 1 ];
+  Test_Values.normalized_accel[ 2 ] = n_accel[ 2 ];
 
-  Test_Values.raw_gyro[0] = r_gyro[0];
-  Test_Values.raw_gyro[1] = r_gyro[1];
-  Test_Values.raw_gyro[2] = r_gyro[2];
+  Test_Values.raw_gyro[ 0 ] = r_gyro[ 0 ];
+  Test_Values.raw_gyro[ 1 ] = r_gyro[ 1 ];
+  Test_Values.raw_gyro[ 2 ] = r_gyro[ 2 ];
 
-  Test_Values.normalized_gyro[0] = n_gyro[0];
-  Test_Values.normalized_gyro[1] = n_gyro[1];
-  Test_Values.normalized_gyro[2] = n_gyro[2];
+  Test_Values.normalized_gyro[ 0 ] = n_gyro[ 0 ];
+  Test_Values.normalized_gyro[ 1 ] = n_gyro[ 1 ];
+  Test_Values.normalized_gyro[ 2 ] = n_gyro[ 2 ];
 
   Test_Values.temperature = 0.0f; //* Not needed for `Check_Systems()`
   Test_Values.pressure = SafeSurfacePressure;
@@ -44,7 +44,7 @@ void setUp( void ) { //* Have the default values be the *Ideal Values* for your 
   continuity_pins_amount = 0;
 
   raw_input_voltage = 1024;
-  nominal_voltage = NOMINAL_INPUT_VOLTAGE;
+  max_pin_input_voltage = MAX_PIN_INPUT_VOLTAGE;
   min_voltage = MINIMUM_INPUT_VOLTAGE;
   max_voltage = MAXIMUM_INPUT_VOLTAGE;
 
@@ -70,7 +70,7 @@ void mocks() { //* Ideally no mocking should be necessary, but if needed, you sh
 }
 
 //* If you're using the same params a lot you might be better off making a helper function so you dont have to keep typing them out on every test
-Result call_test_function() { return Check_Systems( &Test_Values, &Prev_Test_Values, src_pins, gnd_pins, continuity_pins_amount , raw_input_voltage, nominal_voltage, min_voltage, max_voltage ); }
+Result call_test_function() { return Check_Systems( &Test_Values, &Prev_Test_Values, src_pins, gnd_pins, continuity_pins_amount, raw_input_voltage, max_pin_input_voltage, min_voltage, max_voltage ); }
 
 // --------------Test Cases------------------
 
@@ -106,11 +106,11 @@ void test_check_good_3( void ) {
 
 // ------------
 
-void test_check_bad_pressure_movement( void ) { //* The `_bad_` tests should return a `-1` ( Systems Bad )
+void test_check_bad_high_pressure_movement( void ) { //* The `_bad_` tests should return a `-1` ( Systems Bad )
 
   mocks();
 
-  Test_Values.pressure *=( 1 + PMvmntTolerance ); // Brings `Test_values.pressure` up to the max tolerance
+  Test_Values.pressure *= ( 1 + PMvmntTolerance ); // Brings `Test_values.pressure` up to the max tolerance
 
   Test_Values.pressure += 1; // Bump past max tolerance
 
@@ -120,9 +120,13 @@ void test_check_bad_pressure_movement( void ) { //* The `_bad_` tests should ret
 
 }
 
-void test_check_bad_2( void ) {
+void test_check_bad_low_input_voltage( void ) {
 
   mocks();
+
+  raw_input_voltage = min_voltage * ( 1024.0f / max_pin_input_voltage ); // Sets to min voltage
+
+  raw_input_voltage -= 0.2f; // Drop below min
 
   test_result = call_test_function();
 
@@ -130,13 +134,32 @@ void test_check_bad_2( void ) {
 
 }
 
-void test_check_bad_3( void ) {
+void test_check_bad_high_x_surface_tilt( void ) {
 
   mocks();
+
+  Test_Values.normalized_gyro[ 0 ] *= ( 1 + SafeSurfaceTiltX ); // Set to max X tolerance
+
+  Test_Values.normalized_gyro[ 0 ] += 1.0f; // Set past max
 
   test_result = call_test_function();
 
   TEST_ASSERT_EQUAL( -1, test_result.error ); // -1 means error
+
+}
+
+int runTests() { //* Unfortuanltely you HAVE TO run each test individually .-. ...I hate it...
+
+  UNITY_BEGIN();
+
+  RUN_TEST( test_check_good_1 );
+  RUN_TEST( test_check_good_2 );
+  RUN_TEST( test_check_good_3 );
+  RUN_TEST( test_check_bad_high_pressure_movement );
+  RUN_TEST( test_check_bad_low_input_voltage );
+  RUN_TEST( test_check_bad_high_x_surface_tilt );
+
+  return UNITY_END();
 
 }
 
@@ -146,11 +169,8 @@ void test_check_bad_3( void ) {
 
   int main( void ) {
 
-    UNITY_BEGIN();
+    return runTests();
 
-    for ( int i = 0; i < TEST_NUM; i++ ) RUN_TEST( TESTS[ i ] );
-
-    return UNITY_END();
   }
 
 #endif

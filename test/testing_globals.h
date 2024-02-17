@@ -30,17 +30,15 @@ void setUp( void );
 
 void tearDown( void );
 
-typedef void ( *test_func )();
-
 void print_test_result( Result test_result ) {
 
-    String message = "\n Result array: \n\t error: ";
+    String message = "Result array: \n\t error: ";
     message += String( test_result.error );
     message += "\n\t message: ";
     message += String( test_result.message );
   
-    printf( "\n--------------------------------\n" );
+    printf( "\n--------------------------------\n\n" );
     printf( "%s", message.c_str() );
-    printf( "\n--------------------------------\n" );
+    printf( "\n\n--------------------------------\n" );
   
   }

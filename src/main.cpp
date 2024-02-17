@@ -3,8 +3,8 @@
  * @file main.cpp
  * @author UTSA ARC Avionics Team 2023
  * @brief The Avionics code for the Spaceport 2023 vehicle
- * @version 1.0.0
- * @date 2022-2023
+ * @version 1.5.0
+ * @date 2022-2024
  *
  */
 
@@ -12,8 +12,8 @@
 #include "functions.h"
 #include "samples.h"
 
-float_t apogee = 0;
-float_t SurfaceAlt = 0;
+float_t apogee = 0.0f;
+float_t SurfaceAlt = 0.0f;
 bool landed = false;
 
 String csv_file_name = CSV_FILE_NAME;
@@ -28,7 +28,11 @@ void setup() {
 
     Serial.begin( 115200 ); //Changed to higher rate 4/21/22
 
-    while ( !Serial ); //! DELETE WHEN PUTTING IN ROCKET
+    #ifdef DEBUG_ARDUINO
+
+        while ( !Serial );
+
+    #endif
 
     // ----------------------------------------------------------------
 
@@ -47,6 +51,7 @@ void setup() {
     // ----------------------------------------------------------------
 
     Serial.println( "Initializing BMP390..." );
+
     while ( !bmp.begin_I2C() ) { // hardware I2C mode, can pass in address & alt Wire
 
         Serial.println( "Could not find a valid BMP390 sensor, check wiring!\n" );
@@ -112,7 +117,6 @@ void setup() {
 
     Data init_values = Get_All_Values(); // Set Initial Values
     delay( InitValueDelay * 1000 );      // Delay to compare data
-    SurfaceAlt = init_values.altitude;   // Get surface altitude (Assuming Setup() will be called on surface ONLY)
 
     Data values = Get_All_Values(); // Get Current Values
     Result Check_Systems_Result = Check_Systems( &values, &init_values, src_pins, gnd_pins, 2 ); // Check Health of Systems
@@ -127,11 +131,13 @@ void setup() {
 
     }
 
+    SurfaceAlt = init_values.altitude + SurfaceAltBias;   // Set surface altitude
+
     // ----------------------------------------------------------------
 
     Serial.end(); // End Serial Transmission
 
-    delay( ExitSetup * 1000 ); // Delay for N seconds before starting main loop
+    delay( ExitSetup * 1000 ); // Delay for `ExitSetup` seconds before starting main loop
 
 }
 
@@ -219,10 +225,10 @@ void loop() {
 
             for ( int i = 0; i < sample_size; i++ ) { // Iterate through all Samples
                 
-                if ( sample_arr[ i ].Get_Avg_Data().altitude <= ( SurfaceAlt + SurfaceAltBias ) ) { // Check if sample is landed // TODO: UNIT TEST
+                if ( sample_arr[ i ].Get_Avg_Data().altitude <= SurfaceAlt ) { // Check if sample is landed // TODO: UNIT TEST
                     
                     landed = true; // Set as true
-                    sample_arr[ i ].Append_Message( "!!LANDED VEHICLE WOOOOOO!!" ); // Record Landing
+                    sample_arr[ i ].Append_Message( "| !!LANDED VEHICLE WOOOOOO!! |" ); // Record Landing
                     break;
 
                 }
@@ -233,9 +239,19 @@ void loop() {
 
     }
 
-    for ( int i = 0; i < sample_size; i++ ) Record_Data( &( sample_arr->Get_Avg_Data() ), csv_file_name ); // Print & Save All Values
+    for ( int i = 0; i < sample_size; i++ ) {
 
-    delay( ConsoleDelay * 1000 ); //! FOR JUST EASY READING
+        SampleData sample = sample_arr[ i ].Get_Avg_Data();
+
+        Record_Data( &sample, csv_file_name ); // Print & Save All Values
+
+    }
+
+    #ifdef DEBUG_ARDUINO
+
+        delay( ConsoleDelay * 1000 ); //! FOR JUST EASY READING
+
+    #endif
 
 }
 

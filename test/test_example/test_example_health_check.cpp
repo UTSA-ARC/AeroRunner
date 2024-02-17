@@ -181,7 +181,7 @@ int runTests() { //* Unfortuanltely you HAVE TO run each test individually .-. .
   
     UNITY_BEGIN();
 
-    for ( int i = 0; i < TEST_NUM; i++ ) RUN_TEST( TESTS[ i ] );
+    return runTests();
 
     UNITY_END();
 

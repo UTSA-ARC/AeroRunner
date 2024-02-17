@@ -1,7 +1,7 @@
 #pragma once
 
 #define CSV_FILE_NAME "" // By Default the file will be set to "MM-DD-YY(-num).csv"
-#define CSV_NUM_DIGITS 2 // Number of digits
+#define CSV_NUM_DIGITS 2 // Number of digits for values in CSV
 
 #define InputVoltagePin A9
 #define MAX_PIN_INPUT_VOLTAGE 5.0f
@@ -34,9 +34,9 @@
 
 #define ConsoleDelay 1 // In seconds
 
-#define ExitSetup 20 // In seconds
+#define ExitSetup 1 // In seconds
 
-#define SurfaceAltBias 10 //In meters
+#define SurfaceAltBias 10 // In meters
 
 #define PinSrcDrogue 1 //! FIX, continuity check pin, input
 #define PinSrcMain 1 //! FIX, continuity check pin, input

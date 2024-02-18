@@ -292,39 +292,22 @@ Result Check_Systems( // Checks if systems are safe
     Result results[ results_size ];
 
     // Check if connected to sufficient voltage
-    
-    Result res = Check_Input_Voltage( raw_input_voltage, max_pin_input_voltage, min_voltage, max_voltage );
-
-    results[ 0 ].error = res.error;
-    results[ 0 ].message = res.message;
+    results[ 0 ] = Check_Input_Voltage( raw_input_voltage, max_pin_input_voltage, min_voltage, max_voltage );
 
     // Check if VBAT is Connected
-    res = Check_VBAT_Connection( vbat_pin );
-    results[ 1 ].error = res.error;
-    results[ 1 ].message = res.message;
+    results[ 1 ] = Check_VBAT_Connection( vbat_pin );
 
     // Check if pressure is changing
-    res = Check_Pressure_Movement( Values->pressure, Prev_Values->pressure, mvmt_press_tol );
-    results[ 2 ].error = res.error;
-    results[ 2 ].message = res.message;
+    results[ 2 ] = Check_Pressure_Movement( Values->pressure, Prev_Values->pressure, mvmt_press_tol );
 
     // Check current pressure
-    res = Check_Surface_Pressure( Values->pressure, surf_press, surf_press_tol );
-    results[ 3 ].error = res.error;
-    results[ 3 ].message = res.message;
+    results[ 3 ] = Check_Surface_Pressure( Values->pressure, surf_press, surf_press_tol );
 
     // Check current tilt
-    res = Check_Surface_Tilt( Values->normalized_gyro, safe_x_tilt, safe_y_tilt, safe_z_tilt, tilt_tol );
-    results[ 4 ].error = res.error;
-    results[ 4 ].message = res.message;
-    // results[ 4 ] = { 0, "-" }; //! MPU no werk :'(
+    results[ 4 ] = Check_Surface_Tilt( Values->normalized_gyro, safe_x_tilt, safe_y_tilt, safe_z_tilt, tilt_tol );
     
     // Check current accel
-    res = Check_Surface_Accel( Values->normalized_accel, safe_x_accel, safe_y_accel, safe_z_accel, accel_tol );
-    results[ 5 ].error = res.error;
-    results[ 5 ].message = res.message;
-
-    // results[ 5 ] = { 0, "-" }; //! MPU no werk :'(
+    results[ 5 ] = Check_Surface_Accel( Values->normalized_accel, safe_x_accel, safe_y_accel, safe_z_accel, accel_tol );
 
     // Check Ejection Charge continuities, if present
     if ( continuity_arrs_size != 0 ) {

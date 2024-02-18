@@ -1,6 +1,6 @@
 #pragma once //* Or use compiler guards
-#include "../testing_globals.h"
 
+#include "../testing_globals.h"
 #include "setup.h" // Include the file containing the function to test
 
 //* setUp(), tearDown(), main(), setup(), loop(), "globals.h", "unity.h", "Arduino.h/AruinoFake.h", print_test_result(), and mock_arduino() are pre-defined in testing_globals.h *//

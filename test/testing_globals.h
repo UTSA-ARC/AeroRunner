@@ -1,8 +1,9 @@
 #pragma once
 
 #include <unity.h>
-
 #include "globals.h"
+
+// --------------Toolchain Based Imports/Definitions------------------
 
 #ifndef ARDUINO_TC
 
@@ -26,6 +27,8 @@
 
 #endif
 
+// --------------Global Function Definitions------------------
+
 void setUp( void );
 
 void tearDown( void );
@@ -41,4 +44,4 @@ void print_test_result( Result test_result ) {
     printf( "%s", message.c_str() );
     printf( "\n\n--------------------------------\n" );
   
-  }
+}

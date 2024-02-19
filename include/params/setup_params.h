@@ -1,9 +1,11 @@
 #pragma once
 
-#define CSV_FILE_NAME "" // By Default the file will be set to "MM-DD-YY(-num).csv" 
+#define CSV_FILE_NAME "" // By Default the file will be set to "MM-DD-YY(-num).csv"
+#define CSV_NUM_DIGITS 2 // Number of digits for values in CSV
 
-#define PinInputVoltage A9
-#define MINIMUM_INPUT_VOLTAGE 3.4f
+#define InputVoltagePin A9
+#define MAX_PIN_INPUT_VOLTAGE 5.0f
+#define MINIMUM_INPUT_VOLTAGE 3.0f
 #define MAXIMUM_INPUT_VOLTAGE 5.0f
 
 #define PinVBAT 49
@@ -32,9 +34,9 @@
 
 #define ConsoleDelay 1 // In seconds
 
-#define ExitSetup 20 // In seconds
+#define ExitSetup 1 // In seconds
 
-#define SurfaceAltBias 10 //In meters
+#define SurfaceAltBias 10 // In meters
 
 #define PinSrcDrogue 1 //! FIX, continuity check pin, input
 #define PinSrcMain 1 //! FIX, continuity check pin, input
@@ -45,8 +47,8 @@
 
 #define SUBSONIC_SPEED 205.8f // Units: m/s (343 m/s = Mach 1)
 
-#define PMTolerance 0.05f // Pressure Tolerance, % decimal form
-#define SurfacePressure 40 // Surface Pressure
+#define PMvmntTolerance 0.05f // Pressure Tolerance, % decimal form
+#define SafeSurfacePressure 40 // Surface Pressure
 #define SurfPTolerance 0.05f // % in decimal form
 
 #define SafeSurfaceAccelX 0 // Safe Surface X Acceleration

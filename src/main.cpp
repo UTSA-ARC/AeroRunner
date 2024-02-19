@@ -3,8 +3,8 @@
  * @file main.cpp
  * @author UTSA ARC Avionics Team 2023
  * @brief The Avionics code for the Spaceport 2023 vehicle
- * @version 1.0.0
- * @date 2022-2023
+ * @version 1.5.0
+ * @date 2022-2024
  *
  */
 
@@ -12,8 +12,8 @@
 #include "functions.h"
 #include "samples.h"
 
-float_t apogee = 0;
-float_t SurfaceAlt = 0;
+float_t apogee = 0.0f;
+float_t SurfaceAlt = 0.0f;
 bool landed = false;
 
 String csv_file_name = CSV_FILE_NAME;
@@ -28,7 +28,11 @@ void setup() {
 
     Serial.begin( 115200 ); //Changed to higher rate 4/21/22
 
-    while ( !Serial ); //! DELETE WHEN PUTTING IN ROCKET
+    #ifdef DEBUG_ARDUINO
+
+        while ( !Serial );
+
+    #endif
 
     // ----------------------------------------------------------------
 
@@ -47,6 +51,7 @@ void setup() {
     // ----------------------------------------------------------------
 
     Serial.println( "Initializing BMP390..." );
+
     while ( !bmp.begin_I2C() ) { // hardware I2C mode, can pass in address & alt Wire
 
         Serial.println( "Could not find a valid BMP390 sensor, check wiring!\n" );
@@ -73,10 +78,8 @@ void setup() {
     // ----------------------------------------------------------------
 
     // Set up oversampling and filter initialization
-    bmp.setTemperatureOversampling( BMP3_OVERSAMPLING_8X );
-    bmp.setPressureOversampling( BMP3_OVERSAMPLING_4X );
-    bmp.setIIRFilterCoeff( BMP3_IIR_FILTER_COEFF_3 );
-    bmp.setOutputDataRate( BMP3_ODR_50_HZ );
+
+    Configure_BMP();
 
     // ----------------------------------------------------------------
 
@@ -107,14 +110,13 @@ void setup() {
 
     csv_file_name = Init_CSV( csv_file_name ); // Initialize CSV
 
-    // ----------------------------------------------------------------
+    // ---------------------------------------------------------------- // TODO: UNIT TEST
 
     uint8_t src_pins[] = { PinSrcDrogue, PinSrcMain }; // Set source pins for continuity check
     uint8_t gnd_pins[] = { PinGnd, PinGnd };           // Set ground pins for continuity check
 
     Data init_values = Get_All_Values(); // Set Initial Values
     delay( InitValueDelay * 1000 );      // Delay to compare data
-    SurfaceAlt = init_values.altitude;   // Get surface altitude (Assuming Setup() will be called on surface ONLY)
 
     Data values = Get_All_Values(); // Get Current Values
     Result Check_Systems_Result = Check_Systems( &values, &init_values, src_pins, gnd_pins, 2 ); // Check Health of Systems
@@ -129,17 +131,19 @@ void setup() {
 
     }
 
+    SurfaceAlt = init_values.altitude + SurfaceAltBias;   // Set surface altitude
+
     // ----------------------------------------------------------------
 
     Serial.end(); // End Serial Transmission
 
-    delay( ExitSetup * 1000 ); // Delay for N seconds before starting main loop
+    delay( ExitSetup * 1000 ); // Delay for `ExitSetup` seconds before starting main loop
 
 }
 
 void loop() {
 
-    if ( landed ) return; // Do nothing if landed
+    if ( landed ) return; // Do nothing if landed // TODO: UNIT TEST
 
     loopTime.dt = loopTimer; // get loop time interval
     loopTimer = 0; // reset timer
@@ -148,7 +152,7 @@ void loop() {
     Sample* sample_arr = Samples.Get_Sample_Array(); // Get Sample Array
     const int sample_size = Samples.Size(); // Get Sample Array Size
 
-    // -------------------------------------------------
+    // ------------------------------------------------- // TODO: UNIT TEST
     
     float_t mpuVelY = 0.0f; // Vertical velocity based on accelerometer data
     float_t avg_y_accel = 0.0f; // Accelerometer data based on most recent Samples
@@ -166,9 +170,9 @@ void loop() {
 
     int sample_movement[ sample_size - 1 ]; // Init Comparison array
 
-    for ( int i = 1; i < sample_size; i++ ) { sample_movement[ i - 1 ] = Samples.Compare_Sample( ( i - 1 ), i ).error; } // Find movement of samples
+    for ( int i = 1; i < sample_size; i++ ) { sample_movement[ i - 1 ] = Samples.Compare_Sample( ( i - 1 ), i ).error; } // Find movement of samples // TODO: UNIT TEST
 
-    if ( !Paras_Armed[ 0 ] ) { // If Drogue is not armed
+    if ( !Paras_Armed[ 0 ] ) { // If Drogue is not armed // TODO: UNIT TEST
 
         for ( int i = 0; i < sample_size; i++ ) { // Iterate through all samples
 
@@ -181,12 +185,12 @@ void loop() {
 
     }
 
-    if ( Paras_Armed[ 1 ] && apogee == 0 ) { // If Drogue Para is armed and apogee is not set
+    if ( Paras_Armed[ 1 ] && apogee == 0 ) { // If Drogue Para is armed and apogee is not set // TODO: UNIT TEST
 
         int i = 0;
         while ( sample_movement[ i ] > 0 && i < ( sample_size - 2 ) ) i++; // Iterate through Comparison array until reading 0 or -1
 
-        // mpuVelY < SUBSONIC_SPEED adds immunity to Mach-related disturbances
+        // mpuVelY < SUBSONIC_SPEED adds immunity to Mach-related disturbances // TODO: UNIT TEST
         if ( sample_movement[ i + 1 ] < 0 && mpuVelY < SUBSONIC_SPEED) { // If next index is -1
 
             Result launch_result = Launch_Parachute( 1 ); // Launch Drogue
@@ -198,7 +202,7 @@ void loop() {
 
     }
 
-    if ( apogee > 0 ) { // If apogee is set
+    if ( apogee > 0 ) { // If apogee is set // TODO: UNIT TEST
 
         if ( Paras_Armed[ 0 ] ) { // If Main Para is armed
 
@@ -221,10 +225,10 @@ void loop() {
 
             for ( int i = 0; i < sample_size; i++ ) { // Iterate through all Samples
                 
-                if ( sample_arr[ i ].Get_Avg_Data().altitude <= ( SurfaceAlt + SurfaceAltBias ) ) { // Check if sample is landed
+                if ( sample_arr[ i ].Get_Avg_Data().altitude <= SurfaceAlt ) { // Check if sample is landed // TODO: UNIT TEST
                     
                     landed = true; // Set as true
-                    sample_arr[ i ].Append_Message( "!!LANDED VEHICLE WOOOOOO!!" ); // Record Landing
+                    sample_arr[ i ].Append_Message( "| !!LANDED VEHICLE WOOOOOO!! |" ); // Record Landing
                     break;
 
                 }
@@ -235,9 +239,19 @@ void loop() {
 
     }
 
-    for ( int i = 0; i < sample_size; i++ ) Record_Data( &( sample_arr->Get_Avg_Data() ), csv_file_name ); // Print & Save All Values
+    for ( int i = 0; i < sample_size; i++ ) {
 
-    delay( ConsoleDelay * 1000 ); //! FOR JUST EASY READING
+        SampleData sample = sample_arr[ i ].Get_Avg_Data();
+
+        Record_Data( &sample, csv_file_name ); // Print & Save All Values
+
+    }
+
+    #ifdef DEBUG_ARDUINO
+
+        delay( ConsoleDelay * 1000 ); //! FOR JUST EASY READING
+
+    #endif
 
 }
 

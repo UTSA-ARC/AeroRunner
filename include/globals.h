@@ -1,12 +1,6 @@
 #pragma once
 
-#include <Adafruit_BMP3XX.h>
-#include <Wire.h>
-#include <TimeLib.h>
-#include <Arduino.h>
-
-Adafruit_BMP3XX bmp;
-uint16_t ALSB_Sensitivity, GLSB_Sensitivity;
+#include "toolchain.h"
 // Structs
 typedef struct Data { //* All measurements
 
@@ -22,23 +16,36 @@ typedef struct Data { //* All measurements
     float_t pressure;
     float_t altitude;
 
-    String message = "-";
+    String message;
+
+    Data(): message( "-" ) {}
 
 } Data;
 
-typedef struct SampleData : Data { String timeEnd; } SampleData;
+typedef struct SampleData : Data { 
+    
+    String timeEnd; 
+    
+} SampleData;
 
 typedef struct Result {
 
     int8_t error;
     String message;
 
+    Result(): error( 0 ), message( "-" ) {};
+    Result( int8_t _error, String _message ): error( _error ), message( _message ) {};
+
 } Result;
+
 
 typedef struct TimeData {
 
-    uint16_t timeNow = 0;
-    uint16_t timePrev = 0;
-    uint16_t dt = 0; // loop time used to update integral
+    uint16_t timeNow;
+    uint16_t timePrev;
+    uint16_t dt; // loop time used to update integral
     
+    TimeData() {}
+    TimeData( uint16_t _timeNow, uint16_t _timePrev, uint16_t _dt ): timeNow( _timeNow ), timePrev( _timePrev ), dt( _dt ) {}
+
 } TimeData;

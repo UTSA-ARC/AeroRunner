@@ -5,14 +5,14 @@
 
 // -------------------------Vector Functions-----------------------
 
-int* Get_Raw_Accel() { // Returns an int vector of the raw acceleration Values from the MPU
+int16_t* Get_Raw_Accel() { // Returns an int vector of the raw acceleration Values from the MPU
 
     Wire.beginTransmission( MPU_ADDRESS );
     Wire.write( 0x3B );                       // Start with register 0x3B ( ACCEL_XOUT_H )
     Wire.endTransmission( false );
     Wire.requestFrom( MPU_ADDRESS, 6, true );         // Read 6 registers total, each axis value is stored in 2 registers
 
-    static int result[ 3 ];
+    static int16_t result[ 3 ];
 
     for ( int i = 0; i < 3; i++ ) result[ i ] = ( Wire.read() << 8 | Wire.read() ); // Raw values
 
@@ -20,7 +20,7 @@ int* Get_Raw_Accel() { // Returns an int vector of the raw acceleration Values f
 
 }
 
-float_t* Get_Normalized_Accel( const int* raw_accel ) { // Returns the normalized acceleration Values from the MPU
+float_t* Get_Normalized_Accel( const int16_t* raw_accel ) { // Returns the normalized acceleration Values from the MPU
 
     static float_t normalized_accel[ 3 ];
 
@@ -30,14 +30,14 @@ float_t* Get_Normalized_Accel( const int* raw_accel ) { // Returns the normalize
 
 }
 
-int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyroscopic Values from the MPU
+int16_t* Get_Raw_Gyro() { // Returns an int vector containing the raw gyroscopic Values from the MPU
 
     Wire.beginTransmission( MPU_ADDRESS );
     Wire.write( 0x43 );                     // Gyro data first register address 0x43
     Wire.endTransmission( false );
     Wire.requestFrom( MPU_ADDRESS, 6, true );       // Read 4 registers total, each axis value is stored in 2 registers
 
-    static int raw_gyro[ 3 ];
+    static int16_t raw_gyro[ 3 ];
 
     for ( int i = 0; i < 3; i++ ) raw_gyro[ i ] = ( Wire.read() << 8 | Wire.read() );
 
@@ -63,7 +63,7 @@ int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyroscopic Val
 
     if ( toUpperCase( VerticalAxis ) != 'Y' ) { // Swap Y value
 
-        int temp = raw_gyro[ 1 ];
+        int16_t temp = raw_gyro[ 1 ];
 
         if ( toUpperCase( VerticalAxis ) == 'X' ) { // Swap Y and X
 
@@ -105,7 +105,7 @@ int* Get_Raw_Gyro() { // Returns an int vector containing the raw gyroscopic Val
 
 }
 
-float_t* Get_Normalized_Gyro( const int* raw_gyro ) { // Returns a float_t vector containing the normalized gyroscopic Values from the MPU
+float_t* Get_Normalized_Gyro( const int16_t* raw_gyro ) { // Returns a float_t vector containing the normalized gyroscopic Values from the MPU
 
     static float_t normalized_gyro[ 3 ];
 
@@ -126,21 +126,31 @@ Data Get_All_Values() { // Record all values
 
     Data data;
 
-    int i = 0;
-    // Get Values from Accelerometer
-    int *raw_a_ptr = Get_Raw_Accel();
-    int *raw_g_ptr = Get_Raw_Gyro();
-    float_t *norm_a_ptr = Get_Normalized_Accel( raw_a_ptr );
-    float_t *norm_g_ptr = Get_Normalized_Gyro( raw_g_ptr );
+    int16_t* r_accel = Get_Raw_Accel();
+    int16_t* r_gyro = Get_Raw_Accel();
 
-    for ( i = 0; i < 3; i++ ) {
+    // Store Raw Values from Accelerometer
+    data.raw_accel[0] = r_accel[ 0 ];
+    data.raw_accel[1] = r_accel[ 0 ];
+    data.raw_accel[2] = r_accel[ 0 ];
 
-        data.raw_accel[ i ] = raw_a_ptr[ i ];
-        data.raw_gyro[ i ] = raw_g_ptr[ i ];
-        data.normalized_accel[ i ] = norm_a_ptr[ i ];
-        data.normalized_gyro[ i ] = norm_g_ptr[ i ];
+    // Store Raw Values from Gyroscope
+    data.raw_gyro[0] = r_gyro[0];
+    data.raw_gyro[1] = r_gyro[1];
+    data.raw_gyro[2] = r_gyro[2];
 
-    }
+    float_t* n_accel = Get_Normalized_Accel( data.raw_accel );
+    float_t* n_gyro = Get_Normalized_Accel( data.raw_gyro );
+
+    // Store Normalized Values from Accelerometer
+    data.normalized_accel[ 0 ] = n_accel[ 0 ];
+    data.normalized_accel[ 1 ] = n_accel[ 1 ];
+    data.normalized_accel[ 2 ] = n_accel[ 2 ];
+
+    // Store Normalized Values from Gyroscope
+    data.normalized_gyro[ 0 ] = n_gyro[ 0 ];
+    data.normalized_gyro[ 1 ] = n_gyro[ 1 ];
+    data.normalized_gyro[ 2 ] = n_gyro[ 2 ];
 
     time_t time_now = now();
     data.time = (
@@ -173,43 +183,47 @@ void Print_All_Values( SampleData* Values ) { // Print the Values on the serial 
     output.append(
 
         "Raw Acceleration ( X, Y, Z ): " +
-        String( Values->raw_accel[ 0 ] / 1.0f, 2 ) + ',' +
-        String( Values->raw_accel[ 1 ] / 1.0f, 2 ) + ',' +
-        String( Values->raw_accel[ 2 ] / 1.0f, 2 ) + '\n'
+        String( Values->raw_accel[ 0 ], CSV_NUM_DIGITS ) + ',' +
+        String( Values->raw_accel[ 1 ], CSV_NUM_DIGITS ) + ',' +
+        String( Values->raw_accel[ 2 ], CSV_NUM_DIGITS ) + '\n'
 
         );
 
     output.append(
 
         "Normalized Acceleration ( X, Y, Z ): " +
-        String( Values->normalized_accel[ 0 ] / 1.0f, 2 ) + ',' +
-        String( Values->normalized_accel[ 1 ] / 1.0f, 2 ) + ',' +
-        String( Values->normalized_accel[ 2 ] / 1.0f, 2 ) + '\n'
+        String( Values->normalized_accel[ 0 ], CSV_NUM_DIGITS ) + ',' +
+        String( Values->normalized_accel[ 1 ], CSV_NUM_DIGITS ) + ',' +
+        String( Values->normalized_accel[ 2 ], CSV_NUM_DIGITS ) + '\n'
 
         );
 
     output.append(
 
         "Raw GyroRange ( X, Y, Z ): " +
-        String( Values->raw_gyro[ 0 ] / 1.0f, 2 ) + ',' +
-        String( Values->raw_gyro[ 1 ] / 1.0f, 2 ) + ',' +
-        String( Values->raw_gyro[ 2 ] / 1.0f, 2 ) + '\n'
+        String( Values->raw_gyro[ 0 ], CSV_NUM_DIGITS ) + ',' +
+        String( Values->raw_gyro[ 1 ], CSV_NUM_DIGITS ) + ',' +
+        String( Values->raw_gyro[ 2 ], CSV_NUM_DIGITS ) + '\n'
 
         );
 
     output.append(
 
         "Normalized Gyro Range ( X, Y, Z ): " +
-        String( Values->normalized_gyro[ 0 ] / 1.0f, 2 ) + ',' +
-        String( Values->normalized_gyro[ 1 ] / 1.0f, 2 ) + ',' +
-        String( Values->normalized_gyro[ 2 ] / 1.0f, 2 ) + '\n'
+        String( Values->normalized_gyro[ 0 ], CSV_NUM_DIGITS ) + ',' +
+        String( Values->normalized_gyro[ 1 ], CSV_NUM_DIGITS ) + ',' +
+        String( Values->normalized_gyro[ 2 ], CSV_NUM_DIGITS ) + '\n'
 
         );
 
     output.append( "\n\nNow reading BMP390...\n" );
-    output.append( "Temperature ( C ): " + String( Values->temperature / 1.0f ) + '\n' );
-    output.append( "Pressure ( kPa ): " + String( Values->pressure / 1.0f ) + '\n' );
-    output.append( "Altitude ( m ): " + String( Values->altitude / 1.0f ) + '\n' );
+    output.append( "Temperature ( C ): " + String( Values->temperature, CSV_NUM_DIGITS ) + '\n' );
+    output.append( "Pressure ( kPa ): " + String( Values->pressure, CSV_NUM_DIGITS ) + '\n' );
+    output.append( "Altitude ( m ): " + String( Values->altitude, CSV_NUM_DIGITS ) + '\n' );
+
+    output.append( "\n\n Messages...\n");
+    output.append( Values->message );
+    output.append( "\n");
 
     Serial.println( output ); // Print output to screen
 
@@ -217,7 +231,7 @@ void Print_All_Values( SampleData* Values ) { // Print the Values on the serial 
 
 }
 
-void Write_All_Values_To_SD( SampleData* Values, String file_name ) { // Records values to SD card
+void Write_All_Values_To_SD( SampleData* Values, String file_name ) { // Records values to SD card // TODO: UNIT TEST
 
     String file_string = file_name + ".csv";
     File myFile = SD.open( file_string.c_str(), FILE_WRITE );
@@ -237,13 +251,13 @@ void Write_All_Values_To_SD( SampleData* Values, String file_name ) { // Records
 
     output += ( Values->timeEnd );
 
-    for ( int i = 0; i < 3; i++ ) output += ( String( Values->raw_accel[ i ] / 1.0f ) + ',' );
+    for ( int i = 0; i < 3; i++ ) output += ( String( Values->raw_accel[ i ] ) + ',' );
 
-    for ( int i = 0; i < 3; i++ ) output += ( String( Values->normalized_accel[ i ] / 1.0f ) + ',' );
+    for ( int i = 0; i < 3; i++ ) output += ( String( Values->normalized_accel[ i ]) + ',' );
 
-    for ( int i = 0; i < 3; i++ ) output += ( String( Values->raw_gyro[ i ] / 1.0f ) + ',' );
+    for ( int i = 0; i < 3; i++ ) output += ( String( Values->raw_gyro[ i ] ) + ',' );
 
-    for ( int i = 0; i < 3; i++ ) output += ( String( Values->normalized_gyro[ i ] / 1.0f ) + ',' );
+    for ( int i = 0; i < 3; i++ ) output += ( String( Values->normalized_gyro[ i ] ) + ',' );
 
     output += ( String( Values->temperature / 1.0f ) + ',' );
 
@@ -284,11 +298,11 @@ Result Launch_Parachute( const int shute ) { // Launches Parachute
 
                 digitalWrite( PinMain, HIGH );
                 Paras_Armed[ shute ] = 0;
-                return { 0, "!!MAIN shute LAUNCHED!!" };
+                return { 0, "| !!MAIN shute LAUNCHED!! |" };
 
             }
 
-            else return { 1, "MAIN shute Not Deployed!" };
+            else return { 1, "| MAIN shute Not Deployed |" };
 
         case 1: // Drogue shute
 
@@ -296,14 +310,14 @@ Result Launch_Parachute( const int shute ) { // Launches Parachute
 
                 digitalWrite( PinDrogue, HIGH );
                 Paras_Armed[ shute ] = 0;
-                return { 0, "!!DROGUE shute LAUNCHED" };
+                return { 0, "| !!DROGUE shute LAUNCHED!! |" };
 
             }
 
-            else return { 2, "DROGUE shute Not Deployed!" };
+            else return { 2, "| DROGUE shute Not Deployed |" };
 
         default:
-            return { -1, "Not a Valid shute!" };
+            return { -1, "| Not a Valid shute |" };
 
     }
 
@@ -313,15 +327,15 @@ Result Launch_Parachute( const int shute ) { // Launches Parachute
 
 Result Check_Altitude( const float_t altitude, const float_t prev_altitude = 0, const float_t apogee = 0, const float_t safe_altitude = SafeAltitude, const float_t main_para_alt = MainParaAlt ) { // Checks if altitude is safe/at apogee //* Not being used for immediate compatibility
 
-    if ( apogee > 0 && altitude <= main_para_alt ) return { 1, "!!MAIN PARACHUTE ALTITUDE REACHED!!" };
+    if ( apogee > 0 && altitude <= main_para_alt ) return { 1, "| !!MAIN PARACHUTE ALTITUDE REACHED!! |" };
 
     if ( altitude > safe_altitude ) {
 
-        return { 0, "Safe Altitude" }; // Safe
+        return { 0, "| Safe Altitude |" }; // Safe
 
     }
 
-    return { -1, "unsafe altitude" }; // Unsafe
+    return { -1, "| unsafe altitude |" }; // Unsafe
 
 }
 

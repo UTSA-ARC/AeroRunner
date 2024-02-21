@@ -130,14 +130,14 @@ Data Get_All_Values() { // Record all values
     int16_t* r_gyro = Get_Raw_Accel();
 
     // Store Raw Values from Accelerometer
-    data.raw_accel[0] = r_accel[ 0 ];
-    data.raw_accel[1] = r_accel[ 0 ];
-    data.raw_accel[2] = r_accel[ 0 ];
+    data.raw_accel[ 0 ] = r_accel[ 0 ];
+    data.raw_accel[ 1 ] = r_accel[ 1 ];
+    data.raw_accel[ 2 ] = r_accel[ 2 ];
 
     // Store Raw Values from Gyroscope
-    data.raw_gyro[0] = r_gyro[0];
-    data.raw_gyro[1] = r_gyro[1];
-    data.raw_gyro[2] = r_gyro[2];
+    data.raw_gyro[ 0 ] = r_gyro[ 0 ];
+    data.raw_gyro[ 1 ] = r_gyro[ 1 ];
+    data.raw_gyro[ 2 ] = r_gyro[ 2 ];
 
     float_t* n_accel = Get_Normalized_Accel( data.raw_accel );
     float_t* n_gyro = Get_Normalized_Accel( data.raw_gyro );
